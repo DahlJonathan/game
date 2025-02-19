@@ -1,0 +1,25 @@
+First: backend server / ngrok
+
+1: opening page, multi mode, player name, choose game room button
+
+2: single mode later added later, start game button
+
+3: user joins a game room, session starts for current user
+
+4: game room page lists all players on game room page, max 4 players, but two or three can start a game too. when all players in game room have clicked start game, game screen opens. Game room page has startgame and leave game room buttons.
+
+5: In Game screem page Timer shows on top  with game control buttons. game arena where the players are is smaller than the browser window/game screen page.
+
+6: user can play many games with players in current game room during the session. if someone leaves the game room, other one can join, max 4. list of players updates, and the session ends for that player who leaves. Game room page lists a score board that lists all current players in the game room and their score. When user leaves the game room, points go to zero for that player.
+
+- start game button - game screen opens when all players have clicked the button
+- 2-4 players play with arrow buttons.
+- user can click leave game - it redirects to game room page, start game button is not showing, other players can continue the game until the end. when all players have come back to game room start button appears again.
+- timer goes to zero/ or all players quit the game - game ends, player who has left the game gets zero points.
+- scoreboard is showing with all current players in the game room page.
+- user can start new game. New game cannot start when there is a ongoing game still going. New game can start when all players are back in game room, only then start game button is visible.
+(game must wait that all max 4 players have clicked start game button before game starts in game screen page, if someone leaves the game room, game can start with 2 or 3 players, or if someone new joins before game has started, then player list updates and new player can start the game too)
+
+7: user clicks leave game room . opening page opens. (other new user can take their place on game room), game room session ends for current user. score board updates with the players that are still inside the game room.
+
+8: user can now join another game room
