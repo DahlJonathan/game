@@ -1,0 +1,15 @@
+{
+  "name": "web-game",
+  "version": "1.0.0",
+  "description": "Real-time multiplayer web game",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "ws": "^7.5.10"
+  },
+  "author": "",
+  "license": "ISC"
+}
