@@ -11,6 +11,11 @@ export default class Game {
         // Bind event listener
         document.addEventListener("keydown", this.handleMovement.bind(this));
     }
+    
+    setPlayerId(playerId) {
+        this.playerId = playerId;
+        console.log(`game.js -  Player ID set: ${playerId}`); // Debug: Player ID
+    }
 
     handleMovement(event) {
         let left = parseInt(this.player.style.left);
