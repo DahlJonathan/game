@@ -5,39 +5,56 @@
 Real-time multiplayer web game 
 
 ## Stack
-Node.js, Express, WebSocket, JavaScript, HTML, CSS....
+Node.js, Express, WebSocket.io, JavaScript, HTML, CSS, Tailwind, Vite....
 
 ## Project Structure
 ```
 web-game
 ├── backend/          
-│   ├── server.js      # WebSocket server, game state management
-│   ├── gameLogic.js   # Rules, scoring, and updates
+        node_modules/
 │   ├── config.js      # Configuration (port, network settings)
+│   ├── idGenerator.js
+        package-lock.json
+        package.json
 │   ├── README.md      # Backend documentation
+│   ├── server.js      # WebSocket server, game state management
+│   ├── socket.js
 │
 ├── docs/          
-│   ├── logic.txt      # Logic of the game?
-│   ├── plan.txt        # What needs to be done?
+│   ├── logic.txt      # Logic of the game
+│   ├── plan.txt       # What needs to be done
 │   ├── review_kohdat.txt # Everything must be implemented and working properly
 │
 ├── frontend/
-│   ├── player.js
-│   ├── startScreen.js
-│   ├── app.js
-│   ├── game.js
+│   ├── public/
+│   │   └── vite.svg
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── gameArea.jsx
+                gameLogic.jsx
+│   │   │   ├── Platform.jsx
+│   │   │   ├── platformLogic.jsx
+│   │   │   ├── Player.jsx
+│   │   ├── App.jsx
+│   │   ├── main.css
+│   │   ├── main.jsx
+│   ├── .gitignore
+│   ├── eslint.config.js
 │   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+        postcss.config.js
 │   ├── README.md      # Frontend documentation
-│
-├── public/            # Static assets
-│   ├── sounds/        # Game sound effects
-│   ├── images/        # Player avatars, background elements
-│
+│   ├── styles.css
+│   ├── tailwind.config.js
+│   └── vite.config.js
+    node_modules/
 ├── .gitignore         # Ignore node_modules
-├── package-lock.json  # 
-├── package.json       # 
-├── README.md          # Project documentation
+├── package-lock.json  
+├── package.json       
+└──README.md          # Project documentation
 ```
+
 
 ## Installation
 
@@ -47,19 +64,24 @@ web-game
     cd web-game
     ```
 
-2. Install the dependencies:
-    ```sh
+2. Mitkä näistä nyt pitää asentaa??
+   ```sh
     npm install express ws
-    ```
+    npm install
+    npm install vite --save-dev
+    npm install concurrently --save-dev
+    npm install mime
+
+   ```
 
 ## How to Run
 
-1. Start the backend server `/web-game/backend`:
+1. Start both servers `/web-game`:
     ```sh
     npm start
     ```
 
-2. Open your web browser and navigate to `http://localhost:3000` to start the game.
+2. Open your web browser and navigate to `http://localhost:5137` to start the game.
 
 ## Developers
 

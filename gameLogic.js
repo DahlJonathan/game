@@ -1,5 +1,5 @@
 // Importing the player movement function
-import { updatePlayerPosition } from './playerMovement.js';
+import { updatePlayerPosition } from './frontend/src/components/playerMovement.js';
 
 // Function to get the initial game state
 export function getInitialGameState() {

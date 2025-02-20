@@ -1,15 +1,20 @@
+/* filepath: /home/student/web-game/frontend/styles.css */
 #game-area {
-    width: 500px;
-    height: 300px;
+    width: 1280px;
+    height: 720px;
     border: 2px solid black;
-    position: relative;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     overflow: hidden;
     background-color: lightblue;
 }
 
 #player {
-    width: 35px;
-    height: 35px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     background-color: blueviolet;
     position: absolute;
 }
