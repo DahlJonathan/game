@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { platform, checkCollisionWithPlatform } from "./platformLogic";
+import PauseScreen from "./pausescreen/pauseScreen";
 
 const Player = () => {
   const [position, setPosition] = useState({ x: 0, y: 675 });
@@ -11,6 +12,7 @@ const Player = () => {
   const [isMovingLeft, setIsMovingLeft] = useState(false);
   const [isMovingRight, setIsMovingRight] = useState(false);
   const [jumpKeyReleased, setJumpKeyReleased] = useState(true);
+ /*  const [pauseScreen, setPauseScreen] = useState(false); */
 
   const gravity = 5;
   const step = 10;
@@ -18,6 +20,7 @@ const Player = () => {
   const maxJumpHeight = 150;
   const gameAreaWidth = 1280;
   const groundLevel = 675;
+  
 
   const handleKeyDown = (e) => {
     if (e.key === "ArrowLeft") {
@@ -42,7 +45,9 @@ const Player = () => {
       setIsGrounded(false);
       setIsOnPlatform(false);
       setIsFalling(false); // Start by rising.
-    }
+    } /* else if (e.key === "Escape") {
+      setPauseScreen((prev) => !prev)
+    } */
   };
 
   const handleKeyUp = (e) => {
@@ -104,6 +109,7 @@ const Player = () => {
 
   // Use an interval to update jump state.
   useEffect(() => {
+    /* if (pauseScreen) return; */
     if (isJumping) {
       const jumpInterval = setInterval(handleJump, 20);
       return () => clearInterval(jumpInterval);
@@ -111,6 +117,7 @@ const Player = () => {
   }, [isJumping, jumpHeight, isFalling, position]);
 
   useEffect(() => {
+    /* if (pauseScreen) return; */
     const movementInterval = setInterval(handleMovement, 20);
     return () => clearInterval(movementInterval);
   }, [isMovingLeft, isMovingRight]);
@@ -118,6 +125,7 @@ const Player = () => {
   // Downforce / Gravity: when not jumping and not on a platform,
   // always pull the player down to the ground.
   useEffect(() => {
+    /* if (pauseScreen) return; */
     const downforceInterval = setInterval(() => {
       if (!isJumping) {
         setPosition((prev) => {
@@ -170,6 +178,14 @@ const Player = () => {
   }, [position, jumpHeight, isFalling]);
 
   return (
+    <>
+    {/* {{pauseScreen && (
+      <PauseScreen 
+        onContinue={() => setPauseScreen(false)}  
+        onResume={() => setPauseScreen(false)}
+      
+      />}
+    )} */}
     <div
       className="w-10 h-10 bg-blue-500 border-2 border-white rounded-full"
       style={{
@@ -179,6 +195,7 @@ const Player = () => {
       }}
       id="player"
     ></div>
+    </>
   );
 };
 

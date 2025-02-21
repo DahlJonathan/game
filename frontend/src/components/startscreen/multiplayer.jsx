@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
 const MultiPlayer = ({ onGameStart, onGameRoomSelect, selectedRoom, players, onJoinGame, onBack }) => {
-    const [playerName, setPlayerName] = useState(""); // Track entered name
+    const [playerName, setPlayerName] = useState(""); 
+    const [errorMessage, setErrorMessage] = useState("");
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
@@ -44,6 +45,13 @@ const MultiPlayer = ({ onGameStart, onGameRoomSelect, selectedRoom, players, onJ
             <button
                 onClick={() => {
                     if (playerName.trim() && players.length < 4) {
+                        if (players.includes(playerName.trim())) {
+                            setErrorMessage("Username already taken! Choose a different name.");
+                            setTimeout(() => {
+                                setErrorMessage("");
+                            }, 5000)
+                            return;
+                        }
                         onJoinGame(playerName.trim());
                         setPlayerName("");
                     }
@@ -57,6 +65,7 @@ const MultiPlayer = ({ onGameStart, onGameRoomSelect, selectedRoom, players, onJ
             >
                 {players.length < 4 ? "Join Game" : "Room Full"}
             </button>
+
 
             {/* Start Game Button (Disabled if less than 2 players joined) */}
             <button
@@ -76,6 +85,9 @@ const MultiPlayer = ({ onGameStart, onGameRoomSelect, selectedRoom, players, onJ
             >
                 Back
             </button>
+            <div className="text-red-700 font-bold text-2xl mt-5">
+                {errorMessage}
+            </div>
         </div>
     );
 };
