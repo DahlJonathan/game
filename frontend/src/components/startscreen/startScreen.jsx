@@ -3,9 +3,9 @@ import React from "react";
 const StartScreen = ({ onSinglePlayer, onMultiPlayer }) => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
-      <h1 className="text-4xl font-bold mb-6">My Awesome Game</h1>
+      <h1 className="text-4xl font-bold mb-6">RäpeLLys</h1>
       
-      <div className="flex gap-4">
+      <div className="flex gap-4 border-2 border-black bg-gray-800 rounded-lg inline-block p-10 ">
         <button
           onClick={onSinglePlayer}
           className="px-6 py-3 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg transition"
