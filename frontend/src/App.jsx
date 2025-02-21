@@ -5,8 +5,9 @@ import SinglePlayer from "./components/startscreen/singlePlayer.jsx";
 import MultiPlayer from "./components/startscreen/multiplayer.jsx";
 
 function App() {
-  const [gameMode, setGameMode] = useState(null);  // Tracks selected game mode
-  const [startGame, setStartGame] = useState(false);  // Tracks if the game has started
+  const [gameMode, setGameMode] = useState(null);  
+  const [startGame, setStartGame] = useState(false);  
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   return (
     <div>
@@ -18,7 +19,15 @@ function App() {
       ) : gameMode === "single" ? (       
         <SinglePlayer onBack={() => setGameMode(null)} />
       ) : !startGame ? (
-        <MultiPlayer onGameStart={() => setStartGame(true)} />
+        <MultiPlayer 
+        onGameRoomSelect={setSelectedRoom}
+        selectedRoom={selectedRoom}
+        onGameStart={() => selectedRoom && setStartGame(true)} 
+        onBack={() => {
+          setGameMode(null);
+          setSelectedRoom(null);
+        }}
+        />
       ) : (
         <GameArea />
       )}    
