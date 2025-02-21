@@ -3,12 +3,18 @@
 import React from 'react';
 import Player from './player';
 import Platform from './platform'; // Import Platform component
-import { platform } from './platformLogic';
+
+export const platform = {
+  x: 200,
+  y: 625,
+  width: 300,
+  height: 20,
+};
 
 const GameArea = () => {
   return (
     <div
-      className="h-screen w-screen bg-gray-900 flex justify-center items-center"
+      className="h-screen w-screen bg-gray-900 flex justify-center items-center overflow-y-hidden"
       id="game-area"
     >
       <div
@@ -21,11 +27,11 @@ const GameArea = () => {
         id="game-container"
       >
         <Player />
-        <Platform 
-          x={platform.x} 
-          y={platform.y} 
-          width={platform.width} 
-          height={platform.height} 
+        <Platform
+          x={platform.x}
+          y={platform.y}
+          width={platform.width}
+          height={platform.height}
         />
       </div>
     </div>

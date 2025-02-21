@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { platform, checkCollisionWithPlatform } from "./platformLogic";
+import { checkCollisionWithPlatform } from "./platformLogic";
+import { platform } from "./GameArea";
 
 const Player = () => {
   const [position, setPosition] = useState({ x: 0, y: 675 });
@@ -122,13 +123,13 @@ const Player = () => {
       if (!isJumping) {
         setPosition((prev) => {
           const newY = Math.min(prev.y + gravity, groundLevel);
-  
+
           // Check for landing on the platform before applying gravity
           if (checkPlatformLanding(newY, prev.x)) {
             setIsOnPlatform(true);
             return ({ ...prev, y: platform.y - 40 }); // Land on platform
           }
-  
+
           // Otherwise, continue falling
           if (newY >= groundLevel) {
             setIsGrounded(true);
@@ -136,21 +137,21 @@ const Player = () => {
           } else {
             setIsGrounded(false);
           }
-  
+
           return { ...prev, y: newY };
         });
       }
     }, 20);
-  
+
     return () => clearInterval(downforceInterval);
   }, [isJumping, isOnPlatform, position.y]);
-  
+
   // Helper to check for platform landing
   const checkPlatformLanding = (newY, playerX) => {
     const playerBottom = newY + 40;
     const isWithinXBounds =
       playerX + 10 >= platform.x && playerX <= platform.x + platform.width;
-  
+
     return isWithinXBounds && playerBottom >= platform.y && newY <= platform.y;
   };
 
