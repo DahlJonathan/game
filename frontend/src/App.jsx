@@ -8,6 +8,13 @@ function App() {
   const [gameMode, setGameMode] = useState(null);  
   const [startGame, setStartGame] = useState(false);  
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [players, setPlayers] = useState([]);
+
+  const handleJoinGame = (playerName) => {
+    if (players.length < 4) {
+      setPlayers([...players, playerName]);
+    }
+  }
 
   return (
     <div>
@@ -22,14 +29,17 @@ function App() {
         <MultiPlayer 
         onGameRoomSelect={setSelectedRoom}
         selectedRoom={selectedRoom}
-        onGameStart={() => selectedRoom && setStartGame(true)} 
+        players={players}
+        onJoinGame={handleJoinGame}
+        onGameStart={() => players.length > 1 && setStartGame(true)} 
         onBack={() => {
           setGameMode(null);
           setSelectedRoom(null);
+          setPlayers([]);
         }}
         />
       ) : (
-        <GameArea />
+        <GameArea players={players}/>
       )}    
     </div>
   );

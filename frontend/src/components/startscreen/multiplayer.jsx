@@ -1,52 +1,83 @@
-import React from "react";
+import React, { useState } from "react";
 
-const MultiPlayer = ({ onGameStart, selectedRoom, onGameRoomSelect, onBack}) => {
+const MultiPlayer = ({ onGameStart, onGameRoomSelect, selectedRoom, players, onJoinGame, onBack }) => {
+    const [playerName, setPlayerName] = useState(""); // Track entered name
+
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
-            <h1 className="font-bold text-2xl mb-6">Join Game Room!</h1>
-                <div className="flex flex-col items-center justify-center border-2 border-black rounded-lg p-10 bg-gray-800">
-                    <button
-                        onClick={() => onGameRoomSelect("Room 1")} 
-                        className={`px-6 py-1 mb-2 ${
-                            selectedRoom === "Room 1" ? "bg-blue-500" : "bg-red-500"
-                        } hover:bg-red-700 text-white font-bold rounded-lg transition`}
-                    >
-                        Game Room 1
-                    </button>
+            <h1 className="font-bold text-3xl mb-3">Join a Game Room!</h1>
 
-                    <button
-                        onClick={() => onGameRoomSelect("Room 2")} 
-                        className={`px-6 py-1 mb-2 ${
-                            selectedRoom === "Room 2" ? "bg-blue-500" : "bg-red-500"
-                        } hover:bg-red-700 text-white font-bold rounded-lg transition`}
-                    >
-                        Game Room 2
-                    </button>
+            {/* Username Input */}
+            <h2 className="font-bold text-xl mb-1">Enter Your Username</h2>
+            <input
+                type="text"
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                className="p-2 font-bold text-center text-black rounded-lg mb-2"
+                placeholder="Username"
+            />
 
+            {/* Game Room Selection */}
+            <div className="mb-6">
+                {["Room 1", "Room 2", "Room 3"].map((room) => (
                     <button
-                        onClick={() => onGameRoomSelect("Room 3")} 
-                        className={`px-6 py-1 mb-2 ${
-                            selectedRoom === "Room 3" ? "bg-blue-500" : "bg-red-500"
-                        } hover:bg-red-700 text-white font-bold rounded-lg transition`}
+                        key={room}
+                        onClick={() => onGameRoomSelect(room)}
+                        className={`px-3 py-1 m-2 font-bold rounded-lg transition ${
+                            selectedRoom === room ? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
+                        } text-white`}
                     >
-                        Game Room 3
+                        {room}
                     </button>
-                   
-                    <button
-                        onClick={onGameStart} 
-                        className="px-6 py-3 bg-green-400 hover:bg-green-700 text-white font-bold rounded-lg transition"
-                    >
-                        Start Game
-                    </button>
-                    <button
-                        onClick={onBack}
-                        className="px-3 py-1 mt-4 bg-red-500 hover:bg-red-700 text-white font-bold rounded-lg transition"
-                    >
-                        Back
-                    </button>
-                </div>
+                ))}
+            </div>
+
+            {/* Player List */}
+            <h2 className="text-xl mb-2">Players in Room: {players.length}/4</h2>
+            <ul className="mb-4">
+                {players.map((player, index) => (
+                    <li key={index} className="text-lg">{player}</li>
+                ))}
+            </ul>
+
+            {/* Join Button (Disabled if 4 players already joined) */}
+            <button
+                onClick={() => {
+                    if (playerName.trim() && players.length < 4) {
+                        onJoinGame(playerName.trim());
+                        setPlayerName("");
+                    }
+                }}
+                disabled={players.length >= 4 || !playerName.trim()}
+                className={`px-6 py-2 mb-2 font-bold rounded-lg transition ${
+                    players.length < 4 && playerName.trim()
+                        ? "bg-yellow-500 hover:bg-yellow-700"
+                        : "bg-gray-500 cursor-not-allowed"
+                } text-white`}
+            >
+                {players.length < 4 ? "Join Game" : "Room Full"}
+            </button>
+
+            {/* Start Game Button (Disabled if less than 2 players joined) */}
+            <button
+                onClick={onGameStart}
+                disabled={players.length === 0}
+                className={`px-6 py-3 font-bold rounded-lg transition ${
+                    players.length > 1 ? "bg-green-500 hover:bg-green-700" : "bg-gray-500 cursor-not-allowed"
+                } text-white`}
+            >
+                Start Game
+            </button>
+
+            {/* Back Button */}
+            <button
+                onClick={onBack}
+                className="px-3 py-2 mt-4 bg-red-500 hover:bg-red-700 text-white font-bold rounded-lg transition"
+            >
+                Back
+            </button>
         </div>
     );
-}
+};
 
 export default MultiPlayer;
