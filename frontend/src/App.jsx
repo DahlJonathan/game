@@ -10,7 +10,8 @@ function App() {
   const [startGame, setStartGame] = useState(false);  
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [players, setPlayers] = useState([]);
-  const [pauseGame, setPauseGame] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [showPauseScreen, setShowPauseScreen] = useState(false);
 
   const handleJoinGame = (playerName) => {
     if (players.length < 4) {
@@ -20,7 +21,8 @@ function App() {
 
   const handleEscKey = (e) => {
     if (e.key === "Escape") {
-      setPauseGame((prev) => !prev);
+      setIsPaused((prev) =>!prev);
+      setShowPauseScreen((prev) =>!prev);
     }
   }
 
@@ -29,7 +31,8 @@ function App() {
     setSelectedRoom(null);
     setPlayers([]);
     setStartGame(false);
-    setPauseGame(false);
+    setIsPaused(false);
+    setShowPauseScreen(false);
   };
 
   useEffect(() => {
@@ -40,16 +43,21 @@ function App() {
     };
   }, []);
 
+  const handleContinue = () => {
+    setIsPaused(false);
+    setShowPauseScreen(false);
+  };
+
   return (
     <div className="relative">
-      {!gameMode ? (
+      {!gameMode? (
         <StartScreen
           onSinglePlayer={() => setGameMode("single")}
           onMultiPlayer={() => setGameMode("multi")}
         />
-      ) : gameMode === "single" ? (       
+      ) : gameMode === "single"? (       
         <SinglePlayer onBack={resetGame} />
-      ) : !startGame ? (
+      ) :!startGame? (
         <MultiPlayer 
           onGameRoomSelect={setSelectedRoom}
           selectedRoom={selectedRoom}
@@ -60,10 +68,13 @@ function App() {
         />
       ) : (
         <>          
-          <GameArea players={players} />         
-          {pauseGame && (
+          {isPaused? (
+            <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+          ) : null}
+          <GameArea players={players} pause={isPaused} />         
+          {showPauseScreen && (
             <PauseScreen 
-              onContinue={() => setPauseGame(false)} 
+              onContinue={handleContinue} 
               onQuit={resetGame}  
             />
           )}
