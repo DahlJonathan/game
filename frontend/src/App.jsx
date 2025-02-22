@@ -4,6 +4,8 @@ import StartScreen from "./components/startscreen/startScreen.jsx";
 import SinglePlayer from "./components/startscreen/singlePlayer.jsx";
 import MultiPlayer from "./components/startscreen/multiplayer.jsx";
 import PauseScreen from "./components/pausescreen/pauseScreen.jsx";
+import Scoreboard from "./components/scoreboard/scoreboard.jsx";
+
 
 function App() {
   const [gameMode, setGameMode] = useState(null);  
@@ -13,21 +15,23 @@ function App() {
   const [isPaused, setIsPaused] = useState(false);
   const [showPauseScreen, setShowPauseScreen] = useState(false);
   const [reset, setReset] = useState(false);
+  const [playerName, setPlayerName] = useState("");
   const [gameRooms, setGameRooms] = useState({
     "room 1": [],
     "room 2": [],
     "room 3": [],
   })
 
-  const handleJoinGame = (playerName) => {
-    if (selectedRoom && gameRooms[selectedRoom].length < 4 && !gameRooms[selectedRoom].includes(playerName)) {
+  const handleJoinGame = (name) => {
+    if (selectedRoom && gameRooms[selectedRoom].length < 4 && !gameRooms[selectedRoom].includes(name)) {
       setGameRooms({
         ...gameRooms,
-        [selectedRoom]: [...gameRooms[selectedRoom], playerName],
+        [selectedRoom]: [...gameRooms[selectedRoom], name],
       });
-      setPlayers([...gameRooms[selectedRoom], playerName]);
+      setPlayers([...gameRooms[selectedRoom], name]);
+      setPlayerName(name); 
     }
-  }
+  };
 
   const handleEscKey = (e) => {
     if (e.key === "Escape") {
@@ -106,14 +110,16 @@ function App() {
           {isPaused? (
             <div className="absolute inset-0 bg-black bg-opacity-30"></div>
           ) : null}
-          <GameArea players={gameRooms[selectedRoom] || []} pause={isPaused} reset={reset} />     
+          <GameArea players={gameRooms[selectedRoom] || []} pause={isPaused} reset={reset} playerName={playerName}/>     
           {showPauseScreen && (
             <PauseScreen 
+              playerName={playerName}
               onContinue={handleContinue} 
               onQuit={quit}
               onRestart={restart}
             />
           )}
+          {/* <Scoreboard /> */}
         </>
       )}    
     </div>

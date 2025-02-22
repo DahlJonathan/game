@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const MultiPlayer = ({ onGameRoomSelect, selectedRoom, players, onJoinGame, onGameStart, onBack }) => {
-    const [playerName, setPlayerName] = useState(""); // Track entered name
+    const [playerName, setPlayerName] = useState("");
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">

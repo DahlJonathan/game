@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { platform, checkCollisionWithPlatform } from "./platformLogic";
-import PauseScreen from "./pausescreen/pauseScreen";
+
 
 const Player = ({ pause, reset, index }) => {
 

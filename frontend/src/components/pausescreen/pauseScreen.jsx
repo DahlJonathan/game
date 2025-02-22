@@ -1,6 +1,6 @@
 import React from "react";
 
-const PauseScreen = ({ onContinue, onQuit, onRestart }) => {
+const PauseScreen = ({ onContinue, onQuit, onRestart, playerName }) => {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       {/* Dark Overlay (Removed blur effect from here) */}
@@ -8,7 +8,8 @@ const PauseScreen = ({ onContinue, onQuit, onRestart }) => {
 
       {/* Pause menu */}
       <div className="relative z-10 border-2 bg-gray-900 rounded-lg p-10 text-center shadow-lg">
-        <h1 className="mb-5 text-3xl text-white">Game Paused!</h1>
+        <h1 className="mb-5 text-3xl text-white">{playerName}</h1>
+        <h1 className="mb-5 text-xl text-white">Paused The Game</h1>
         <button
           onClick={(e) => {
             e.preventDefault();

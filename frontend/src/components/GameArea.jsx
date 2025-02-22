@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Player from './player';
-import Platform from './platform'; // Import Platform component
+import Platform from './platform';
+import Scoreboard from './scoreboard/scoreboard';
 
 export const platform = {
   x: 200,
@@ -22,13 +23,16 @@ const GameArea = ({ players, pause, reset }) => {
         style={{
           position: "relative",
           width: "1280px",
-          height: "720px",
+          height: "784px",
         }}
         id="game-container"
       >
         {players.map((player, index) => (
           <Player key={index} pause={pause} reset={reset} index={index} />
         ))}
+        <Scoreboard
+        players={players}
+        />
         <Platform 
           x={platform.x} 
           y={platform.y} 
