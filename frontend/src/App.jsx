@@ -12,10 +12,19 @@ function App() {
   const [players, setPlayers] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
   const [showPauseScreen, setShowPauseScreen] = useState(false);
+  const [gameRooms, setGameRooms] = useState({
+    "room 1": [],
+    "room 2": [],
+    "room 3": [],
+  })
 
   const handleJoinGame = (playerName) => {
-    if (players.length < 4) {
-      setPlayers([...players, playerName]);
+    if (selectedRoom && gameRooms[selectedRoom].length < 4 && !gameRooms[selectedRoom].includes(playerName)) {
+      setGameRooms({
+        ...gameRooms,
+        [selectedRoom]: [...gameRooms[selectedRoom], playerName],
+      });
+      setPlayers([...gameRooms[selectedRoom], playerName]);
     }
   }
 
@@ -26,7 +35,19 @@ function App() {
     }
   }
 
-  const resetGame = () => {
+  const quit = () => {
+    setGameRooms((prevGameRooms) => ({
+      ...prevGameRooms,
+       [selectedRoom]: [],
+     }));
+     setPlayers([]);
+     setGameMode(null);
+     setStartGame(false);
+     setIsPaused(false);
+     setShowPauseScreen(false);
+  }
+
+  const back = () => {
     setGameMode(null);
     setSelectedRoom(null);
     setPlayers([]);
@@ -56,15 +77,19 @@ function App() {
           onMultiPlayer={() => setGameMode("multi")}
         />
       ) : gameMode === "single"? (       
-        <SinglePlayer onBack={resetGame} />
+        <SinglePlayer onBack={back} />
       ) :!startGame? (
         <MultiPlayer 
           onGameRoomSelect={setSelectedRoom}
           selectedRoom={selectedRoom}
-          players={players}
+          players={gameRooms[selectedRoom] || []}
           onJoinGame={handleJoinGame}
-          onGameStart={() => players.length > 1 && setStartGame(true)} 
-          onBack={resetGame}
+          onGameStart={() => {
+            if (gameRooms[selectedRoom].length > 1){
+              setStartGame(true)
+            }
+          }} 
+          onBack={back}
         />
       ) : (
         <>          
@@ -75,7 +100,7 @@ function App() {
           {showPauseScreen && (
             <PauseScreen 
               onContinue={handleContinue} 
-              onQuit={resetGame}  
+              onQuit={quit}
             />
           )}
         </>
