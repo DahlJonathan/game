@@ -21,7 +21,7 @@ const GameArea = ({ players, pause, reset }) => {
         id="game-container"
       >
         {players.map((player, index) => (
-          <Player key={index} pause={pause} reset={reset} />
+          <Player key={index} pause={pause} reset={reset} index={index} />
         ))}
         <Platform 
           x={platform.x} 

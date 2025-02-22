@@ -95,7 +95,7 @@ function App() {
           players={gameRooms[selectedRoom] || []}
           onJoinGame={handleJoinGame}
           onGameStart={() => {
-            if (gameRooms[selectedRoom].length > 1){
+            if (gameRooms[selectedRoom].length >= 1){
               setStartGame(true)
             }
           }} 

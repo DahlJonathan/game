@@ -2,8 +2,16 @@ import React, { useState, useEffect } from "react";
 import { platform, checkCollisionWithPlatform } from "./platformLogic";
 import PauseScreen from "./pausescreen/pauseScreen";
 
-const Player = ({ pause, reset }) => {
-  const [position, setPosition] = useState({ x: 0, y: 675 });
+const Player = ({ pause, reset, index }) => {
+
+  const initialPositions = [
+    { x: 0, y: 675 },
+    { x: 1230, y: 675 },
+    { x: 0, y: 0 },
+    { x: 1230, y: 0 },
+  ];
+
+  const [position, setPosition] = useState(initialPositions[index % initialPositions.length]);
   const [isJumping, setIsJumping] = useState(false);
   const [jumpHeight, setJumpHeight] = useState(0);
   const [isFalling, setIsFalling] = useState(false);
@@ -12,6 +20,7 @@ const Player = ({ pause, reset }) => {
   const [isMovingLeft, setIsMovingLeft] = useState(false);
   const [isMovingRight, setIsMovingRight] = useState(false);
   const [jumpKeyReleased, setJumpKeyReleased] = useState(true);
+  const colors = ["green", "blue", "red", "yellow"];
 
   const gravity = 5;
   const step = 10;
@@ -179,6 +188,7 @@ const Player = ({ pause, reset }) => {
         position: "absolute",
         top: `${position.y - jumpHeight}px`,
         left: `${position.x}px`,
+        backgroundColor: colors[index % colors.length]
       }}
       id="player"
     />

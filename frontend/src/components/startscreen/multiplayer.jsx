@@ -51,19 +51,19 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, players, onJoinGame, onGa
                 disabled={!selectedRoom || players.length >= 4 ||!playerName.trim() || players.includes(playerName.trim())}
                 className={`px-6 py-2 mb-2 font-bold rounded-lg transition ${
                     selectedRoom && players.length < 4 && playerName.trim() &&!players.includes(playerName.trim()) 
-                      ? "bg-yellow-500 hover:bg-yellow-700"
+                     ? "bg-yellow-500 hover:bg-yellow-700"
                         : "bg-gray-500 cursor-not-allowed"
                 } text-white`}
             >
                 {players.length < 4? "Join Game" : "Room Full"}
             </button>
 
-            {/* Start Game Button (Disabled if less than 2 players joined) */}
+            {/* Start Game Button (Disabled if less than 1 player joined) */}
             <button
                 onClick={onGameStart}
-                disabled={players.length < 2}
+                disabled={players.length < 1}
                 className={`px-6 py-3 font-bold rounded-lg transition ${
-                    players.length > 1? "bg-green-500 hover:bg-green-700" : "bg-gray-500 cursor-not-allowed"
+                    players.length >= 1? "bg-green-500 hover:bg-green-700" : "bg-gray-500 cursor-not-allowed"
                 } text-white`}
             >
                 Start Game
