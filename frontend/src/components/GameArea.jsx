@@ -11,7 +11,7 @@ export const platform = {
   height: 20,
 };
 
-const GameArea = () => {
+const GameArea = ({ players, pause, reset }) => {
   return (
     <div
       className="h-screen w-screen bg-gray-900 flex justify-center items-center overflow-y-hidden"
@@ -26,12 +26,14 @@ const GameArea = () => {
         }}
         id="game-container"
       >
-        <Player />
-        <Platform
-          x={platform.x}
-          y={platform.y}
-          width={platform.width}
-          height={platform.height}
+        {players.map((player, index) => (
+          <Player key={index} pause={pause} reset={reset} index={index} />
+        ))}
+        <Platform 
+          x={platform.x} 
+          y={platform.y} 
+          width={platform.width} 
+          height={platform.height} 
         />
       </div>
     </div>

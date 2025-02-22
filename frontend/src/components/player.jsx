@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { checkCollisionWithPlatform } from "./platformLogic";
-import { platform } from "./GameArea";
+import { platform, checkCollisionWithPlatform } from "./platformLogic";
+import PauseScreen from "./pausescreen/pauseScreen";
 
-const Player = () => {
-  const [position, setPosition] = useState({ x: 0, y: 675 });
+const Player = ({ pause, reset, index }) => {
+
+  const initialPositions = [
+    { x: 0, y: 675 },
+    { x: 1230, y: 675 },
+    { x: 0, y: 0 },
+    { x: 1230, y: 0 },
+  ];
+
+  const [position, setPosition] = useState(initialPositions[index % initialPositions.length]);
   const [isJumping, setIsJumping] = useState(false);
   const [jumpHeight, setJumpHeight] = useState(0);
   const [isFalling, setIsFalling] = useState(false);
@@ -12,6 +20,7 @@ const Player = () => {
   const [isMovingLeft, setIsMovingLeft] = useState(false);
   const [isMovingRight, setIsMovingRight] = useState(false);
   const [jumpKeyReleased, setJumpKeyReleased] = useState(true);
+  const colors = ["green", "blue", "red", "yellow"];
 
   const gravity = 5;
   const step = 10;
@@ -21,6 +30,7 @@ const Player = () => {
   const groundLevel = 675;
 
   const handleKeyDown = (e) => {
+    if (pause) return;
     if (e.key === "ArrowLeft") {
       setIsMovingLeft(true);
     } else if (e.key === "ArrowRight") {
@@ -30,40 +40,31 @@ const Player = () => {
       (isGrounded || isOnPlatform) &&
       jumpKeyReleased
     ) {
-      // Reset the jump baseline:
-      // Update the base position to the current rendered position:
-      // rendered position = position.y - jumpHeight.
-      setPosition((prev) => ({ ...prev, y: prev.y - jumpHeight }));
-      // Reset jumpHeight so the new jump starts at 0.
-      setJumpHeight(0);
-
-      // Initiate the jump.
       setIsJumping(true);
       setJumpKeyReleased(false);
       setIsGrounded(false);
       setIsOnPlatform(false);
-      setIsFalling(false); // Start by rising.
+      setIsFalling(false);
     }
   };
 
   const handleKeyUp = (e) => {
+    if (pause) return;
     if (e.key === "ArrowLeft") {
       setIsMovingLeft(false);
     } else if (e.key === "ArrowRight") {
       setIsMovingRight(false);
     } else if (e.key === " " || e.key === "ArrowUp") {
-      // Allow jump initiation again once the key is released.
       setJumpKeyReleased(true);
     }
   };
 
-  // Jump logic that distinguishes rising from falling.
   const handleJump = () => {
+    if (pause) return;
     if (isJumping) {
       setJumpHeight((prev) => {
         let newJumpHeight;
         if (!isFalling) {
-          // Ascending phase.
           if (prev + jumpForce >= maxJumpHeight) {
             setIsFalling(true);
             newJumpHeight = maxJumpHeight;
@@ -71,9 +72,7 @@ const Player = () => {
             newJumpHeight = prev + jumpForce;
           }
         } else {
-          // Descending phase.
           newJumpHeight = prev - gravity;
-          // Once the arc is complete, cancel the jump so gravity can take over.
           if (newJumpHeight <= 0) {
             newJumpHeight = 0;
             setIsJumping(false);
@@ -86,11 +85,12 @@ const Player = () => {
   };
 
   const handleMovement = () => {
+    if (pause) return;
     if (isMovingLeft) {
-      setPosition((prev) => ({ ...prev, x: Math.max(prev.x - step, 0) }));
+      setPosition((prev) => ({...prev, x: Math.max(prev.x - step, 0) }));
     }
     if (isMovingRight) {
-      setPosition((prev) => ({ ...prev, x: Math.min(prev.x + step, gameAreaWidth - 45) }));
+      setPosition((prev) => ({...prev, x: Math.min(prev.x + step, gameAreaWidth - 45) }));
     }
   };
 
@@ -101,52 +101,49 @@ const Player = () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [isGrounded, isOnPlatform, jumpKeyReleased, isJumping, jumpHeight, position]);
+  }, [isGrounded, isOnPlatform, jumpKeyReleased, isJumping, jumpHeight, position, pause]);
 
-  // Use an interval to update jump state.
   useEffect(() => {
+    if (pause) return;
     if (isJumping) {
       const jumpInterval = setInterval(handleJump, 20);
       return () => clearInterval(jumpInterval);
     }
-  }, [isJumping, jumpHeight, isFalling, position]);
+  }, [isJumping, jumpHeight, isFalling, position, pause]);
 
   useEffect(() => {
+    if (pause) return;
     const movementInterval = setInterval(handleMovement, 20);
     return () => clearInterval(movementInterval);
-  }, [isMovingLeft, isMovingRight]);
+  }, [isMovingLeft, isMovingRight, pause]);
 
-  // Downforce / Gravity: when not jumping and not on a platform,
-  // always pull the player down to the ground.
   useEffect(() => {
+    if (pause) return;
     const downforceInterval = setInterval(() => {
       if (!isJumping) {
         setPosition((prev) => {
           const newY = Math.min(prev.y + gravity, groundLevel);
 
-          // Check for landing on the platform before applying gravity
           if (checkPlatformLanding(newY, prev.x)) {
             setIsOnPlatform(true);
-            return ({ ...prev, y: platform.y - 40 }); // Land on platform
+            return ({...prev, y: platform.y - 40 });
           }
 
-          // Otherwise, continue falling
           if (newY >= groundLevel) {
             setIsGrounded(true);
-            return { ...prev, y: groundLevel };
+            return {...prev, y: groundLevel };
           } else {
             setIsGrounded(false);
           }
 
-          return { ...prev, y: newY };
+          return {...prev, y: newY };
         });
       }
     }, 20);
 
     return () => clearInterval(downforceInterval);
-  }, [isJumping, isOnPlatform, position.y]);
+  }, [isJumping, isOnPlatform, position.y, pause]);
 
-  // Helper to check for platform landing
   const checkPlatformLanding = (newY, playerX) => {
     const playerBottom = newY + 40;
     const isWithinXBounds =
@@ -155,8 +152,8 @@ const Player = () => {
     return isWithinXBounds && playerBottom >= platform.y && newY <= platform.y;
   };
 
-  // Run collision detection on every update.
   useEffect(() => {
+    if (pause) return;
     checkCollisionWithPlatform(
       position,
       jumpHeight,
@@ -168,7 +165,21 @@ const Player = () => {
       setIsOnPlatform,
       setIsGrounded
     );
-  }, [position, jumpHeight, isFalling]);
+  }, [position, jumpHeight, isFalling, pause]);
+
+  useEffect(() => {
+    if (reset) {
+      setPosition({ x: 0, y: 675 });
+      setIsJumping(false);
+      setJumpHeight(0);
+      setIsFalling(false);
+      setIsOnPlatform(false);
+      setIsGrounded(true);
+      setIsMovingLeft(false);
+      setIsMovingRight(false);
+      setJumpKeyReleased(true);
+    }
+  }, [reset]);
 
   return (
     <div
@@ -177,9 +188,10 @@ const Player = () => {
         position: "absolute",
         top: `${position.y - jumpHeight}px`,
         left: `${position.x}px`,
+        backgroundColor: colors[index % colors.length]
       }}
       id="player"
-    ></div>
+    />
   );
 };
 
