@@ -1,4 +1,9 @@
-import { platform } from "./GameArea";
+export const platform = {
+  x: 200,
+  y: 625,
+  width: 300,
+  height: 20,
+};
 
 export const checkCollisionWithPlatform = (
   position,
