@@ -12,6 +12,7 @@ function App() {
   const [players, setPlayers] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
   const [showPauseScreen, setShowPauseScreen] = useState(false);
+  const [reset, setReset] = useState(false);
   const [gameRooms, setGameRooms] = useState({
     "room 1": [],
     "room 2": [],
@@ -56,6 +57,15 @@ function App() {
     setShowPauseScreen(false);
   };
 
+  const restart = () => {
+    setShowPauseScreen(false);
+    setIsPaused(false);
+    setReset(true);
+    setTimeout(() => {
+      setReset(false);
+    }, 100);
+  };
+
   useEffect(() => {
     window.addEventListener("keydown", handleEscKey);
 
@@ -96,11 +106,12 @@ function App() {
           {isPaused? (
             <div className="absolute inset-0 bg-black bg-opacity-30"></div>
           ) : null}
-          <GameArea players={players} pause={isPaused} />         
+          <GameArea players={gameRooms[selectedRoom] || []} pause={isPaused} reset={reset} />     
           {showPauseScreen && (
             <PauseScreen 
               onContinue={handleContinue} 
               onQuit={quit}
+              onRestart={restart}
             />
           )}
         </>

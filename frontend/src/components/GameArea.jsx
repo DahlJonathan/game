@@ -5,7 +5,7 @@ import Player from './player';
 import Platform from './platform'; // Import Platform component
 import { platform } from './platformLogic';
 
-const GameArea = () => {
+const GameArea = ({ players, pause, reset }) => {
   return (
     <div
       className="h-screen w-screen bg-gray-900 flex justify-center items-center"
@@ -20,7 +20,9 @@ const GameArea = () => {
         }}
         id="game-container"
       >
-        <Player />
+        {players.map((player, index) => (
+          <Player key={index} pause={pause} reset={reset} />
+        ))}
         <Platform 
           x={platform.x} 
           y={platform.y} 
