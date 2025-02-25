@@ -4,8 +4,9 @@ import SinglePlayer from "./components/startscreen/singlePlayer.jsx";
 import MultiPlayer from "./components/startscreen/multiPlayer.jsx";
 import GameWrapper from "./GameWrapper.jsx";
 import ws from "../public/websocket.js";
+import Scoreboard from "./components/gameinfo/scoreboard.jsx";
 
-function App() {
+function App(playerName) {
   const [gameMode, setGameMode] = useState(null);  
   const [startGame, setStartGame] = useState(false);  
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -26,14 +27,14 @@ function App() {
 
   return (
     <div>
-      {!gameMode ? (
+      {!gameMode? (
         <StartScreen
           onSinglePlayer={() => setGameMode("single")}
           onMultiPlayer={() => setGameMode("multi")}
         />
-      ) : gameMode === "single" ? (       
+      ) : gameMode === "single"? (       
         <SinglePlayer onBack={() => setGameMode(null)} />
-      ) : !startGame ? (
+      ) :!startGame? (
         <MultiPlayer 
           onGameRoomSelect={setSelectedRoom}
           selectedRoom={selectedRoom}
@@ -46,7 +47,16 @@ function App() {
           }}
         />
       ) : (
-        <GameWrapper />
+        <div className="flex flex-col items-center">
+          <div className="relative">
+            <div id="game-container" style={{ height: '720px', width: '1280px', border: '2px solid black', overflow: 'hidden', backgroundColor: 'lightblue' }} className="mx-auto">
+              <GameWrapper playerName={playerName || ""}/>
+            </div>
+            <div className="scoreboard-container mt-8 w-full bg-gray-800 text-white text-2xl p-4 shadow-lg z-10 flex justify-center gap-4">
+              <Scoreboard players={["Player 1", "Player 2", "Player 3", "Player 4"]} />
+            </div>
+          </div>
+        </div>
       )}    
     </div>
   );

@@ -23,7 +23,18 @@ const GameWrapper = () => {
     };
   }, []);
 
-  return <div id="game-container" style={{ minHeight: "100vh" }}></div>;
+  return (
+    <div className="flex flex-col h-screen">
+      {/* Game Container */}
+      <div
+        id="game-container"
+        className="flex-grow bg-lightblue relative"
+        
+      >
+        {/* Your game content */}
+      </div>
+    </div>
+  );
 };
 
 export default GameWrapper;

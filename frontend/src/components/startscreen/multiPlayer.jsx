@@ -26,7 +26,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, players = [], onJoinGame,
                 type="text"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
-                className="p-2 font-bold text-center text-black rounded-lg mb-2"
+                className="p-2 font-bold text-center text-black rounded-lg mb-2 bg-white"
                 placeholder="Username"
             />
 

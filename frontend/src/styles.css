@@ -1,19 +1,10 @@
-#game-area {
-    width: 1280px;
-    height: 720px;
-    border: 2px solid black;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+#game-container {
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
     overflow: hidden;
     background-color: lightblue;
 }
 
-#player {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: blueviolet;
-    position: absolute;
-}
+
+
