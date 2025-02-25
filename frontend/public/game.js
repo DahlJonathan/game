@@ -1,0 +1,118 @@
+// frontend/public/game.js+
+import ws from "./websocket.js";
+
+export default class Game {
+    constructor() {
+        this.ws = ws; // Connect to WebSocket server
+        this.playerId = null;
+        this.players = {};
+        this.platforms = [];
+        this.activeKeys = {}; // Track active keys
+        this.inputInterval = null; // Timer for sending inputs
+
+        this.gameContainer = document.getElementById("game-container");
+        if (!this.gameContainer) return;
+
+        this.gameArea = document.createElement("div");
+        this.gameArea.id = "game-area";
+        this.gameContainer.appendChild(this.gameArea);
+
+        requestAnimationFrame(() => this.render());
+
+        document.addEventListener("keydown", (event) => this.handleKeyChange(event, true));
+        document.addEventListener("keyup", (event) => this.handleKeyChange(event, false));
+
+        this.ws.addEventListener("message", (event) => this.handleServerMessage(event));
+    }
+
+    handleKeyChange(event, isPressed) {
+        const key = event.key === " " ? "Spacebar" : event.key;
+        this.activeKeys[key] = isPressed;
+
+        // Start sending inputs at a fixed interval if not already running
+        if (!this.inputInterval) {
+            this.inputInterval = setInterval(() => this.sendInputs(), 50);
+        }
+    }
+
+    sendInputs() {
+        if (!this.playerId) return;
+
+        const input = {
+            moveLeft: this.activeKeys["ArrowLeft"] || false,
+            moveRight: this.activeKeys["ArrowRight"] || false,
+            jump: this.activeKeys["ArrowUp"] || false,
+        };
+
+        this.ws.send(JSON.stringify({ type: "input", input }));
+
+        if (!input.moveLeft && !input.moveRight && !input.jump && this.players[this.playerId]?.isGrounded) {
+            clearInterval(this.inputInterval);
+            this.inputInterval = null;
+        }
+    }
+
+    handleServerMessage(event) {
+        const data = JSON.parse(event.data);
+
+        if (data.type === "init") {
+            this.playerId = data.playerId;
+            this.platforms = data.state.platforms;
+        } else if (data.type === "update") {
+            for (const [id, playerData] of Object.entries(data.state.players)) {
+                if (!this.players[id]) {
+                    this.players[id] = { x: playerData.x, y: playerData.y, lastX: playerData.x, lastY: playerData.y };
+                } else {
+                    this.players[id].lastX = this.players[id].x;
+                    this.players[id].lastY = this.players[id].y;
+                    this.players[id].x = playerData.x;
+                    this.players[id].y = playerData.y;
+                    this.players[id].timestamp = Date.now();
+                }
+            }
+        }
+    }
+
+    render() {
+        const gameArea = document.getElementById("game-area");
+
+        // Clear existing players
+        document.querySelectorAll(".player").forEach(el => el.remove());
+        document.querySelectorAll(".platform").forEach(el => el.remove());
+
+        this.platforms.forEach(platform => {
+            let platformEl = document.createElement("div");
+            platformEl.classList.add("platform");
+            platformEl.style.position = "absolute";
+            platformEl.style.left = `${platform.left}px`;
+            platformEl.style.top = `${platform.top}px`;
+            platformEl.style.width = `${platform.width}px`;
+            platformEl.style.height = `${platform.height}px`;
+            platformEl.style.backgroundColor = "brown";
+
+            gameArea.appendChild(platformEl);
+        });
+
+        const now = Date.now();
+        for (const [id, player] of Object.entries(this.players)) {
+            let playerEl = document.createElement("div");
+            playerEl.classList.add("player");
+            playerEl.style.position = "absolute";
+            playerEl.style.width = "35px";
+            playerEl.style.height = "35px";
+            playerEl.style.borderRadius = "50%";
+            playerEl.style.backgroundColor = id === this.playerId ? "blue" : "red";
+
+            let t = Math.min((now - player.timestamp) / 50, 1);
+            let interpolatedX = player.lastX + (player.x - player.lastX) * t;
+            let interpolatedY = player.lastY + (player.y - player.lastY) * t;
+
+            playerEl.style.left = `${interpolatedX}px`;
+            playerEl.style.top = `${interpolatedY}px`;
+
+            gameArea.appendChild(playerEl);
+        }
+
+        requestAnimationFrame(() => this.render());
+    }
+}

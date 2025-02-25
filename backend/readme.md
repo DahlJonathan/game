@@ -7,15 +7,13 @@ The backend of this project is responsible for handling real-time communication 
 ## Project Structure
 
 ```
-├── backend/          
-        node_modules/
-│   ├── config.js      # Configuration (port, network settings)
-│   ├── idGenerator.js
-        package-lock.json
-        package.json
-│   ├── README.md      # Backend documentation
-│   ├── server.js      # WebSocket server, game state management
-│   ├── socket.js
+backend/
+├── config.js          # Configuration (port, network settings)
+├── gameLogic.js       # Game logic, rules, and scoring
+├── idGenerator.js     # Unique ID generation logic
+├── playerMovement.js  # Player movement logic
+├── server.js          # WebSocket server, game state management
+└── README.md          # Backend documentation
 ```
 
 ## Configuration
@@ -24,11 +22,23 @@ The backend of this project is responsible for handling real-time communication 
 
 This file contains configuration settings for the backend server.
 
+## Game Logic
+
+### gameLogic.js
+
+This file defines the initial game state and functions to update the game state based on player actions.
+
 ## ID Generation
 
 ### idGenerator.js
 
 This file contains the logic for generating unique IDs.
+
+## Player Movement
+
+### playerMovement.js
+
+This file contains the logic for updating player positions based on their movements.
 
 ## WebSocket Server
 

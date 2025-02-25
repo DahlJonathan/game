@@ -1,5 +1,5 @@
 // Importing the player movement function
-import { updatePlayerPosition } from '../../../docs/playerMovement.js';
+import { updatePlayerPosition } from './playerMovement.js';
 
 // Function to get the initial game state
 export function getInitialGameState() {
@@ -30,7 +30,7 @@ export function updateGameState(state, data) {
     // Update score or other game logic here
     state.scores[playerId] = (state.scores[playerId] || 0) + 1;
     
-    console.log(`GameLogic - Game state updated for player ${playerId}: ${JSON.stringify(state)}`); // Debug: Game state update
+    // console.log(`GameLogic - Game state updated for player ${playerId}: ${JSON.stringify(state)}`); // Debug: Game state update
 
     return state;
 }
