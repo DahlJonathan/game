@@ -1,21 +1,19 @@
-// ./frontend/public/websocket.js
+// frontend/public/websocket.js
+if (!window.__ws) {
+    window.__ws = new WebSocket('ws://localhost:8080');
+    window.__ws.onopen = () => {
+        console.log('WebSocket connection established');
+    };
+    window.__ws.onmessage = (event) => {
+        // console.log(`WebSocket message received: ${event}`);
+    };
+    window.__ws.onclose = () => {
+        console.log('WebSocket connection closed');
+    };
+    window.__ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+}
 
-const ws = new WebSocket('ws://localhost:8080');
-
-ws.onopen = () => {
-    console.log('websocket.js - WebSocket connection established');
-};
-
-ws.onmessage = (event) => {
-    console.log('websocket.js - Received WebSocket message:', event.data);
-};
-
-ws.onclose = () => {
-    console.log('websocket.js - WebSocket connection closed');
-};
-
-ws.onerror = (error) => {
-    console.error('websocket.js - WebSocket error:', error);
-};
-
+const ws = window.__ws;
 export default ws;

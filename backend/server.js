@@ -13,8 +13,6 @@ wss.on('connection', (ws) => {
 
     console.log(`Player ${playerId} connected`);
 
-    ws.send(JSON.stringify({ type: 'init', state: gameState.getGameState(), playerId }));
-
     ws.on('message', (message) => {
         const data = JSON.parse(message);
         if (data.type === 'joinLobby') {
@@ -31,6 +29,10 @@ wss.on('connection', (ws) => {
                 }
             });
         }
+        // New: handle startGame message
+        if (data.type === "startGame") {
+            ws.send(JSON.stringify({ type: 'init', state: gameState.getGameState(), playerId }));
+        }
         if (data.type === "input") {
             gameState.updatePlayer(playerId, data.input);
         }
@@ -39,7 +41,18 @@ wss.on('connection', (ws) => {
     ws.on('close', () => {
         gameState.removePlayer(playerId);
         console.log(`Player ${playerId} disconnected`);
+        const deleteMessage = JSON.stringify({
+            type: 'delete',
+            state: gameState.getGameState(),
+            playerId,
+        });
+        wss.clients.forEach(client => {
+            if (client.readyState === client.OPEN) {
+                client.send(deleteMessage);
+            }
+        });
     });
+
 });
 
 // Send game state updates every 50ms

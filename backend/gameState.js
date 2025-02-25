@@ -15,15 +15,17 @@ export default class GameState {
     addPlayer(playerId) {
         this.players[playerId] = {
             x: 0,
-            y: 685, // Start on the ground
+            y: 681, // Start on the ground
             velocityY: 0,
             isJumping: false,
         };
+        console.log("players after add:", this.players);
     }
 
     removePlayer(playerId) {
         console.log("removePlayer called")
         delete this.players[playerId];
+        console.log("players after removePlayer:", this.players)
     }
 
     updatePlayer(playerId, input) {
@@ -84,16 +86,16 @@ export default class GameState {
         }
 
         // Reset to ground if below it.
-        if (player.y >= 685) {
-            player.y = 685;
+        if (player.y >= 681) {
+            player.y = 681;
             player.velocityY = 0;
             player.isJumping = false;
         }
         if (player.x < 0) {
             player.x = 0;
         }
-        if (player.x > 1245) {
-            player.x = 1245;
+        if (player.x > 1242) {
+            player.x = 1242;
         }
     }
 

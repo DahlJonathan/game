@@ -70,16 +70,22 @@ export default class Game {
                     this.players[id].timestamp = Date.now();
                 }
             }
+        } else if (data.type === "delete") {
+            const idToDelete = data.playerId;
+            delete this.players[idToDelete];
+            document.querySelectorAll(`.player-${idToDelete}`).forEach(el => el.remove());
         }
+
     }
 
     render() {
         const gameArea = document.getElementById("game-area");
 
-        // Clear existing players
-        document.querySelectorAll(".player").forEach(el => el.remove());
+        // Clear all players and platforms
+        document.querySelectorAll('.player').forEach(el => el.remove());
         document.querySelectorAll(".platform").forEach(el => el.remove());
 
+        // Render platforms
         this.platforms.forEach(platform => {
             let platformEl = document.createElement("div");
             platformEl.classList.add("platform");
@@ -89,14 +95,15 @@ export default class Game {
             platformEl.style.width = `${platform.width}px`;
             platformEl.style.height = `${platform.height}px`;
             platformEl.style.backgroundColor = "brown";
-
             gameArea.appendChild(platformEl);
         });
 
         const now = Date.now();
+        // Render each player
         for (const [id, player] of Object.entries(this.players)) {
             let playerEl = document.createElement("div");
-            playerEl.classList.add("player");
+            // Add a generic class plus a unique one
+            playerEl.classList.add("player", `player-${id}`);
             playerEl.style.position = "absolute";
             playerEl.style.width = "35px";
             playerEl.style.height = "35px";

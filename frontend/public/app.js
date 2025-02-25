@@ -1,4 +1,4 @@
-// app.js
+// ./frontend/public/app.js
 import Game from "./game.js";
 import ws from "./websocket.js";
 
@@ -8,6 +8,9 @@ function initGame() {
 
     const game = new Game();
     console.log("Game initialized");
+
+    // Request game initialization from the server
+    ws.send(JSON.stringify({ type: "startGame" }));
 
     // Handle WebSocket messages
     ws.onmessage = (event) => {
