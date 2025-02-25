@@ -5,6 +5,7 @@ import MultiPlayer from "./components/startscreen/multiPlayer.jsx";
 import GameWrapper from "./GameWrapper.jsx";
 import ws from "../public/websocket.js";
 import Scoreboard from "./components/gameinfo/scoreboard.jsx";
+import Timer from "./components/gameinfo/timer.jsx";
 
 function App(playerName) {
   const [gameMode, setGameMode] = useState(null);  
@@ -55,6 +56,7 @@ function App(playerName) {
             <div className="scoreboard-container mt-8 w-full bg-gray-800 text-white text-2xl p-4 shadow-lg z-10 flex justify-center gap-4">
               <Scoreboard players={["Player 1", "Player 2", "Player 3", "Player 4"]} />
             </div>
+            <Timer />
           </div>
         </div>
       )}    
