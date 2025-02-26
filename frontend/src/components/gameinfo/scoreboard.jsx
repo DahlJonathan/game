@@ -8,7 +8,7 @@ function Scoreboard({ players }) {
             {players.map((player, index) => (
                 <div key={index} className="flex items-center gap-2">
                     <div className="w-7 h-7 rounded-full" style={{ backgroundColor: colors[index % colors.length] }}></div>
-                    <span>{player}</span>
+                    <span>{player.name}: {player.points}</span>
                 </div>
             ))}
         </div>

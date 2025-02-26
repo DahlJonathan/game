@@ -134,7 +134,7 @@ return (
               onRestart={restart}
             />
           )}
-            <Scoreboard players={[playerName]} />
+            <Scoreboard players={players.map(player => ({ name: player, points: 0 }))} />
            <Timer />
            <Fps />
         </>

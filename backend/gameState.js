@@ -1,6 +1,7 @@
 export default class GameState {
     constructor() {
         this.players = {};
+        this.collectables = this.generateCollectables();
         this.gravity = 2;
         this.jumpStrength = 25;
         this.platforms = [
@@ -12,12 +13,28 @@ export default class GameState {
         ];
     }
 
+    generateCollectables() {
+        return Array.from({ length: 50 }, () => ({
+            x: Math.random() * 1200,
+            y: Math.random() * 600,
+            width: 15,
+            height: 15,
+            collected: false,
+        }));
+    }
+
+    resetCollectables() {
+        this.collectables = this.generateCollectables();
+        console.log("Reset collectables:", this.collectables);
+    }
+
     addPlayer(playerId) {
         this.players[playerId] = {
             x: 0,
             y: 681, // Start on the ground
             velocityY: 0,
             isJumping: false,
+            points: 0,
         };
         console.log("players after add:", this.players);
     }
@@ -85,6 +102,21 @@ export default class GameState {
             player.y = newY;
         }
 
+        // Check for collectable collisions
+        this.collectables.forEach(collectable => {
+            if (
+                !collectable.collected &&
+                player.x < collectable.x + collectable.width &&
+                player.x + 35 > collectable.x &&
+                player.y < collectable.y + collectable.height &&
+                player.y + 35 > collectable.y
+            ) {
+                collectable.collected = true;
+                player.points += 1;
+                console.log(`Player ${playerId} collected a collectable`);
+            }
+        });
+
         // Reset to ground if below it.
         if (player.y >= 681) {
             player.y = 681;
@@ -100,6 +132,6 @@ export default class GameState {
     }
 
     getGameState() {
-        return { players: this.players, platforms: this.platforms };
+        return { players: this.players, platforms: this.platforms, collectables: this.collectables };
     }
 }

@@ -31,7 +31,9 @@ wss.on('connection', (ws) => {
         }
         // New: handle startGame message
         if (data.type === "startGame") {
+            gameState.resetCollectables();
             ws.send(JSON.stringify({ type: 'init', state: gameState.getGameState(), playerId }));
+            console.log("Game started, sending initial state:", gameState.getGameState());
         }
         if (data.type === "input") {
             gameState.updatePlayer(playerId, data.input);
@@ -59,6 +61,7 @@ wss.on('connection', (ws) => {
 setInterval(() => {
     const state = JSON.stringify({ type: 'update', state: gameState.getGameState() });
     wss.clients.forEach(client => client.send(state));
+    //console.log("Sending game state update:", gameState.getGameState());
 }, 50);
 
 console.log(`WebSocket server running on port ${PORT}`);

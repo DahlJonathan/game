@@ -1,3 +1,6 @@
+### Backend `README.md`
+
+```markdown
 # Backend Documentation
 
 ## Overview
@@ -9,9 +12,8 @@ The backend of this project is responsible for handling real-time communication 
 ```
 backend/
 ├── config.js          # Configuration (port, network settings)
-├── gameLogic.js       # Game logic, rules, and scoring
+├── gameState.js       # Rules, scoring, and updates
 ├── idGenerator.js     # Unique ID generation logic
-├── playerMovement.js  # Player movement logic
 ├── server.js          # WebSocket server, game state management
 └── README.md          # Backend documentation
 ```
@@ -22,27 +24,21 @@ backend/
 
 This file contains configuration settings for the backend server.
 
-## Game Logic
+## Game State
 
-### gameLogic.js
+### `gameState.js`
 
 This file defines the initial game state and functions to update the game state based on player actions.
 
 ## ID Generation
 
-### idGenerator.js
+### `idGenerator.js`
 
 This file contains the logic for generating unique IDs.
 
-## Player Movement
-
-### playerMovement.js
-
-This file contains the logic for updating player positions based on their movements.
-
 ## WebSocket Server
 
-### server.js
+### `server.js`
 
 This file sets up the WebSocket server using Express and WebSocket. It handles client connections, updates the game state, and broadcasts the updated state to all connected clients.
 
@@ -63,7 +59,7 @@ This file sets up the WebSocket server using Express and WebSocket. It handles c
     npm start
     ```
 
-The backend server will start on the port specified in config.js (default is 3000). You can then open your web browser and navigate to `http://localhost:3000` to start the game.
+The backend server will start on the port specified in config.js (default is 8080). You can then open your web browser and navigate to `http://localhost:5173/` to start the game.
 
 ## Dependencies
 
