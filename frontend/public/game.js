@@ -75,7 +75,7 @@ export default class Game {
                 }
             }
             this.collectables = data.state.collectables;
-            console.log("Received game state update:", data.state);
+            // console.log("Received game state update:", data.state);
         } else if (data.type === "delete") {
             const idToDelete = data.playerId;
             delete this.players[idToDelete];
@@ -118,7 +118,7 @@ export default class Game {
                 collectableEl.style.backgroundColor = "gold"; // Set the color of the collectable
                 collectableEl.style.borderRadius = "50%";
                 gameArea.appendChild(collectableEl);
-                console.log("Rendered collectable:", collectable);
+                // console.log("Rendered collectable:", collectable);
             }
         });
 
