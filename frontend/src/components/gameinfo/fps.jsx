@@ -1,30 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 function Fps() {
   const [fps, setFps] = useState(0);
-  const [lastTime, setLastTime] = useState(0);
-  const [frameCount, setFrameCount] = useState(0);
+  const lastTimeRef = useRef(performance.now());
+  const frameCountRef = useRef(0);
+  const requestRef = useRef(null);
 
   useEffect(() => {
     const handleFrame = (timestamp) => {
-      const deltaTime = timestamp - lastTime;
-      setFrameCount((prevFrameCount) => prevFrameCount + 1);
-      setLastTime(timestamp);
+      frameCountRef.current += 1;
+      const deltaTime = timestamp - lastTimeRef.current;
 
       if (deltaTime >= 1000) {
-        setFps(frameCount);
-        setFrameCount(0);
+        setFps(frameCountRef.current);
+        frameCountRef.current = 0;
+        lastTimeRef.current = timestamp;
       }
 
-      requestAnimationFrame(handleFrame);
+      requestRef.current = requestAnimationFrame(handleFrame);
     };
 
-    requestAnimationFrame(handleFrame);
+    requestRef.current = requestAnimationFrame(handleFrame);
 
-    return () => {
-      // Clean up any event listeners or timeouts here
-    };
-  }, [lastTime, frameCount]);
+    return () => cancelAnimationFrame(requestRef.current);
+  }, []);
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, fontSize: 24, color: 'black', backgroundColor: 'white' }}>
