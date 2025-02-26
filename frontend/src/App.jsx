@@ -28,44 +28,48 @@ function App(playerName) {
     setPlayers((prevPlayers) => [...prevPlayers, playerName]);
   };
 
-  return (
-    <div>
+return (
+    <div className="relative">
       {!gameMode? (
         <StartScreen
           onSinglePlayer={() => setGameMode("single")}
           onMultiPlayer={() => setGameMode("multi")}
         />
       ) : gameMode === "single"? (       
-        <SinglePlayer onBack={() => setGameMode(null)} />
+        <SinglePlayer onBack={back} />
       ) :!startGame? (
         <MultiPlayer 
           onGameRoomSelect={setSelectedRoom}
           selectedRoom={selectedRoom}
-          players={players}
+          players={gameRooms[selectedRoom] || []}
           onJoinGame={handleJoinGame}
-          onGameStart={() => selectedRoom && setStartGame(true)} 
-          onBack={() => {
-            setGameMode(null);
-            setSelectedRoom(null);
-          }}
+          onGameStart={() => {
+            if (gameRooms[selectedRoom].length >= 1){
+              setStartGame(true)
+            }
+          }} 
+          onBack={back}
         />
       ) : (
-        <div className="flex flex-col items-center">
-          <div className="relative">
-            <div id="game-container" style={{ height: '720px', width: '1280px', border: '2px solid black', overflow: 'hidden', backgroundColor: 'lightblue' }} className="mx-auto">
-              <GameWrapper playerName={playerName || ""}/>
-            </div>
-            <div className="scoreboard-container mt-8 w-full bg-gray-800 text-white text-2xl p-4 shadow-lg z-10 flex justify-center gap-4">
-              <Scoreboard players={["Player 1", "Player 2", "Player 3", "Player 4"]} />
-            </div>
-            <Timer />
-            <Fps />
-            <PauseScreen />
-          </div>
-        </div>
+        <>          
+          {isPaused? (
+            <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+          ) : null}
+          <GameWrapper players={gameRooms[selectedRoom] || []} pause={isPaused} reset={reset} playerName={playerName}/>     
+          {showPauseScreen && (
+            <PauseScreen 
+              playerName={playerName}
+              onContinue={handleContinue} 
+              onQuit={quit}
+              onRestart={restart}
+            />
+          )}
+           <Timer />
+           <Fps />
+        </>
       )}    
     </div>
   );
-}
+}  
 
 export default App;
