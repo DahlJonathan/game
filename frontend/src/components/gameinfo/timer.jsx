@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 function Timer({ gameStarted, setGameStarted }) {
     const [timer, setTimer] = useState(60);
-    const [gameStartTimer, setGameStartTimer] = useState(10);  
+    const [gameStartTimer, setGameStartTimer] = useState(5);  
     const [gameStartedNow, setGameStartedNow] = useState(gameStarted);
 
     useEffect(() => {

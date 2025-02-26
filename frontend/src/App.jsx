@@ -6,6 +6,8 @@ import GameWrapper from "./GameWrapper.jsx";
 import ws from "../public/websocket.js";
 import Scoreboard from "./components/gameinfo/scoreboard.jsx";
 import Timer from "./components/gameinfo/timer.jsx";
+import Fps from "./components/gameinfo/fps.jsx";
+import PauseScreen from "./components/pausescreen/pauseScreen.jsx";
 
 function App(playerName) {
   const [gameMode, setGameMode] = useState(null);  
@@ -57,6 +59,8 @@ function App(playerName) {
               <Scoreboard players={["Player 1", "Player 2", "Player 3", "Player 4"]} />
             </div>
             <Timer />
+            <Fps />
+            <PauseScreen />
           </div>
         </div>
       )}    
