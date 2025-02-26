@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
+import ws from "../../../public/websocket";
 
-function Timer({ gameStarted, setGameStarted }) {
+function Timer() {
     const [timer, setTimer] = useState(60);
     const [gameStartTimer, setGameStartTimer] = useState(5);  
-    const [gameStartedNow, setGameStartedNow] = useState(gameStarted);
+    const [gameStartedNow, setGameStartedNow] = useState(false);
+    const [gameStarted, setGameStarted] = useState(false);
 
     useEffect(() => {
         const interval = setInterval(() => {
             if (gameStartTimer > 0) {
                 setGameStartTimer((prev) => prev - 1);
+                ws.send(JSON.stringify({ type: "waitForStart" }));
             } else if (!gameStartedNow) {
                 setGameStartedNow(true);
                 setGameStarted(true);  
+                ws.send(JSON.stringify({ type: "startGame" }));
             }
 
             if (gameStartTimer === 0) {
@@ -24,7 +28,7 @@ function Timer({ gameStarted, setGameStarted }) {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [gameStartTimer, gameStartedNow, timer, setGameStarted]);
+    }, [gameStartTimer, gameStartedNow, timer, gameStarted]);
 
     return (
         <div>

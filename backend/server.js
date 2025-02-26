@@ -33,7 +33,10 @@ wss.on('connection', (ws) => {
         if (data.type === "startGame") {
             gameState.resetCollectables();
             ws.send(JSON.stringify({ type: 'init', state: gameState.getGameState(), playerId }));
-            console.log("Game started, sending initial state:", gameState.getGameState());
+            // console.log("Game started, sending initial state:", gameState.getGameState());
+        }
+        if (data.type === "waitForStart") {
+            console.log("Waiting for countdown to end...")
         }
         if (data.type === "input") {
             gameState.updatePlayer(playerId, data.input);

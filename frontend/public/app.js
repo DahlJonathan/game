@@ -10,7 +10,7 @@ function initGame() {
     console.log("Game initialized");
 
     // Request game initialization from the server
-    ws.send(JSON.stringify({ type: "startGame" }));
+    // ws.send(JSON.stringify({ type: "startGame" }));
 
     // Handle WebSocket messages
     ws.onmessage = (event) => {

@@ -25,7 +25,7 @@ export default class GameState {
 
     resetCollectables() {
         this.collectables = this.generateCollectables();
-        console.log("Reset collectables:", this.collectables);
+        // console.log("Reset collectables:", this.collectables);
     }
 
     addPlayer(playerId) {
