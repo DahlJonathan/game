@@ -7,6 +7,7 @@ export default class Game {
         this.playerId = null;
         this.players = {};
         this.platforms = [];
+        this.collectables = [];
         this.activeKeys = {}; // Track active keys
         this.inputInterval = null; // Timer for sending inputs
 
@@ -58,18 +59,23 @@ export default class Game {
         if (data.type === "init") {
             this.playerId = data.playerId;
             this.platforms = data.state.platforms;
+            this.collectables = data.state.collectables;
+            console.log("Received initial game state:", data.state);
         } else if (data.type === "update") {
             for (const [id, playerData] of Object.entries(data.state.players)) {
                 if (!this.players[id]) {
-                    this.players[id] = { x: playerData.x, y: playerData.y, lastX: playerData.x, lastY: playerData.y };
+                    this.players[id] = { x: playerData.x, y: playerData.y, lastX: playerData.x, lastY: playerData.y, points: playerData.points };
                 } else {
                     this.players[id].lastX = this.players[id].x;
                     this.players[id].lastY = this.players[id].y;
                     this.players[id].x = playerData.x;
                     this.players[id].y = playerData.y;
+                    this.players[id].points = playerData.points;
                     this.players[id].timestamp = Date.now();
                 }
             }
+            this.collectables = data.state.collectables;
+            // console.log("Received game state update:", data.state);
         } else if (data.type === "delete") {
             const idToDelete = data.playerId;
             delete this.players[idToDelete];
@@ -81,9 +87,10 @@ export default class Game {
     render() {
         const gameArea = document.getElementById("game-area");
 
-        // Clear all players and platforms
+        // Clear all players, platforms, and collectables
         document.querySelectorAll('.player').forEach(el => el.remove());
         document.querySelectorAll(".platform").forEach(el => el.remove());
+        document.querySelectorAll(".collectable").forEach(el => el.remove());
 
         // Render platforms
         this.platforms.forEach(platform => {
@@ -96,6 +103,23 @@ export default class Game {
             platformEl.style.height = `${platform.height}px`;
             platformEl.style.backgroundColor = "brown";
             gameArea.appendChild(platformEl);
+        });
+
+        // Render collectables
+        this.collectables.forEach(collectable => {
+            if (!collectable.collected) {
+                let collectableEl = document.createElement("div");
+                collectableEl.classList.add("collectable");
+                collectableEl.style.position = "absolute";
+                collectableEl.style.left = `${collectable.x}px`;
+                collectableEl.style.top = `${collectable.y}px`;
+                collectableEl.style.width = `${collectable.width}px`;
+                collectableEl.style.height = `${collectable.height}px`;
+                collectableEl.style.backgroundColor = "gold"; // Set the color of the collectable
+                collectableEl.style.borderRadius = "50%";
+                gameArea.appendChild(collectableEl);
+                // console.log("Rendered collectable:", collectable);
+            }
         });
 
         const now = Date.now();

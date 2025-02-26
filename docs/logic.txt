@@ -1,25 +1,61 @@
-First: backend server / ngrok
+CONNECTION
+front and back server / ngrok??
+Each player have unique id
+If page is closed or refreshed websocket is disconncted and player is out of game room or game
 
-1: opening page, multi mode, player name, choose game room button
+START MENU
+in start menu page: multi mode button and single mode button
 
-2: single mode later added later, start game button
+(SINGLE PAGE
+single mode added later, single page and start game button)
 
-3: user joins a game room, session starts for current user
+MULTI PAGE
+input field, game room buttons, join room button
 
-4: game room page lists all players on game room page, max 4 players, but two or three can start a game too. when all players in game room have clicked start game, game screen opens. Game room page has startgame and leave game room buttons.
+GAME ROOM
+a list of 2-4 players, updated in real time
+first player (lead player) can start the game when 2-4 players in one room
+Ready button
+start game button
+back button to multi page
+When game room is full, button is disabled or "full" text
+player can join ongoing game as long as game room isn't full
 
-5: In Game screem page Timer shows on top  with game control buttons. game arena where the players are is smaller than the browser window/game screen page.
+#######################################
+GAME SCREEN
+in game screen page: timer, pause menu, game area, scoreboard
 
-6: user can play many games with players in current game room during the session. if someone leaves the game room, other one can join, max 4. list of players updates, and the session ends for that player who leaves. Game room page lists a score board that lists all current players in the game room and their score. When user leaves the game room, points go to zero for that player.
+MANY GAMES
+current user can play multiple games with same group of players after redirecting back to game room and starting a new game?
 
-- start game button - game screen opens when all players have clicked the button
-- 2-4 players play with arrow buttons.
-- user can click leave game - it redirects to game room page, start game button is not showing, other players can continue the game until the end. when all players have come back to game room start button appears again.
-- timer goes to zero/ or all players quit the game - game ends, player who has left the game gets zero points.
-- scoreboard is showing with all current players in the game room page.
-- user can start new game. New game cannot start when there is a ongoing game still going. New game can start when all players are back in game room, only then start game button is visible.
-(game must wait that all max 4 players have clicked start game button before game starts in game screen page, if someone leaves the game room, game can start with 2 or 3 players, or if someone new joins before game has started, then player list updates and new player can start the game too)
+GAME AREA
+in game area: 2-4 players, platforms, collectables
+players move with arrow keys (left, right, jump?)
+Same colored players in every screen
 
-7: user clicks leave game room . opening page opens. (other new user can take their place on game room), game room session ends for current user. score board updates with the players that are still inside the game room.
+COLLECTABLES
+player try to get a many points as they can
+when all collectables are collected, new ones appear?
+time can end when there are still collectables
 
-8: user can now join another game room
+PAUSE MENU
+in pause menu: restart button, quit button
+
+TIMER
+when timer goes to zero, game ends
+
+SCOREBOARD
+scoreboard is listing all players in current game and it updated with points in real time, from best player to worse sorted by timestamp
+scoreboard is emptied after each game?
+
+GAME END
+when game ends scoreboard is showing the list of players and winner is highlighted?
+back button to game room
+Next game button?
+#######################################
+
+BACK FROM GAME ROOM
+back in game room from a game: players can start a new game with same players or player can click leave game room button
+
+BACK FROM MULTI PAGE
+when clicking back button it redirects to start menu

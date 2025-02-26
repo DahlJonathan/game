@@ -4,7 +4,7 @@ import React from "react";
 const StartScreen = ({ onSinglePlayer, onMultiPlayer }) => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
-      <h1 className="text-4xl font-bold mb-6">RäpeLLys</h1>
+      <h1 className="text-4xl font-bold mb-6">Panic Point Sprint</h1>
       
       <div className="flex space-x-4 border-2 border-black bg-gray-800 rounded-lg inline-block p-10 ">
         <button
