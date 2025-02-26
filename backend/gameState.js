@@ -1,7 +1,7 @@
 export default class GameState {
     constructor() {
         this.players = {};
-        this.collectables = this.generateCollectables();
+        this.collectables = [];
         this.gravity = 2;
         this.jumpStrength = 25;
         this.platforms = [
@@ -28,8 +28,9 @@ export default class GameState {
         // console.log("Reset collectables:", this.collectables);
     }
 
-    addPlayer(playerId) {
+    addPlayer(playerId, name = "") {
         this.players[playerId] = {
+            name,
             x: 0,
             y: 681, // Start on the ground
             velocityY: 0,
@@ -37,6 +38,13 @@ export default class GameState {
             points: 0,
         };
         console.log("players after add:", this.players);
+    }
+
+    updatePlayerName(playerId, name) {
+        if (this.players[playerId]) {
+            this.players[playerId].name = name;
+            console.log(`Updated player ${playerId} name to ${name}`);
+        }
     }
 
     removePlayer(playerId) {
@@ -113,7 +121,7 @@ export default class GameState {
             ) {
                 collectable.collected = true;
                 player.points += 1;
-                console.log(`Player ${playerId} collected a collectable`);
+                console.log(`Player ${player.name} (ID: ${playerId}) collected a collectable and now has ${player.points} points.`);
             }
         });
 

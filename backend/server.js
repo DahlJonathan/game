@@ -16,18 +16,10 @@ wss.on('connection', (ws) => {
     ws.on('message', (message) => {
         const data = JSON.parse(message);
         if (data.type === 'joinLobby') {
-            console.log("joined lobby:", data)
-            const updatedPlayers = data.playerName;
-            const updateMessage = JSON.stringify({
-                type: 'lobbyUpdate',
-                room: data.room,
-                players: updatedPlayers,
-            });
-            wss.clients.forEach(client => {
-                if (client.readyState === client.OPEN) {
-                    client.send(updateMessage);
-                }
-            });
+            console.log(`${data.playerName} joined ${data.room}!`)
+            gameState.updatePlayerName(playerId, data.playerName);
+            const state = JSON.stringify({ type: 'update', state: gameState.getGameState() });
+            wss.clients.forEach(client => client.send(state));
         }
         // New: handle startGame message
         if (data.type === "startGame") {

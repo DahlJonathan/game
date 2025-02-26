@@ -23,6 +23,7 @@ function App() {
     "room 2": [],
     "room 3": [],
   })
+  const [scoreboard, setScoreboard] = useState([]);
 
   const handleJoinGame = (name) => {
     if (selectedRoom && gameRooms[selectedRoom].length < 4 && !gameRooms[selectedRoom].includes(name)) {
@@ -33,20 +34,8 @@ function App() {
       setPlayers([...gameRooms[selectedRoom], name]);
       setPlayerName(name); 
     }
+    ws.send(JSON.stringify({ type: "joinLobby", playerName: name, room: selectedRoom}));
   };
-
-  /* const handleJoinGame = (playerName) => {
-    const joinMessage = {
-      type: "joinLobby",
-      room: selectedRoom,
-      playerName,
-    };
-
-    ws.send(JSON.stringify(joinMessage));
-    
-    // Optimistically update the local player list (not working yet)
-    setPlayers((prevPlayers) => [...prevPlayers, playerName]);
-  }; */
 
   const handleEscKey = (e) => {
     if (e.key === "Escape") {
@@ -98,6 +87,26 @@ function App() {
     setShowPauseScreen(false);
   };
 
+  useEffect(() => {
+    const handleMessage = (message) => {
+      const data = JSON.parse(message.data);
+      if (data.type === "update") {
+        const playersData = data.state.players;
+        const updatedScoreboard = Object.entries(playersData).map(([id, playerData]) => ({
+          name: playerData.name || id,
+          points: playerData.points,
+        }));
+        setScoreboard(updatedScoreboard);
+      }
+    };
+  
+    ws.addEventListener("message", handleMessage);
+  
+    return () => {
+      ws.removeEventListener("message", handleMessage);
+    };
+  }, []);
+  
 return (
     <div className="relative">
       {!gameMode? (
@@ -134,7 +143,7 @@ return (
               onRestart={restart}
             />
           )}
-            <Scoreboard players={players.map(player => ({ name: player, points: 0 }))} />
+            <Scoreboard players={scoreboard} />
            <Timer />
            <Fps />
         </>

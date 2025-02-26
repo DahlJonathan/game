@@ -75,7 +75,6 @@ export default class Game {
                 }
             }
             this.collectables = data.state.collectables;
-            // console.log("Received game state update:", data.state);
         } else if (data.type === "delete") {
             const idToDelete = data.playerId;
             delete this.players[idToDelete];
