@@ -39,8 +39,15 @@ function App() {
 
   const handleEscKey = (e) => {
     if (e.key === "Escape") {
-      setIsPaused((prev) =>!prev);
-      setShowPauseScreen((prev) =>!prev);
+      if (isPaused) {
+        setIsPaused(false);
+        setShowPauseScreen(false);
+        ws.send(JSON.stringify({ type: "unPause" }));
+      } else {
+        setIsPaused(true);
+        setShowPauseScreen(true);
+        ws.send(JSON.stringify({ type: "pause" }));
+      }
     }
   }
 
@@ -132,8 +139,15 @@ function App() {
         />
       ) : (
         <>
-          {isPaused? (
-            <div className=""></div>
+                    {isPaused? (
+            <div className="absolute inset-0">
+              <PauseScreen
+                playerName={playerName}
+                onContinue={handleContinue}
+                onQuit={quit}
+                onRestart={restart}
+              />
+            </div>
           ) : null}
           <div className="flex flex-col items-center justify-center h-screen w-full">
             <GameWrapper players={gameRooms[selectedRoom] || []} pause={isPaused} reset={reset} playerName={playerName} />
@@ -141,17 +155,9 @@ function App() {
               <Scoreboard players={scoreboard} />
             </div>
           </div>
-          {showPauseScreen && (
-            <PauseScreen
-              playerName={playerName}
-              onContinue={handleContinue}
-              onQuit={quit}
-              onRestart={restart}
-            />
-          )}
           <Timer>
-            <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
-          </Timer>
+          <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
+        </Timer>
         </>
       )}
     </div>

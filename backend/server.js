@@ -47,6 +47,13 @@ wss.on('connection', (ws) => {
                 }
             });
         }
+        if (data.type === "unPause") {
+            console.log("unPause")
+        }
+        if (data.type === "pause") {
+            console.log("pause")
+        }
+       
     });
 
     ws.on('close', () => {
