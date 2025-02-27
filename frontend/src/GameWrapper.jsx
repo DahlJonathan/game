@@ -24,17 +24,16 @@ const GameWrapper = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen">
-      {/* Game Container */}
+    <div className="">
       <div
         id="game-container"
-        className="flex-grow bg-lightblue relative"
-        
+        className="relative w-[60vw] max-w-[1280px] h-auto aspect-[16/9] border border-black bg-sky-100 overflow-hidden rounded-lg mt-1"
       >
-        {/* Your game content */}
+        <div id="game-area" className="absolute inset-0 w-auto"></div>
       </div>
     </div>
   );
+  
 };
 
 export default GameWrapper;

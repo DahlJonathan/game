@@ -107,49 +107,54 @@ function App() {
     };
   }, []);
   
-return (
+  return (
     <div className="relative">
       {!gameMode? (
         <StartScreen
           onSinglePlayer={() => setGameMode("single")}
           onMultiPlayer={() => setGameMode("multi")}
         />
-      ) : gameMode === "single"? (       
+      ) : gameMode === "single"? (
         <SinglePlayer onBack={back} />
       ) :!startGame? (
-        <MultiPlayer 
+        <MultiPlayer
           onGameRoomSelect={setSelectedRoom}
           selectedRoom={selectedRoom}
           players={gameRooms[selectedRoom] || []}
           onJoinGame={handleJoinGame}
           onGameStart={() => {
-            if (gameRooms[selectedRoom].length >= 1){
-              setStartGame(true)
+            if (gameRooms[selectedRoom].length >= 1) {
+              setStartGame(true);
             }
-          }} 
+          }}
           onBack={back}
         />
       ) : (
-        <>          
+        <>
           {isPaused? (
             <div className=""></div>
           ) : null}
-          <GameWrapper players={gameRooms[selectedRoom] || []} pause={isPaused} reset={reset} playerName={playerName}/>     
+          <div className="flex flex-col items-center justify-center h-screen w-full">
+            <GameWrapper players={gameRooms[selectedRoom] || []} pause={isPaused} reset={reset} playerName={playerName} />
+            <div className="w-[60vw] max-w-[1280px]">
+              <Scoreboard players={scoreboard} />
+            </div>
+          </div>
           {showPauseScreen && (
-            <PauseScreen 
+            <PauseScreen
               playerName={playerName}
-              onContinue={handleContinue} 
+              onContinue={handleContinue}
               onQuit={quit}
               onRestart={restart}
             />
           )}
-            <Scoreboard players={scoreboard} />
-           <Timer />
-           <Fps />
+          <Timer>
+            <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
+          </Timer>
         </>
-      )}    
+      )}
     </div>
   );
-}  
+}
 
 export default App;

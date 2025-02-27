@@ -27,7 +27,7 @@ function Fps() {
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, fontSize: 24, color: 'black', backgroundColor: 'white' }}>
-      <div>FPS: {fps}</div>
+      <div className="bg-gray-800 text-white ">FPS: {fps}</div>
     </div>
   );
 }
