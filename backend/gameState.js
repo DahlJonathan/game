@@ -44,13 +44,13 @@ export default class GameState {
         if (this.players[playerId]) {
             this.players[playerId].name = name;
             console.log(`Updated player ${playerId} name to ${name}`);
+            this.players[playerId].points = 0;
+            this.collectables = [];
         }
     }
 
     removePlayer(playerId) {
-        console.log("removePlayer called")
         delete this.players[playerId];
-        console.log("players after removePlayer:", this.players)
     }
 
     updatePlayer(playerId, input) {

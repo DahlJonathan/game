@@ -20,8 +20,10 @@ export default class Game {
 
         requestAnimationFrame(() => this.render());
 
-        document.addEventListener("keydown", (event) => this.handleKeyChange(event, true));
-        document.addEventListener("keyup", (event) => this.handleKeyChange(event, false));
+        this.boundKeyDown = (event) => this.handleKeyChange(event, true);
+        this.boundKeyUp = (event) => this.handleKeyChange(event, false);
+        document.addEventListener("keydown", this.boundKeyDown);
+        document.addEventListener("keyup", this.boundKeyUp);
 
         this.ws.addEventListener("message", (event) => this.handleServerMessage(event));
     }
@@ -83,8 +85,33 @@ export default class Game {
 
     }
 
+    destroy() {
+        if (this.inputInterval) {
+            clearInterval(this.inputInterval);
+            this.inputInterval = null;
+        }
+
+        document.removeEventListener("keydown", this.boundKeyDown);
+        document.removeEventListener("keyup", this.boundKeyUp);
+
+        this.ws.removeEventListener("message", this.handleServerMessage);
+
+        if (this.gameArea) {
+            this.gameArea.remove();
+            this.gameArea = null;
+        }
+
+        this.players = {};
+        console.log("players after destroying:", this.players);
+    }
+
+
     render() {
         const gameArea = document.getElementById("game-area");
+        if (!gameArea) {
+            this.destroy();
+            return;
+        }
 
         // Clear all players, platforms, and collectables
         document.querySelectorAll('.player').forEach(el => el.remove());

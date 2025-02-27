@@ -1,6 +1,5 @@
 ### Root README.md
 
-```markdown
 # web-game
 
 ## Description

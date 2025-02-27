@@ -3,14 +3,22 @@ import Game from "./game.js";
 import ws from "./websocket.js";
 
 function initGame() {
+    if (window.__gameInitialized) {
+        return;
+    }
+    window.__gameInitialized = true;
+
     const gameContainer = document.getElementById("game-container");
     if (!gameContainer) return;
 
-    const game = new Game();
-    console.log("Game initialized");
+    if (window.currentGame) {
+        console.log("remove previous game:", window.currentGame);
+        window.currentGame.destroy();
+    }
 
-    // Request game initialization from the server
-    // ws.send(JSON.stringify({ type: "startGame" }));
+    window.currentGame = new Game();
+    console.log("Created new game", window.currentGame);
+    console.log("Game initialized");
 
     // Handle WebSocket messages
     ws.onmessage = (event) => {
@@ -27,13 +35,16 @@ function initGame() {
     document.addEventListener('keydown', (event) => {
         const direction = event.key;
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(direction)) {
-            ws.send(JSON.stringify({ type: 'move', playerId: game.playerId, direction }));
+            ws.send(JSON.stringify({ type: 'move', playerId: window.currentGame.playerId, direction }));
         }
     });
 }
 
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initGame);
-} else {
-    initGame();
+initGame();
+
+ws.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    if (message.type === "delete") {
+        window.__gameInitialized = false;
+    }
 }

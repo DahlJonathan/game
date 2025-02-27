@@ -54,6 +54,7 @@ function App() {
      setStartGame(false);
      setIsPaused(false);
      setShowPauseScreen(false);
+     ws.send(JSON.stringify({ type: "quitGame" }));
   }
 
   const back = () => {

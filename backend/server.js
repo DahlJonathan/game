@@ -9,13 +9,13 @@ const gameState = new GameState();
 
 wss.on('connection', (ws) => {
     const playerId = Math.random().toString(36).substr(2, 9);
-    gameState.addPlayer(playerId);
 
     console.log(`Player ${playerId} connected`);
 
     ws.on('message', (message) => {
         const data = JSON.parse(message);
         if (data.type === 'joinLobby') {
+            gameState.addPlayer(playerId);
             console.log(`${data.playerName} joined ${data.room}!`)
             gameState.updatePlayerName(playerId, data.playerName);
             const state = JSON.stringify({ type: 'update', state: gameState.getGameState() });
@@ -33,11 +33,25 @@ wss.on('connection', (ws) => {
         if (data.type === "input") {
             gameState.updatePlayer(playerId, data.input);
         }
+        if (data.type === "quitGame") {
+            gameState.removePlayer(playerId);
+            console.log(`Player ${playerId} disconnected from game`);
+            const deleteMessage = JSON.stringify({
+                type: 'delete',
+                state: gameState.getGameState(),
+                playerId,
+            });
+            wss.clients.forEach(client => {
+                if (client.readyState === client.OPEN) {
+                    client.send(deleteMessage);
+                }
+            });
+        }
     });
 
     ws.on('close', () => {
         gameState.removePlayer(playerId);
-        console.log(`Player ${playerId} disconnected`);
+        console.log(`Player ${playerId} disconnected from socket`);
         const deleteMessage = JSON.stringify({
             type: 'delete',
             state: gameState.getGameState(),

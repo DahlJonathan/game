@@ -12,13 +12,15 @@ const GameWrapper = () => {
 
     const script = document.createElement("script");
     script.type = "module"; // Ensures ES module support
-    script.src = "./app.js"; // Adjust path if necessary
+    script.src = `./app.js?cb=${Date.now()}`;
     script.async = true;
     
     // Append script inside the game container
     gameContainer.appendChild(script);
+    console.log("script created")
 
     return () => {
+      console.log("script removed")
       gameContainer.removeChild(script);
     };
   }, []);
@@ -29,7 +31,6 @@ const GameWrapper = () => {
         id="game-container"
         className="relative w-[60vw] max-w-[1280px] h-auto aspect-[16/9] border border-black bg-sky-100 overflow-hidden rounded-lg mt-1"
       >
-        <div id="game-area" className="absolute inset-0 w-auto"></div>
       </div>
     </div>
   );
