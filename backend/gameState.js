@@ -7,19 +7,25 @@ export default class GameState {
         this.platforms = [
             { left: 0, top: 50, width: 100, height: 10 }, //left upper corner
             { left: 1180, top: 50, width: 100, height: 10 },//right upper coorner
-            { left: 150, top: 100, width: 100, height: 10 },
-            { left: 1030, top: 100, width: 100, height: 10 },
-            { left: 150, top: 470, width: 100, height: 10 },
-            { left: 1030, top: 470, width: 100, height: 10 },
-            { left: 500, top: 200, width: 100, height: 10 },
-            { left: 680, top: 200, width: 100, height: 10 },
-            { left: 500, top: 200, width: 10, height: 170 },
-            { left: 770, top: 200, width: 10, height: 170 },
-            { left: 500, top: 370, width: 100, height: 10 },
-            { left: 680, top: 370, width: 100, height: 10 },
-            { left: 590, top: 470, width: 100, height: 10 },
-            
-
+            { left: 150, top: 100, width: 100, height: 10 },// first left
+            { left: 1030, top: 100, width: 100, height: 10 },//first right
+            { left: 150, top: 470, width: 100, height: 10 },// second left
+            { left: 1030, top: 470, width: 100, height: 10 },// second right
+            { left: 500, top: 200, width: 100, height: 10 },//first bottom left
+            { left: 680, top: 200, width: 100, height: 10 },//first bottom right
+            { left: 500, top: 200, width: 10, height: 170 },//middle
+            { left: 770, top: 200, width: 10, height: 170 },//middle
+            { left: 500, top: 370, width: 100, height: 10 },//middle
+            { left: 680, top: 370, width: 100, height: 10 },//middle
+            { left: 590, top: 470, width: 100, height: 10 },//bottom middle
+            { left: 590, top: 90, width: 100, height: 10 },//top middle
+            { left: 600, top: 285, width: 80, height: 10 },//middle
+            { left: 200, top: 285, width: 100, height: 10 },//left middle
+            { left: 980, top: 285, width: 100, height: 10 },//right middle
+            { left: 0, top: 185, width: 100, height: 10 },
+            { left: 1180, top: 185, width: 100, height: 10 },
+            { left: 0, top: 385, width: 100, height: 10 },
+            { left: 1180, top: 385, width: 100, height: 10 },
         ];
     }
 
