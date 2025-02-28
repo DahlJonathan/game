@@ -22,10 +22,10 @@ export default class GameState {
             { left: 600, top: 285, width: 80, height: 10 },//middle
             { left: 200, top: 285, width: 100, height: 10 },//left middle
             { left: 980, top: 285, width: 100, height: 10 },//right middle
-            { left: 0, top: 185, width: 100, height: 10 },
-            { left: 1180, top: 185, width: 100, height: 10 },
-            { left: 0, top: 385, width: 100, height: 10 },
-            { left: 1180, top: 385, width: 100, height: 10 },
+            { left: 0, top: 185, width: 100, height: 10 },//left second from top
+            { left: 1180, top: 185, width: 100, height: 10 },//right second from top
+            { left: 0, top: 385, width: 100, height: 10 },//left third from top
+            { left: 1180, top: 385, width: 100, height: 10 },//right third from top
         ];
     }
 
