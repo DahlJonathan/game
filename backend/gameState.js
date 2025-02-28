@@ -13,8 +13,8 @@ export default class GameState {
             { left: 1030, top: 470, width: 100, height: 10 },// second right
             { left: 500, top: 200, width: 100, height: 10 },//first bottom left
             { left: 680, top: 200, width: 100, height: 10 },//first bottom right
-            { left: 500, top: 200, width: 10, height: 170 },//middle
-            { left: 770, top: 200, width: 10, height: 170 },//middle
+            { left: 500, top: 210, width: 10, height: 160 },//middle
+            { left: 770, top: 210, width: 10, height: 160 },//middle
             { left: 500, top: 370, width: 100, height: 10 },//middle
             { left: 680, top: 370, width: 100, height: 10 },//middle
             { left: 590, top: 470, width: 100, height: 10 },//bottom middle
@@ -27,6 +27,7 @@ export default class GameState {
             { left: 0, top: 385, width: 100, height: 10 },//left third from top
             { left: 1180, top: 385, width: 100, height: 10 },//right third from top
         ];
+
         this.gameOver = false;
     }
 

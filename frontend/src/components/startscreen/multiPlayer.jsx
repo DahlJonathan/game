@@ -2,8 +2,13 @@
 import React, { useState, useEffect } from "react";
 import ws from "../../../public/websocket";
 import Game from "../../../public/game";
+import GameWrapper from "../../GameWrapper";
+import Scoreboard from "../gameinfo/scoreboard";
+import Timer from "../gameinfo/timer";
+import Fps from "../gameinfo/fps";
+import PauseScreen from "../pausescreen/pauseScreen";
 
-const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, onBack }) => {
+const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, onBack, scoreboard }) => {
     const [playerName, setPlayerName] = useState("");
     const [isReady, setIsReady] = useState(false);
     const [players, setPlayers] = useState([]);
@@ -16,8 +21,8 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
             if (data.type === 'lobbyUpdate') {
                 setPlayers(Object.values(data.state.players));
             } else if (data.type === 'init') {
+                console.log("init message multiplayer")
                 setGameStarted(true);
-                new Game();
             } else if (data.type === 'pause') {
                 setGamePaused(true);
             } else if (data.type === 'unPause') {
@@ -25,13 +30,6 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
             }
         };
     }, []);
-
-    // Add this useEffect to instantiate the Game class after the component has been rendered
-    useEffect(() => {
-        if (gameStarted) {
-            new Game();
-        }
-    }, [gameStarted]);
 
     const handleJoin = () => {
         if (
@@ -73,21 +71,28 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
 
     if (gameStarted) {
         return (
-            <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
-                <h1 className="font-bold text-3xl mb-3">Game Started!</h1>
-                <div id="game-container" className="relative w-full h-full border border-black bg-sky-100 overflow-hidden rounded-lg mt-1"></div>
-                {gamePaused ? (
-                    <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center bg-black bg-opacity-50">
-                        <h2 className="text-2xl mb-4">Game Paused</h2>
-                        <button onClick={handleUnPause} className="px-6 py-2 mb-2 font-bold rounded-lg bg-green-500 hover:bg-green-700 text-white">Continue</button>
-                        <button onClick={handleRestart} className="px-6 py-2 mb-2 font-bold rounded-lg bg-yellow-500 hover:bg-yellow-700 text-white">Restart</button>
-                        <button onClick={handleQuit} className="px-6 py-2 mb-2 font-bold rounded-lg bg-red-500 hover:bg-red-700 text-white">Quit</button>
+            <>
+                {gamePaused? (
+                    <div className="absolute inset-0">
+                    <PauseScreen
+                        playerName={playerName}
+                        onContinue={handleUnPause}
+                        onQuit={handleQuit}
+                        onRestart={handleRestart}
+                    />
                     </div>
-                ) : (
-                    <button onClick={handlePause} className="absolute top-4 right-4 px-6 py-2 font-bold rounded-lg bg-yellow-500 hover:bg-yellow-700 text-white">Pause</button>
-                )}
-            </div>
-        );
+                ) : null}
+                <div className="flex flex-col items-center justify-center h-screen w-full">
+                    <GameWrapper players={players} reset={handleRestart} playerName={playerName} />
+                    <div className="w-[60vw] w-[1280px]">
+                    <Scoreboard players={scoreboard} />
+                    </div>
+                </div>
+                <Timer>
+                <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
+                </Timer>
+            </>
+        )
     }
 
     return (
