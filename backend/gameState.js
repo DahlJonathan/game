@@ -82,7 +82,10 @@ export default class GameState {
         let player = this.players[playerId];
         if (!player) return;
 
-        // Handle movement inputs
+        // Store the old position for horizontal collision checking.
+        const oldX = player.x;
+
+        // Handle movement inputs.
         if (input.moveLeft) player.x -= 10;
         if (input.moveRight) player.x += 10;
         if (input.jump && !player.isJumping) {
@@ -93,17 +96,18 @@ export default class GameState {
         // Apply gravity
         player.velocityY += this.gravity;
         const newY = player.y + player.velocityY;
-        let onPlatform = false;
+        let verticalResolved = false;
 
+        // Process vertical collisions
         for (let platform of this.platforms) {
             const platformLeft = platform.left;
             const platformTop = platform.top;
             const platformRight = platform.left + platform.width;
             const platformBottom = platform.top + platform.height;
 
-            // Check if player horizontally overlaps with the platform
+            // Check horizontal overlap before vertical resolution
             if (player.x + 35 > platformLeft && player.x < platformRight) {
-                // Falling: land on the platform if player's feet cross its top boundary.
+                // Falling: land on platform if crossing its top boundary
                 if (
                     player.velocityY > 0 &&
                     player.y + 35 <= platformTop &&
@@ -112,27 +116,47 @@ export default class GameState {
                     player.y = platformTop - 35; // Snap onto platform
                     player.velocityY = 0;
                     player.isJumping = false;
-                    onPlatform = true;
-                    break; // Collision resolved; stop checking further platforms.
+                    verticalResolved = true;
+                    break; // No need to check other platforms
                 }
-                // Jumping: if the player's head is moving upward and will cross the platform’s bottom,
-                // cancel the upward momentum so gravity takes over.
+                // Jumping: hit bottom of platform
                 if (
                     player.velocityY < 0 &&
                     player.y > platformBottom &&
                     newY <= platformBottom
                 ) {
-                    // Place player just below the platform’s bottom.
-                    player.y = platformBottom + 1;
+                    player.y = platformBottom + 1; // Place player just below
                     player.velocityY = 0;
-                    break; // Resolve this collision.
+                    verticalResolved = true;
+                    break;
                 }
             }
         }
 
-        // If no collision was detected, update the player's vertical position normally.
-        if (!onPlatform) {
+        // Update vertical position if no vertical collision was resolved
+        if (!verticalResolved) {
             player.y = newY;
+        }
+
+        // Handle horizontal collisions
+        // Only apply if the player is moving horizontally into a platform
+        for (let platform of this.platforms) {
+            const platformLeft = platform.left;
+            const platformRight = platform.left + platform.width;
+            const platformTop = platform.top;
+            const platformBottom = platform.top + platform.height;
+
+            // Check if player and platform vertically overlap
+            if (player.y + 35 >= platformTop && player.y <= platformBottom) {
+                // If moving right, check for collision with the platform's left side
+                if (input.moveRight && oldX + 35 <= platformLeft && player.x + 35 > platformLeft) {
+                    player.x = platformLeft - 35;
+                }
+                // If moving left, check for collision with the platform's right side
+                if (input.moveLeft && oldX >= platformRight && player.x < platformRight) {
+                    player.x = platformRight;
+                }
+            }
         }
 
         // Check for collectable collisions
@@ -150,11 +174,15 @@ export default class GameState {
             }
         });
 
-        // Reset to ground if below it.
+        // Stay within game-area bounds.
         if (player.y >= 531) {
             player.y = 531;
             player.velocityY = 0;
             player.isJumping = false;
+        }
+        if (player.y < 0) {
+            player.y = 0;
+            player.velocityY = 0;
         }
         if (player.x < 0) {
             player.x = 0;
