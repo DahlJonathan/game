@@ -12,10 +12,16 @@ export default class Game {
         this.inputInterval = null; // Timer for sending inputs
 
         this.gameContainer = document.getElementById("game-container");
+        this.gameContainer.style.width = "1280px"
+        this.gameContainer.style.height = "570px"
         if (!this.gameContainer) return;
 
         this.gameArea = document.createElement("div");
         this.gameArea.id = "game-area";
+        this.gameArea.style.top = "0px";
+        this.gameArea.style.left = "0px";
+        this.gameArea.style.width = "100%";
+        this.gameArea.style.maxHeight = "570";
         this.gameContainer.appendChild(this.gameArea);
 
         requestAnimationFrame(() => this.render());

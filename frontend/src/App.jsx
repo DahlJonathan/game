@@ -151,7 +151,7 @@ function App() {
           ) : null}
           <div className="flex flex-col items-center justify-center h-screen w-full">
             <GameWrapper players={gameRooms[selectedRoom] || []} pause={isPaused} reset={reset} playerName={playerName} />
-            <div className="w-[60vw] max-w-[1280px]">
+            <div className="w-[60vw] w-[1280px]">
               <Scoreboard players={scoreboard} />
             </div>
           </div>

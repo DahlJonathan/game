@@ -1,8 +1,8 @@
 // Function to update player position based on direction
 export function updatePlayerPosition(player, direction) {
     const step = 10;
-    const gameAreaWidth = 1000; // Width of the game area
-    const gameAreaHeight = 600; // Height of the game area
+    const gameAreaWidth = 1280; // Width of the game area
+    const gameAreaHeight = 570; // Height of the game area
 
     switch (direction) {
         case 'ArrowRight':

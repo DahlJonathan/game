@@ -5,18 +5,28 @@ export default class GameState {
         this.gravity = 2;
         this.jumpStrength = 25;
         this.platforms = [
-            { left: 100, top: 400, width: 200, height: 20 },
-            { left: 400, top: 300, width: 200, height: 20 },
-            { left: 700, top: 200, width: 200, height: 20 },
-            { left: 500, top: 500, width: 200, height: 20 },
-            { left: 850, top: 600, width: 200, height: 20 },
+            { left: 0, top: 50, width: 100, height: 10 }, //left upper corner
+            { left: 1180, top: 50, width: 100, height: 10 },//right upper coorner
+            { left: 150, top: 100, width: 100, height: 10 },
+            { left: 1030, top: 100, width: 100, height: 10 },
+            { left: 150, top: 470, width: 100, height: 10 },
+            { left: 1030, top: 470, width: 100, height: 10 },
+            { left: 500, top: 200, width: 100, height: 10 },
+            { left: 680, top: 200, width: 100, height: 10 },
+            { left: 500, top: 200, width: 10, height: 170 },
+            { left: 770, top: 200, width: 10, height: 170 },
+            { left: 500, top: 370, width: 100, height: 10 },
+            { left: 680, top: 370, width: 100, height: 10 },
+            { left: 590, top: 470, width: 100, height: 10 },
+            
+
         ];
     }
 
     generateCollectables() {
-        return Array.from({ length: 50 }, () => ({
+        return Array.from({ length: 3 }, () => ({
             x: Math.random() * 1200,
-            y: Math.random() * 600,
+            y: Math.random() * 500,
             width: 15,
             height: 15,
             collected: false,
@@ -32,7 +42,7 @@ export default class GameState {
         this.players[playerId] = {
             name,
             x: 0,
-            y: 681, // Start on the ground
+            y: 531, // Start on the ground
             velocityY: 0,
             isJumping: false,
             points: 0,
@@ -50,9 +60,10 @@ export default class GameState {
     }
 
     removePlayer(playerId) {
+        console.log("removePlayer called")
         delete this.players[playerId];
+        console.log("players after removePlayer:", this.players)
     }
-
     updatePlayer(playerId, input) {
         let player = this.players[playerId];
         if (!player) return;
@@ -126,8 +137,8 @@ export default class GameState {
         });
 
         // Reset to ground if below it.
-        if (player.y >= 681) {
-            player.y = 681;
+        if (player.y >= 531) {
+            player.y = 531;
             player.velocityY = 0;
             player.isJumping = false;
         }

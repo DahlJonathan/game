@@ -3,7 +3,7 @@ import ws from "../../../public/websocket";
 
 function Timer({ children }) {
     const [timer, setTimer] = useState(60);
-    const [gameStartTimer, setGameStartTimer] = useState(5);  
+    const [gameStartTimer, setGameStartTimer] = useState(1);  
     const [gameStartedNow, setGameStartedNow] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
 
@@ -38,7 +38,7 @@ function Timer({ children }) {
                     <p>{gameStartTimer}</p>
                 </div>
             )}
-            <div className="absolute top-0 w-[60vw] max-w-[1280px] h-16 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-5xl p-4 shadow-lg flex justify-center items-center gap-2 rounded-lg">
+            <div className="absolute top-0 w-[90vw] max-w-[1280px] h-16 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-5xl p-4 shadow-lg flex justify-center items-center gap-2 rounded-lg">
                 {children}
                 <p>Game time</p>
                 <p>{timer}</p>

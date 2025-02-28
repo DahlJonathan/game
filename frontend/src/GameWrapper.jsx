@@ -26,13 +26,16 @@ const GameWrapper = () => {
   }, []);
 
   return (
-    <div className="">
-      <div
-        id="game-container"
-        className="relative w-[60vw] max-w-[1280px] h-auto aspect-[16/9] border border-black bg-sky-100 overflow-hidden rounded-lg mt-1"
-      >
+    
+      <div className="">
+        <div
+          id="game-container"
+          className="relative w-[90vw] border border-black bg-sky-100 rounded-lg mt-15"
+        >          
+       
+        </div>
       </div>
-    </div>
+    
   );
   
 };
