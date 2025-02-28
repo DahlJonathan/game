@@ -12,9 +12,9 @@ export default class Game {
         this.inputInterval = null; // Timer for sending inputs
 
         this.gameContainer = document.getElementById("game-container");
-        this.gameContainer.style.width = "1280px"
-        this.gameContainer.style.height = "570px"
         if (!this.gameContainer) return;
+        this.gameContainer.style.width = "1280px";
+        this.gameContainer.style.height = "570px";
 
         this.gameArea = document.createElement("div");
         this.gameArea.id = "game-area";
@@ -87,8 +87,9 @@ export default class Game {
             const idToDelete = data.playerId;
             delete this.players[idToDelete];
             document.querySelectorAll(`.player-${idToDelete}`).forEach(el => el.remove());
-        }
-
+        } //else if (data.type === "gameOver") {
+          //  alert(`Game Over! Winner: ${data.winner} with ${data.points} points`);
+        //}
     }
 
     destroy() {
@@ -110,7 +111,6 @@ export default class Game {
         this.players = {};
         console.log("players after destroying:", this.players);
     }
-
 
     render() {
         const gameArea = document.getElementById("game-area");

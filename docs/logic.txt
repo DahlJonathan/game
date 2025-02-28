@@ -1,22 +1,22 @@
 CONNECTION
-front and back server / ngrok??
-Each player have unique id
+front and back server / ngrok provided
+Each player have unique id when joining the lobby
 If page is closed or refreshed websocket is disconncted and player is out of game room or game
 
-START MENU
-in start menu page: multi mode button and single mode button
+#(START MENU
+#in start menu page: multi mode button and single mode button)
+#(SINGLE PAGE
+#single mode added later, single page and start game button)
 
-(SINGLE PAGE
-single mode added later, single page and start game button)
-
-MULTI PAGE
+MULTI PAGE / LOBBY
 input field, game room buttons, join room button
 
 GAME ROOM
 a list of 2-4 players, updated in real time
 first player (lead player) can start the game when 2-4 players in one room
+lead player can share a ngrok link directly to lobby for max 3 other players
 Ready button
-start game button
+start game button when everyone is ready
 back button to multi page
 When game room is full, button is disabled or "full" text
 player can join ongoing game as long as game room isn't full
@@ -31,15 +31,16 @@ current user can play multiple games with same group of players after redirectin
 GAME AREA
 in game area: 2-4 players, platforms, collectables
 players move with arrow keys (left, right, jump?)
-Same colored players in every screen
+Same colored players in every screen (for example lead is blue in every screen)
 
 COLLECTABLES
 player try to get a many points as they can
-when all collectables are collected, new ones appear?
 time can end when there are still collectables
 
 PAUSE MENU
 in pause menu: restart button, quit button
+other can see who paused, restarted or quit the game
+(what happens when one player quits?)
 
 TIMER
 when timer goes to zero, game ends
@@ -49,7 +50,7 @@ scoreboard is listing all players in current game and it updated with points in 
 scoreboard is emptied after each game?
 
 GAME END
-when game ends scoreboard is showing the list of players and winner is highlighted?
+when game ends scoreboard is showing the list of players and winner is highlighted
 back button to game room
 Next game button?
 #######################################

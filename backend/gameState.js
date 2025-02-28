@@ -27,6 +27,7 @@ export default class GameState {
             { left: 0, top: 385, width: 100, height: 10 },//left third from top
             { left: 1180, top: 385, width: 100, height: 10 },//right third from top
         ];
+        this.gameOver = false;
     }
 
     generateCollectables() {
@@ -70,7 +71,10 @@ export default class GameState {
         delete this.players[playerId];
         console.log("players after removePlayer:", this.players)
     }
+
     updatePlayer(playerId, input) {
+        if (this.gameOver) return;
+
         let player = this.players[playerId];
         if (!player) return;
 
@@ -156,7 +160,23 @@ export default class GameState {
         }
     }
 
+    endGame() {
+        this.gameOver = true;
+        const winner = Object.values(this.players).reduce((max, player) => player.points > max.points ? player : max, { points: 0 });
+        console.log(`Game over! Winner: ${winner.name} with ${winner.points} points`);
+        const winnerMessage = JSON.stringify({
+            type: 'gameOver',
+            winner: winner.name,
+            points: winner.points,
+        });
+        wss.clients.forEach(client => {
+            if (client.readyState === client.OPEN) {
+                client.send(winnerMessage);
+            }
+        });
+    }
+
     getGameState() {
-        return { players: this.players, platforms: this.platforms, collectables: this.collectables };
+        return { players: this.players, platforms: this.platforms, collectables: this.collectables, gameOver: this.gameOver };
     }
 }
