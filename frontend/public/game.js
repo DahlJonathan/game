@@ -21,7 +21,7 @@ export default class Game {
         this.gameArea.style.top = "0px";
         this.gameArea.style.left = "0px";
         this.gameArea.style.width = "100%";
-        this.gameArea.style.maxHeight = "570";
+        this.gameArea.style.maxHeight = "570px";
         this.gameContainer.appendChild(this.gameArea);
 
         requestAnimationFrame(() => this.render());
@@ -67,7 +67,9 @@ export default class Game {
         if (data.type === "init") {
             this.playerId = data.playerId;
             this.platforms = data.state.platforms;
+            this.platformImage = data.state.platformImage;
             this.collectables = data.state.collectables;
+            this.collectablesImage = data.state.collectablesImage;
             console.log("Received initial game state:", data.state);
         } else if (data.type === "update") {
             for (const [id, playerData] of Object.entries(data.state.players)) {
@@ -133,7 +135,8 @@ export default class Game {
             platformEl.style.top = `${platform.top}px`;
             platformEl.style.width = `${platform.width}px`;
             platformEl.style.height = `${platform.height}px`;
-            platformEl.style.backgroundColor = "brown";
+            platformEl.style.backgroundImage = `url(${this.platformImage})`;
+            platformEl.style.backgroundSize = "cover";
             gameArea.appendChild(platformEl);
         });
 
@@ -147,8 +150,9 @@ export default class Game {
                 collectableEl.style.top = `${collectable.y}px`;
                 collectableEl.style.width = `${collectable.width}px`;
                 collectableEl.style.height = `${collectable.height}px`;
-                collectableEl.style.backgroundColor = "gold"; // Set the color of the collectable
+                collectableEl.style.backgroundImage = `url(${this.collectablesImage})`;
                 collectableEl.style.borderRadius = "50%";
+                collectableEl.style.backgroundSize = "cover";
                 gameArea.appendChild(collectableEl);
                 // console.log("Rendered collectable:", collectable);
             }

@@ -30,8 +30,9 @@ const GameWrapper = () => {
       <div className="">
         <div
           id="game-container"
-          className="relative w-[90vw] border border-black bg-sky-100 rounded-lg mt-15"
-        >          
+          className="relative w-[90vw] border border-black rounded-lg mt-15 bg-cover bg-center"
+          style={{ backgroundImage: 'url(src/images/background.png)' }}
+        >                 
        
         </div>
       </div>

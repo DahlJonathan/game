@@ -2,6 +2,8 @@ export default class GameState {
     constructor() {
         this.players = {};
         this.collectables = [];
+        this.collectablesImage = 'src/images/gem.png';
+        this.platformImage = 'src/images/platform.jpg';
         this.gravity = 2;
         this.jumpStrength = 25;
         this.platforms = [
@@ -33,11 +35,11 @@ export default class GameState {
     }
 
     generateCollectables() {
-        return Array.from({ length: 3 }, () => ({
+        return Array.from({ length: 60 }, () => ({
             x: Math.random() * 1200,
             y: Math.random() * 500,
-            width: 15,
-            height: 15,
+            width: 25,
+            height: 35,
             collected: false,
         }));
     }
@@ -217,6 +219,13 @@ export default class GameState {
     }
 
     getGameState() {
-        return { players: this.players, platforms: this.platforms, collectables: this.collectables, gameOver: this.gameOver };
+        return { 
+            players: this.players, 
+            platforms: this.platforms,
+            collectables: this.collectables, 
+            gameOver: this.gameOver, 
+            platformImage: this.platformImage, 
+            collectablesImage: this.collectablesImage 
+        };
     }
 }
