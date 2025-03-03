@@ -8,6 +8,7 @@ import Scoreboard from "./components/gameinfo/scoreboard.jsx";
 import Timer from "./components/gameinfo/timer.jsx";
 import Fps from "./components/gameinfo/fps.jsx";
 import PauseScreen from "./components/pausescreen/pauseScreen.jsx";
+import HowToPlay from "./components/startscreen/howToPlay.jsx";
 
 function App() {
   const [gameMode, setGameMode] = useState(null);  
@@ -131,7 +132,10 @@ function App() {
         <StartScreen
           onSinglePlayer={() => setGameMode("single")}
           onMultiPlayer={() => setGameMode("multi")}
+          onHowToPlay={() => setGameMode("howtoplay")}
         />
+      ) : gameMode === "howtoplay"? (
+        <HowToPlay onBack={back} />
       ) : gameMode === "single"? (
         <SinglePlayer onBack={back} />
       ) :!startGame? (
