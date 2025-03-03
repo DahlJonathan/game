@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ws from "../../../public/websocket";
 
-function Timer({ children }) {
+function Timer({ children, isPaused }) {
     const [timer, setTimer] = useState(60);
     const [gameStartTimer, setGameStartTimer] = useState(1);  
     const [gameStartedNow, setGameStartedNow] = useState(false);
@@ -22,13 +22,13 @@ function Timer({ children }) {
                 setGameStartTimer(null); 
             }
 
-            if (gameStartedNow && timer > 0) {
+            if (gameStartedNow && timer > 0 && !isPaused) {
                 setTimer((prev) => prev - 1);
             }
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [gameStartTimer, gameStartedNow, timer, gameStarted]);
+    }, [gameStartTimer, gameStartedNow, timer, gameStarted, isPaused]);
 
     return (
         <div>

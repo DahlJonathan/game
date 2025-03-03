@@ -1,14 +1,12 @@
 // ./frontend/src/components/startscreen/multiplayer.jsx
 import React, { useState, useEffect } from "react";
 import ws from "../../../public/websocket";
-import Game from "../../../public/game";
 import GameWrapper from "../../GameWrapper";
 import Scoreboard from "../gameinfo/scoreboard";
 import Timer from "../gameinfo/timer";
 import Fps from "../gameinfo/fps";
-import PauseScreen from "../pausescreen/pauseScreen";
 
-const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, onBack, scoreboard }) => {
+const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, onBack, scoreboard, onPause }) => {
     const [playerName, setPlayerName] = useState("");
     const [isReady, setIsReady] = useState(false);
     const [players, setPlayers] = useState([]);
@@ -21,7 +19,6 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
             if (data.type === 'lobbyUpdate') {
                 setPlayers(Object.values(data.state.players));
             } else if (data.type === 'init') {
-                console.log("init message multiplayer")
                 setGameStarted(true);
             } else if (data.type === 'pause') {
                 setGamePaused(true);
@@ -52,19 +49,6 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
         ws.send(JSON.stringify({ type: 'startGame' }));
     };
 
-    const handlePause = () => {
-        ws.send(JSON.stringify({ type: 'pause' }));
-    };
-
-    const handleUnPause = () => {
-        ws.send(JSON.stringify({ type: 'unPause' }));
-    };
-
-    const handleQuit = () => {
-        ws.send(JSON.stringify({ type: 'quitGame' }));
-        setGameStarted(false);
-    };
-
     const handleRestart = () => {
         ws.send(JSON.stringify({ type: 'startGame' }));
     };
@@ -72,23 +56,13 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
     if (gameStarted) {
         return (
             <>
-                {gamePaused? (
-                    <div className="absolute inset-0">
-                    <PauseScreen
-                        playerName={playerName}
-                        onContinue={handleUnPause}
-                        onQuit={handleQuit}
-                        onRestart={handleRestart}
-                    />
-                    </div>
-                ) : null}
                 <div className="flex flex-col items-center justify-center h-screen w-full">
                     <GameWrapper players={players} reset={handleRestart} playerName={playerName} />
                     <div className="w-[60vw] w-[1280px]">
                     <Scoreboard players={scoreboard} />
                     </div>
                 </div>
-                <Timer>
+                <Timer isPaused={onPause}>
                 <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
                 </Timer>
             </>

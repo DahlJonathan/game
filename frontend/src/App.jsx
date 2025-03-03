@@ -18,6 +18,7 @@ function App() {
   const [showPauseScreen, setShowPauseScreen] = useState(false);
   const [reset, setReset] = useState(false);
   const [playerName, setPlayerName] = useState("");
+  const [pausedPlayer, setPausedPlayer] = useState("");
   const [gameRooms, setGameRooms] = useState({
     "room 1": [],
     "room 2": [],
@@ -36,20 +37,6 @@ function App() {
     }
     ws.send(JSON.stringify({ type: "joinLobby", playerName: name, room: selectedRoom}));
   };
-
-  const handleEscKey = (e) => {
-    if (e.key === "Escape") {
-      if (isPaused) {
-        setIsPaused(false);
-        setShowPauseScreen(false);
-        ws.send(JSON.stringify({ type: "unPause" }));
-      } else {
-        setIsPaused(true);
-        setShowPauseScreen(true);
-        ws.send(JSON.stringify({ type: "pause" }));
-      }
-    }
-  }
 
   const quit = () => {
     setGameRooms((prevGameRooms) => ({
@@ -83,6 +70,17 @@ function App() {
   };
 
   useEffect(() => {
+    const handleEscKey = (e) => {
+      if (e.key === "Escape") {
+        setIsPaused((prev) => {
+          const newPausedState = !prev;
+          setShowPauseScreen(newPausedState);
+          ws.send(JSON.stringify({ type: newPausedState ? "pause" : "unPause", pausedPlayer: playerName }));
+          return newPausedState;
+        });
+      }
+    };
+
     window.addEventListener("keydown", handleEscKey);
 
     return () => {
@@ -91,8 +89,10 @@ function App() {
   }, []);
 
   const handleContinue = () => {
+    console.log("unPause game")
     setIsPaused(false);
     setShowPauseScreen(false);
+    ws.send(JSON.stringify({ type: "unPause" }));
   };
 
   useEffect(() => {
@@ -105,6 +105,16 @@ function App() {
           points: playerData.points,
         }));
         setScoreboard(updatedScoreboard);
+      }
+      if (data.type === "unPauseGame") {
+          setIsPaused(false);
+          setShowPauseScreen(false);
+          setPausedPlayer("");
+      }
+      if (data.type === "pauseGame") {
+        setIsPaused(true);
+        setShowPauseScreen(true);
+        setPausedPlayer(data.pausedPlayer);
       }
     };
   
@@ -125,10 +135,22 @@ function App() {
       ) : gameMode === "single"? (
         <SinglePlayer onBack={back} />
       ) :!startGame? (
+        <>
+        {isPaused? (
+            <div className="absolute inset-0">
+              <PauseScreen
+                playerName={pausedPlayer}
+                onContinue={handleContinue}
+                onQuit={quit}
+                onRestart={restart}
+                onPause={isPaused}
+              />
+            </div>
+          ) : null}
         <MultiPlayer
           onGameRoomSelect={setSelectedRoom}
           selectedRoom={selectedRoom}
-          players={gameRooms[selectedRoom] || []}
+          players={players}
           onJoinGame={handleJoinGame}
           onGameStart={() => {
             if (gameRooms[selectedRoom].length >= 1) {
@@ -137,19 +159,11 @@ function App() {
           }}
           onBack={back}
           scoreboard={scoreboard}
+          onPause={isPaused}
         />
+        </>
       ) : (
         <>
-                    {isPaused? (
-            <div className="absolute inset-0">
-              <PauseScreen
-                playerName={playerName}
-                onContinue={handleContinue}
-                onQuit={quit}
-                onRestart={restart}
-              />
-            </div>
-          ) : null}
           <div className="flex flex-col items-center justify-center h-screen w-full">
             <GameWrapper players={gameRooms[selectedRoom] || []} pause={isPaused} reset={reset} playerName={playerName} />
             <div className="w-[60vw] w-[1280px]">

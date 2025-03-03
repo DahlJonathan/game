@@ -88,7 +88,7 @@ export default class Game {
             delete this.players[idToDelete];
             document.querySelectorAll(`.player-${idToDelete}`).forEach(el => el.remove());
         } //else if (data.type === "gameOver") {
-          //  alert(`Game Over! Winner: ${data.winner} with ${data.points} points`);
+        //  alert(`Game Over! Winner: ${data.winner} with ${data.points} points`);
         //}
     }
 
@@ -156,7 +156,8 @@ export default class Game {
 
         const now = Date.now();
         // Render each player
-        for (const [id, player] of Object.entries(this.players)) {
+        for (const [index, [id, player]] of Object.entries(Object.entries(this.players))) {
+            const colors = ["green", "blue", "red", "yellow"];
             let playerEl = document.createElement("div");
             // Add a generic class plus a unique one
             playerEl.classList.add("player", `player-${id}`);
@@ -164,7 +165,7 @@ export default class Game {
             playerEl.style.width = "35px";
             playerEl.style.height = "35px";
             playerEl.style.borderRadius = "50%";
-            playerEl.style.backgroundColor = id === this.playerId ? "blue" : "red";
+            playerEl.style.backgroundColor = colors[index % colors.length];
 
             let t = Math.min((now - player.timestamp) / 50, 1);
             let interpolatedX = player.lastX + (player.x - player.lastX) * t;

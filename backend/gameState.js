@@ -29,6 +29,7 @@ export default class GameState {
         ];
 
         this.gameOver = false;
+        this.gamePaused = false;
     }
 
     generateCollectables() {
@@ -55,7 +56,6 @@ export default class GameState {
             isJumping: false,
             points: 0,
         };
-        console.log("players after add:", this.players);
     }
 
     updatePlayerName(playerId, name) {
@@ -68,13 +68,16 @@ export default class GameState {
     }
 
     removePlayer(playerId) {
-        console.log("removePlayer called")
         delete this.players[playerId];
-        console.log("players after removePlayer:", this.players)
+    }
+
+    getPlayerName(playerId) {
+        return this.players[playerId].name
     }
 
     updatePlayer(playerId, input) {
         if (this.gameOver) return;
+        if (this.gamePaused) return;
 
         let player = this.players[playerId];
         if (!player) return;
@@ -159,6 +162,14 @@ export default class GameState {
         if (player.x > 1242) {
             player.x = 1242;
         }
+    }
+
+    pauseGame() {
+        this.gamePaused = true;
+    }
+
+    unpauseGame() {
+        this.gamePaused = false;
     }
 
     endGame() {

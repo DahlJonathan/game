@@ -1,11 +1,10 @@
-// ./backend/server.js
-
 import { WebSocketServer } from 'ws';
 import { PORT } from './config.js';
 import GameState from './gameState.js';
 
 const wss = new WebSocketServer({ port: PORT });
 const gameState = new GameState();
+let gameInterval = null;
 
 wss.on('connection', (ws) => {
     let playerId = null;
@@ -17,7 +16,7 @@ wss.on('connection', (ws) => {
         if (data.type === 'joinLobby') {
             playerId = Math.random().toString(36).substring(2, 11);
             gameState.addPlayer(playerId);
-            console.log(`${data.playerName} joined ${data.room}!`)
+            console.log(`${data.playerName} joined the game!`)
             gameState.updatePlayerName(playerId, data.playerName);
             if (Object.keys(gameState.players).length === 1) {
                 gameState.players[playerId].isLead = true;
@@ -46,15 +45,17 @@ wss.on('connection', (ws) => {
                         client.send(initMessage);
                     }
                 });
-                console.log("Game started, sending initial state:", gameState.getGameState());
+                startGameLoop();
             }
         }
         if (data.type === "input") {
             gameState.updatePlayer(playerId, data.input);
         }
         if (data.type === "pause") {
-            console.log("Game paused");
-            const pauseMessage = JSON.stringify({ type: 'pause' });
+            let playerName = gameState.getPlayerName(playerId);
+            gameState.pauseGame();
+            stopGameLoop();
+            const pauseMessage = JSON.stringify({ type: 'pauseGame', pausedPlayer: playerName });
             wss.clients.forEach(client => {
                 if (client.readyState === client.OPEN) {
                     client.send(pauseMessage);
@@ -62,8 +63,9 @@ wss.on('connection', (ws) => {
             });
         }
         if (data.type === "unPause") {
-            console.log("Game unpaused");
-            const unPauseMessage = JSON.stringify({ type: 'unPause' });
+            gameState.unpauseGame();
+            startGameLoop();
+            const unPauseMessage = JSON.stringify({ type: 'unPauseGame', pausedPlayer: "" });
             wss.clients.forEach(client => {
                 if (client.readyState === client.OPEN) {
                     client.send(unPauseMessage);
@@ -104,11 +106,24 @@ wss.on('connection', (ws) => {
     });
 });
 
-// Send game state updates every 50ms
-setInterval(() => {
-    const state = JSON.stringify({ type: 'update', state: gameState.getGameState() });
-    wss.clients.forEach(client => client.send(state));
-    //console.log("Sending game state update:", gameState.getGameState());
-}, 50);
+function startGameLoop() {
+    if (!gameInterval) {
+        gameInterval = setInterval(() => {
+            const state = JSON.stringify({ type: 'update', state: gameState.getGameState() });
+            wss.clients.forEach(client => {
+                if (client.readyState === client.OPEN) {
+                    client.send(state);
+                }
+            });
+        }, 50);
+    }
+}
+
+function stopGameLoop() {
+    if (gameInterval) {
+        clearInterval(gameInterval);
+        gameInterval = null;
+    }
+}
 
 console.log(`WebSocket server running on port ${PORT}`);
