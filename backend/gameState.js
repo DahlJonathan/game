@@ -35,7 +35,7 @@ export default class GameState {
     }
 
     generateCollectables() {
-        return Array.from({ length: 60 }, () => ({
+        return Array.from({ length: 50 }, () => ({
             x: Math.random() * 1200,
             y: Math.random() * 500,
             width: 25,

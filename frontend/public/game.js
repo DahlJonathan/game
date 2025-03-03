@@ -151,10 +151,9 @@ export default class Game {
                 collectableEl.style.width = `${collectable.width}px`;
                 collectableEl.style.height = `${collectable.height}px`;
                 collectableEl.style.backgroundImage = `url(${this.collectablesImage})`;
-                collectableEl.style.borderRadius = "50%";
+                //collectableEl.style.borderRadius = "50%";
                 collectableEl.style.backgroundSize = "cover";
                 gameArea.appendChild(collectableEl);
-                // console.log("Rendered collectable:", collectable);
             }
         });
 
