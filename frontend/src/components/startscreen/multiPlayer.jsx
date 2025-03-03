@@ -82,10 +82,10 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
                 className="p-2 font-bold text-center text-black rounded-lg mb-2 bg-white"
                 placeholder="Username"
             />
-
+            <p>Choose server</p>
             {/* Game Room Selection */}
-            <div className="mb-6">
-                {["room 1", "room 2", "room 3"].map((room) => (
+            <div>
+                {["Server 1"].map((room) => (
                     <button
                         key={room}
                         onClick={() => onGameRoomSelect(room)}
@@ -97,15 +97,6 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
                     </button>
                 ))}
             </div>
-
-            {/* Player List */}
-            <h2 className="text-xl mb-2">Players in Room: {players.length}/4</h2>
-            <ul className="mb-4">
-                {players.map((player, index) => (
-                    <li key={index} className="text-lg">{player.name} {player.isReady ? '(Ready)' : ''}</li>
-                ))}
-            </ul>
-
             {/* Join Button */}
             <button
                 onClick={handleJoin}
@@ -116,8 +107,16 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
                         : "bg-gray-500 cursor-not-allowed"
                 } text-white`}
             >
-                {players.length < 4 ? "Join Game" : "Room Full"}
+                {players.length < 4 ? "Join Server" : "Server Full"}
             </button>
+
+            {/* Player List */}
+            <h2 className="text-xl mb-2">Players on server: {players.length}/4</h2>
+            <ul className="mb-4">
+                {players.map((player, index) => (
+                    <li key={index} className="text-lg">{player.name} {player.isReady ? '(Ready)' : ''}</li>
+                ))}
+            </ul>
 
             {/* Ready Button */}
             <button
