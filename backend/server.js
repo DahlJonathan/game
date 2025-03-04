@@ -19,7 +19,7 @@ wss.on('connection', (ws) => {
                 ws.send(JSON.stringify({ type: 'error', message: 'Player name already exists' }));
                 return;
             }
-
+            
             playerId = Math.random().toString(36).substring(2, 11);
             gameState.addPlayer(playerId);
             console.log(`${data.playerName} joined the game!`)
@@ -98,11 +98,19 @@ wss.on('connection', (ws) => {
         if (playerId) {
             gameState.removePlayer(playerId);
             console.log(`Player ${playerId} disconnected`);
+    
+            // Assign a new leader if the current leader leaves
+            const remainingPlayerIds = Object.keys(gameState.players);
+            if (remainingPlayerIds.length > 0) {
+                const newLeaderId = remainingPlayerIds[0]; // First remaining player becomes leader
+                gameState.players[newLeaderId].isLead = true;
+            }
+    
             const deleteMessage = JSON.stringify({
-                type: 'delete',
+                type: 'lobbyUpdate',
                 state: gameState.getGameState(),
-                playerId,
             });
+    
             wss.clients.forEach(client => {
                 if (client.readyState === client.OPEN) {
                     client.send(deleteMessage);
@@ -110,6 +118,7 @@ wss.on('connection', (ws) => {
             });
         }
     });
+    
 });
 
 function startGameLoop() {

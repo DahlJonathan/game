@@ -6,20 +6,29 @@ import Scoreboard from "../gameinfo/scoreboard";
 import Timer from "../gameinfo/timer";
 import Fps from "../gameinfo/fps";
 
-const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, onBack, scoreboard, onPause }) => {
+const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPause }) => {
     const [playerName, setPlayerName] = useState("");
     const [isReady, setIsReady] = useState(false);
     const [players, setPlayers] = useState([]);
     const [gameStarted, setGameStarted] = useState(false);
     const [gamePaused, setGamePaused] = useState(false);
     const [message, setMessage] = useState("");
+    const [lobbyLeader, setLobbyLeader] = useState(null);
 
     useEffect(() => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.type === 'lobbyUpdate') {
-                setPlayers(Object.values(data.state.players));
-                setMessage("");
+                const updatedPlayers = Object.values(data.state.players);
+                setPlayers(updatedPlayers);
+    
+                // Find the leader from the players list
+                const leader = updatedPlayers.find(player => player.isLead);
+                setLobbyLeader(leader);
+    
+                console.log("Updated players:", updatedPlayers); // Debugging
+                console.log("Lobby leader:", leader); // Debugging
+                
             } else if (data.type === 'init') {
                 setGameStarted(true);
             } else if (data.type === 'pause') {
@@ -27,7 +36,11 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
             } else if (data.type === 'unPause') {
                 setGamePaused(false);
             } else if (data.type === 'playerJoined' || data.type === 'playerLeft') {
-                setPlayers(Object.values(data.state.players));
+                const updatedPlayers = Object.values(data.state.players);
+                setPlayers(updatedPlayers);
+                if (updatedPlayers.length > 0) {
+                    setLobbyLeader(updatedPlayers[0]);
+                }
             } else if (data.type === 'error') {
                 setMessage(data.message);
             }
@@ -42,7 +55,8 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
             !players.some(player => player.name === playerName.trim())
         ) {
             ws.send(JSON.stringify({ type: 'joinLobby', playerName, room: selectedRoom }));
-            setPlayerName("");
+            setPlayerName(playerName.trim());
+            setMessage("");
         } else {
             setMessage("Username already taken");
         }
@@ -76,6 +90,12 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
             </>
         );
     }
+
+    console.log("Current player name:", playerName);
+    console.log("Lobby leader name:", lobbyLeader ? lobbyLeader.name : "No leader");
+    console.log("Players ready:", players.every(player => player.isReady));
+    console.log("Total players:", players.length);
+
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
@@ -130,7 +150,9 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
                         <h2 className="text-xl mb-2">Players on server: {players.length}/4</h2>
                         <ul className="mb-4">
                             {players.map((player, index) => (
-                                <li key={index} className="text-lg">{player.name} {player.isReady ? '(Ready)' : ''}</li>
+                                <li key={index} className="text-lg">
+                                    {player.name} {player.isReady ? '(R)' : ''} {lobbyLeader?.name === player.name ? '(Leader)' : ''}
+                                </li>
                             ))}
                         </ul>
                     </div>
@@ -154,17 +176,21 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
                 >
                     Back
                 </button>
-
                 {/* Start Game Button */}
                 <button
                     onClick={handleStartGame}
-                    disabled={players.length < 2 || !players.every(player => player.isReady)}
+                    disabled={!lobbyLeader || lobbyLeader.name !== playerName || players.length < 2 || !players.every(player => player.isReady)}
                     className={`px-4 py-3 font-bold rounded-lg transition ${
-                        players.length >= 2 && players.every(player => player.isReady) ? "bg-green-500 hover:bg-green-700" : "bg-gray-500 cursor-not-allowed"
+                        lobbyLeader && lobbyLeader.name === playerName && players.length >= 2 && players.every(player => player.isReady)
+                            ? "bg-green-500 hover:bg-green-700"
+                            : "bg-gray-500 cursor-not-allowed"
                     } text-white`}
                 >
                     Start Game
                 </button>
+
+
+
             </div>
         </div>
     );
