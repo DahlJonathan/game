@@ -25,9 +25,6 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
                 const leader = updatedPlayers.find(player => player.isLead);
                 setLobbyLeader(leader);
     
-                console.log("Updated players:", updatedPlayers); // Debugging
-                console.log("Lobby leader:", leader); // Debugging
-                
             } else if (data.type === 'init') {
                 setGameStarted(true);
             } else if (data.type === 'pause') {
@@ -89,11 +86,6 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
             </>
         );
     }
-
-    console.log("Current player name:", playerName);
-    console.log("Lobby leader name:", lobbyLeader ? lobbyLeader.name : "No leader");
-    console.log("Players ready:", players.every(player => player.isReady));
-    console.log("Total players:", players.length);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
