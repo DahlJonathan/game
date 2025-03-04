@@ -51,6 +51,7 @@ wss.on('connection', (ws) => {
                         client.send(initMessage);
                     }
                 });
+                gameState.unpauseGame();
                 startGameLoop();
             }
         }
@@ -79,12 +80,14 @@ wss.on('connection', (ws) => {
             });
         }
         if (data.type === "quitGame") {
+            let playerName = gameState.getPlayerName(playerId);
             gameState.removePlayer(playerId);
-            console.log(`Player ${playerId} disconnected`);
+            console.log(`Player ${playerName} disconnected`);
             const deleteMessage = JSON.stringify({
                 type: 'delete',
                 state: gameState.getGameState(),
                 playerId,
+                playerName,
             });
             wss.clients.forEach(client => {
                 if (client.readyState === client.OPEN) {
