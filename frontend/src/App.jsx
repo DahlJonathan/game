@@ -11,8 +11,8 @@ import PauseScreen from "./components/pausescreen/pauseScreen.jsx";
 import HowToPlay from "./components/startscreen/howToPlay.jsx";
 
 function App() {
-  const [gameMode, setGameMode] = useState(null);  
-  const [startGame, setStartGame] = useState(false);  
+  const [gameMode, setGameMode] = useState(null);
+  const [startGame, setStartGame] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [players, setPlayers] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
@@ -20,6 +20,8 @@ function App() {
   const [reset, setReset] = useState(false);
   const [playerName, setPlayerName] = useState("");
   const [pausedPlayer, setPausedPlayer] = useState("");
+  const [leftGame, setLeftGame] = useState(false);
+  const [playerLeft, setPlayerLeft] = useState("");
   const [gameRooms, setGameRooms] = useState({
     "room 1": [],
     "room 2": [],
@@ -34,22 +36,22 @@ function App() {
         [selectedRoom]: [...gameRooms[selectedRoom], name],
       });
       setPlayers([...gameRooms[selectedRoom], name]);
-      setPlayerName(name); 
+      setPlayerName(name);
     }
-    ws.send(JSON.stringify({ type: "joinLobby", playerName: name, room: selectedRoom}));
+    ws.send(JSON.stringify({ type: "joinLobby", playerName: name, room: selectedRoom }));
   };
 
   const quit = () => {
     setGameRooms((prevGameRooms) => ({
       ...prevGameRooms,
-       [selectedRoom]: [],
-     }));
-     setPlayers([]);
-     setGameMode(null);
-     setStartGame(false);
-     setIsPaused(false);
-     setShowPauseScreen(false);
-     ws.send(JSON.stringify({ type: "quitGame" }));
+      [selectedRoom]: [],
+    }));
+    setPlayers([]);
+    setGameMode(null);
+    setStartGame(false);
+    setIsPaused(false);
+    setShowPauseScreen(false);
+    ws.send(JSON.stringify({ type: "quitGame" }));
   }
 
   const back = () => {
@@ -108,42 +110,51 @@ function App() {
         setScoreboard(updatedScoreboard);
       }
       if (data.type === "unPauseGame") {
-          setIsPaused(false);
-          setShowPauseScreen(false);
-          setPausedPlayer("");
+        setIsPaused(false);
+        setShowPauseScreen(false);
+        setPausedPlayer("");
+        setLeftGame(false);
+        setPlayerLeft("");
       }
       if (data.type === "pauseGame") {
         setIsPaused(true);
         setShowPauseScreen(true);
         setPausedPlayer(data.pausedPlayer);
       }
+      if (data.type === "delete") {
+        setLeftGame(true);
+        setPlayerLeft(data.playerName);
+      }
     };
-  
+
     ws.addEventListener("message", handleMessage);
-  
+
     return () => {
       ws.removeEventListener("message", handleMessage);
     };
   }, []);
-  
+
   return (
     <div className="relative">
-      {!gameMode? (
+      {!gameMode ? (
         <StartScreen
           onSinglePlayer={() => setGameMode("single")}
           onMultiPlayer={() => setGameMode("multi")}
           onHowToPlay={() => setGameMode("howtoplay")}
         />
-      ) : gameMode === "howtoplay"? (
+      ) : gameMode === "howtoplay" ? (
         <HowToPlay onBack={back} />
-      ) : gameMode === "single"? (
+      ) : gameMode === "single" ? (
         <SinglePlayer onBack={back} />
-      ) :!startGame? (
+      ) : !startGame ? (
         <>
-        {isPaused? (
+          {isPaused ? (
             <div className="absolute inset-0">
               <PauseScreen
-                playerName={pausedPlayer}
+                playerName={playerName}
+                pausedPlayer={pausedPlayer}
+                playerLeft={playerLeft}
+                leftGame={leftGame}
                 onContinue={handleContinue}
                 onQuit={quit}
                 onRestart={restart}
@@ -151,20 +162,20 @@ function App() {
               />
             </div>
           ) : null}
-        <MultiPlayer
-          onGameRoomSelect={setSelectedRoom}
-          selectedRoom={selectedRoom}
-          players={players}
-          onJoinGame={handleJoinGame}
-          onGameStart={() => {
-            if (gameRooms[selectedRoom].length >= 1) {
-              setStartGame(true);
-            }
-          }}
-          onBack={back}
-          scoreboard={scoreboard}
-          onPause={isPaused}
-        />
+          <MultiPlayer
+            onGameRoomSelect={setSelectedRoom}
+            selectedRoom={selectedRoom}
+            players={players}
+            onJoinGame={handleJoinGame}
+            onGameStart={() => {
+              if (gameRooms[selectedRoom].length >= 1) {
+                setStartGame(true);
+              }
+            }}
+            onBack={back}
+            scoreboard={scoreboard}
+            onPause={isPaused}
+          />
         </>
       ) : (
         <>
@@ -175,8 +186,8 @@ function App() {
             </div>
           </div>
           <Timer>
-          <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
-        </Timer>
+            <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
+          </Timer>
         </>
       )}
     </div>
