@@ -1,4 +1,3 @@
-// ./frontend/src/components/startscreen/multiplayer.jsx
 import React, { useState, useEffect } from "react";
 import ws from "../../../public/websocket";
 import GameWrapper from "../../GameWrapper";
@@ -80,7 +79,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
             <>
                 <div className="flex flex-col items-center justify-center h-screen w-full">
                     <GameWrapper players={players} reset={handleRestart} playerName={playerName} />
-                    <div className="w-[60vw] w-[1280px]">
+                    <div className="w-[60vw] max-w-[1280px]">
                         <Scoreboard players={scoreboard} />
                     </div>
                 </div>
@@ -96,13 +95,12 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
     console.log("Players ready:", players.every(player => player.isReady));
     console.log("Total players:", players.length);
 
-
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
             <h1 className="font-bold text-3xl mb-3">Join a Game Room!</h1>
 
-            <div className="flex w-full justify-center items-start">
-                <div className="flex flex-col items-center w-1/4">
+            <div className="flex flex-col md:flex-row w-full justify-center items-start">
+                <div className="flex flex-col items-center w-full md:w-1/4 p-4">
                     {/* Username Input */}
                     <h2 className="font-bold text-xl mb-3">Enter Unique Username</h2>
                     <input
@@ -144,9 +142,9 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
                     </div>
                 </div>
 
-                <div className="flex flex-col items-center w-1/4">
+                <div className="flex flex-col items-center w-full md:w-1/4 p-4">
                     {/* Player List */}
-                    <div className="border-2 border-white p-4 rounded-lg mb-4 w-[230px] h-[200px]">
+                    <div className="border-2 border-white p-4 rounded-lg mb-4 max-w-[240px] h-[200px]">
                         <h2 className="text-xl mb-2">Players on server: {players.length}/4</h2>
                         <ul className="mb-4">
                             {players.map((player, index) => (
@@ -188,9 +186,6 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
                 >
                     Start Game
                 </button>
-
-
-
             </div>
         </div>
     );
