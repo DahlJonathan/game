@@ -168,6 +168,11 @@ export default class Game {
             playerEl.style.height = "35px";
             playerEl.style.borderRadius = "50%";
             playerEl.style.backgroundColor = colors[index % colors.length];
+            playerEl.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.3)"; // Add shadow for 3D effect
+            playerEl.style.background = id === this.playerId 
+                ? "radial-gradient(circle at 30% 30%, #4a90e2, #003366)" // Gradient for blue player
+                : "radial-gradient(circle at 30% 30%, #e24a4a, #660000)"; // Gradient for red player
+
 
             let t = Math.min((now - player.timestamp) / 50, 1);
             let interpolatedX = player.lastX + (player.x - player.lastX) * t;

@@ -1,5 +1,3 @@
-### Root README.md
-
 # web-game
 
 ## Description
@@ -7,7 +5,8 @@
 Real-time multiplayer web game using React for menus and vanilla JavaScript for the game logic. The game does not use canvas.
 
 ## Stack
-Node.js, Express, WebSocket, JavaScript, HTML, CSS....
+
+Node.js, Express, WebSocket, JavaScript, HTML, CSS.
 
 ## Project Structure
 
@@ -16,13 +15,11 @@ web-game
 ├── backend/   
 │   ├── config.js         # Configuration (port, network settings)       
 │   ├── gameState.js      # Rules, scoring, and updates
-│   ├── idGenerator.js    # Unique ID generation logic
 │   ├── README.md         # Backend documentation
 │   ├── server.js         # WebSocket server, game state management
 │
 ├── docs/          
 │   ├── logic.txt         # Logic of the game
-│   ├── plan.txt          # What needs to be done
 │   ├── review_kohdat.txt # Everything must be implemented and working properly
 │
 ├── frontend/
@@ -33,27 +30,27 @@ web-game
 │   │   ├── websocket.js  # Handles WebSocket connections
 │   ├── src/
 │   │   ├── components/
-                collectables/
-                collectable.jsx
+│   │   │   ├── collectables/
+│   │   │   │   ├── collectable.jsx
 │   │   │   ├── gameinfo/
+│   │   │   │   ├── fps.jsx
 │   │   │   │   ├── scoreboard.jsx  # Displays the scoreboard
 │   │   │   │   ├── timer.jsx       # Displays the game timer
 │   │   │   ├── pausescreen/
 │   │   │   │   ├── pausescreen.jsx # Displays the pause screen
 │   │   │   ├── startscreen/
+│   │   │   │   ├── howToPlay.jsx
 │   │   │   │   ├── multiplayer.jsx # Handles multiplayer start screen
 │   │   │   │   ├── singleplayer.jsx# Handles singleplayer start screen
 │   │   │   │   ├── startscreen.jsx # Displays the start screen
-│   │   │   ├── GameArea.jsx        # Renders the game area
-│   │   │   ├── GameWrapper.jsx     # Wraps the game area and loads the game script
+│   ├── images/
 │   │   ├── App.jsx                 # Main React component
+│   │   ├── GameWrapper.jsx         # Wraps the game area and loads the game script
 │   │   ├── main.css                # Main CSS file
 │   │   ├── main.jsx                # Entry point for the React application
-│   │   ├── styles.css              # Additional styles
 │   ├── .gitignore                  # Ignore node_modules
 │   ├── eslint.config.js            # ESLint configuration
 │   ├── index.html                  # HTML template
-│   ├── main.css                    # Main CSS file
 │   ├── package-lock.json           # Lock file for npm dependencies
 │   ├── package.json                # Project metadata and dependencies
 │   ├── postcss.config.mjs          # PostCSS configuration
@@ -68,29 +65,14 @@ web-game
 ├── README.md                        # Project documentation
 ```
 
-## Installation
-
-1. Clone the repository:
-    ```sh
-    git clone https://gitea.koodsisu.fi/akiheiskanen/web-game.git
-    cd web-game
-    ```
-
-2. Install the dependencies in the root directory:
-    ```sh
-    npm install
-    ```
-
-3. Install the dependencies in the frontend directory:
-    ```sh
-    cd frontend
-    npm install
-    cd ..
-    ```
-
 ## How to Run
 
-1. Start the backend server from the root directory:
+1. Install the dependencies in `/web-game/` and in `/web-game/frontend`:
+    ```sh
+    npm install
+    ```
+
+2. Start frontend and backend servers in `/web-game/`:
     ```sh
     npm start
     ```
