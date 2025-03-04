@@ -1,4 +1,3 @@
-// frontend/public/game.js+
 import ws from "./websocket.js";
 
 export default class Game {
@@ -24,7 +23,8 @@ export default class Game {
         this.gameArea.style.maxHeight = "570px";
         this.gameContainer.appendChild(this.gameArea);
 
-        requestAnimationFrame(() => this.render());
+        this.lastRenderTime = 0;
+        this.fpsInterval = 1000 / 60; // 60 FPS
 
         this.boundKeyDown = (event) => this.handleKeyChange(event, true);
         this.boundKeyUp = (event) => this.handleKeyChange(event, false);
@@ -32,6 +32,8 @@ export default class Game {
         document.addEventListener("keyup", this.boundKeyUp);
 
         this.ws.addEventListener("message", (event) => this.handleServerMessage(event));
+
+        requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
     }
 
     handleKeyChange(event, isPressed) {
@@ -89,9 +91,7 @@ export default class Game {
             const idToDelete = data.playerId;
             delete this.players[idToDelete];
             document.querySelectorAll(`.player-${idToDelete}`).forEach(el => el.remove());
-        } //else if (data.type === "gameOver") {
-        //  alert(`Game Over! Winner: ${data.winner} with ${data.points} points`);
-        //}
+        }
     }
 
     destroy() {
@@ -112,6 +112,17 @@ export default class Game {
 
         this.players = {};
         console.log("players after destroying:", this.players);
+    }
+
+    gameLoop(timestamp) {
+        const elapsed = timestamp - this.lastRenderTime;
+
+        if (elapsed > this.fpsInterval) {
+            this.lastRenderTime = timestamp - (elapsed % this.fpsInterval);
+            this.render();
+        }
+
+        requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
     }
 
     render() {
@@ -178,7 +189,5 @@ export default class Game {
 
             gameArea.appendChild(playerEl);
         }
-
-        requestAnimationFrame(() => this.render());
     }
 }
