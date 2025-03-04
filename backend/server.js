@@ -14,6 +14,12 @@ wss.on('connection', (ws) => {
     ws.on('message', (message) => {
         const data = JSON.parse(message);
         if (data.type === 'joinLobby') {
+            const existingPlayer = Object.values(gameState.players).find(player => player.name === data.playerName.trim());
+            if (existingPlayer) {
+                ws.send(JSON.stringify({ type: 'error', message: 'Player name already exists' }));
+                return;
+            }
+
             playerId = Math.random().toString(36).substring(2, 11);
             gameState.addPlayer(playerId);
             console.log(`${data.playerName} joined the game!`)
