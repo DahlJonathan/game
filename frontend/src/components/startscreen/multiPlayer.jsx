@@ -13,6 +13,9 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
     const [gamePaused, setGamePaused] = useState(false);
     const [message, setMessage] = useState("");
     const [lobbyLeader, setLobbyLeader] = useState(null);
+      const [isPaused, setIsPaused] = useState(false);
+        const [reset, setReset] = useState(false);
+          const [timeEnd, setTimeEnd] = useState(false);
 
     useEffect(() => {
         ws.onmessage = (event) => {
@@ -80,9 +83,9 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
                         <Scoreboard players={scoreboard} />
                     </div>
                 </div>
-                <Timer isPaused={onPause}>
-                    <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
-                </Timer>
+                <Timer setTimeEnd={setTimeEnd} reset={reset} isPaused={isPaused}>
+            <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
+          </Timer>
             </>
         );
     }

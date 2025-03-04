@@ -1,34 +1,43 @@
 import React, { useEffect, useState } from "react";
 import ws from "../../../public/websocket";
 
-function Timer({ children, isPaused }) {
-    const [timer, setTimer] = useState(60);
-    const [gameStartTimer, setGameStartTimer] = useState(1);  
+function Timer({ children, setTimeEnd, reset, isPaused }) {
+    const [timer, setTimer] = useState(10);
+    const [gameStartTimer, setGameStartTimer] = useState(3);  
     const [gameStartedNow, setGameStartedNow] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
+    
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (gameStartTimer > 0) {
+            if (!isPaused && timer === 0) {
+                clearInterval(interval);
+                setTimeEnd(true);
+            } else if (gameStartTimer > 0) {
                 setGameStartTimer((prev) => prev - 1);
                 ws.send(JSON.stringify({ type: "waitForStart" }));
             } else if (!gameStartedNow) {
                 setGameStartedNow(true);
                 setGameStarted(true);  
                 ws.send(JSON.stringify({ type: "startGame" }));
-            }
-
-            if (gameStartTimer === 0) {
+            } else if (gameStartTimer === 0) {
                 setGameStartTimer(null); 
-            }
-
-            if (gameStartedNow && timer > 0 && !isPaused) {
+            } else if (gameStartedNow && timer > 0 && !isPaused) {
                 setTimer((prev) => prev - 1);
             }
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [gameStartTimer, gameStartedNow, timer, gameStarted, isPaused]);
+    }, [gameStartTimer, gameStartedNow, timer, gameStarted, setTimeEnd, isPaused]);
+
+
+    useEffect(() => {
+        if (reset) {
+            setTimer(60);
+            setGameStartTimer(10);
+            setGameStartedNow(false);
+        }
+    })
 
     return (
         <div>
