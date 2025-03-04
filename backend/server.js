@@ -1,10 +1,28 @@
+// filepath: /home/student/web-game/backend/server.js
+import express from 'express';
 import { WebSocketServer } from 'ws';
 import { PORT } from './config.js';
 import GameState from './gameState.js';
+import path from 'path';
 
-const wss = new WebSocketServer({ port: PORT });
+const app = express();
+const wss = new WebSocketServer({ noServer: true });
 const gameState = new GameState();
 let gameInterval = null;
+
+app.get('/favicon.ico', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
+});
+
+const server = app.listen(PORT, () => {
+    console.log(`HTTP server running on port ${PORT}`);
+});
+
+server.on('upgrade', (request, socket, head) => {
+    wss.handleUpgrade(request, socket, head, (ws) => {
+        wss.emit('connection', ws, request);
+    });
+});
 
 wss.on('connection', (ws) => {
     let playerId = null;
