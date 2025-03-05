@@ -4,8 +4,11 @@ export default class GameState {
         this.collectables = [];
         this.collectablesImage = 'src/images/gem.png';
         this.platformImage = 'src/images/platform.jpg';
+        this.playerImage = 'src/images/1.png';
         //this.collectablesImage = '/gem.png'; for netlify
         //this.platformImage = '/platform.jpg'; for netlify
+        //this.playerImage = '1.png';
+
         this.gravity = 2;
         this.jumpStrength = 25;
         this.platforms = [
@@ -227,7 +230,10 @@ export default class GameState {
             collectables: this.collectables, 
             gameOver: this.gameOver, 
             platformImage: this.platformImage, 
-            collectablesImage: this.collectablesImage 
+            collectablesImage: this.collectablesImage, 
+            playerImage: this.playerImage,
+            collectablesImage: this.collectablesImage, 
+            playerImage: this.playerImage
         };
     }
 }

@@ -1,6 +1,3 @@
-### Backend `README.md`
-
-```markdown
 # Backend Documentation
 
 ## Overview
@@ -13,7 +10,6 @@ The backend of this project is responsible for handling real-time communication 
 backend/
 ├── config.js          # Configuration (port, network settings)
 ├── gameState.js       # Rules, scoring, and updates
-├── idGenerator.js     # Unique ID generation logic
 ├── server.js          # WebSocket server, game state management
 └── README.md          # Backend documentation
 ```
@@ -23,12 +19,6 @@ backend/
 ### `config.js`
 
 This file contains configuration settings for the backend server.
-
-## Game State
-
-### `gameState.js`
-
-This file defines the initial game state and functions to update the game state based on player actions.
 
 ## ID Generation
 
@@ -44,17 +34,12 @@ This file sets up the WebSocket server using Express and WebSocket. It handles c
 
 ## How to Run
 
-1. Ensure you are in the `web-game` directory:
-    ```sh
-    cd web-game
-    ```
-
-2. Install the dependencies:
+1. Install the dependencies in `/web-game/` and in `/web-game/frontend`:
     ```sh
     npm install
     ```
 
-3. Start the backend server:
+2. Start frontend and backend servers in `/web-game/`:
     ```sh
     npm start
     ```

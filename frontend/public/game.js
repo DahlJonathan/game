@@ -72,6 +72,7 @@ export default class Game {
             this.platformImage = data.state.platformImage;
             this.collectables = data.state.collectables;
             this.collectablesImage = data.state.collectablesImage;
+            this.playerImage = data.state.playerImage; // Add player image URL
             console.log("Received initial game state:", data.state);
         } else if (data.type === "update") {
             for (const [id, playerData] of Object.entries(data.state.players)) {
@@ -170,15 +171,16 @@ export default class Game {
         const now = Date.now();
         // Render each player
         for (const [index, [id, player]] of Object.entries(Object.entries(this.players))) {
-            const colors = ["green", "blue", "red", "yellow"];
             let playerEl = document.createElement("div");
             // Add a generic class plus a unique one
             playerEl.classList.add("player", `player-${id}`);
             playerEl.style.position = "absolute";
             playerEl.style.width = "35px";
             playerEl.style.height = "35px";
-            playerEl.style.borderRadius = "50%";
-            playerEl.style.backgroundColor = colors[index % colors.length];
+            playerEl.style.backgroundImage = `url(${this.playerImage})`; // Set player image
+            playerEl.style.backgroundSize = "cover";
+            playerEl.style.backgroundPosition = "center";
+            //playerEl.style.backgroundRepeat = "no-repeat";
 
             let t = Math.min((now - player.timestamp) / 50, 1);
             let interpolatedX = player.lastX + (player.x - player.lastX) * t;
