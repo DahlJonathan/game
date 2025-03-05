@@ -6,7 +6,8 @@ export default class GameState {
         this.platformImage = '/platform.jpg';
         //this.collectablesImage = '/gem.png'; for netlify
         //this.platformImage = '/platform.jpg'; for netlify
-        this.playerImage = '/1.png';
+        //this.playerImage = '/1.png';
+        this.playerImage = 'src/images/1.png';
         this.gravity = 2;
         this.jumpStrength = 25;
         this.platforms = [
