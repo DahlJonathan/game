@@ -32,7 +32,7 @@ const GameWrapper = () => {
           id="game-container"
           className="relative w-[90vw] border border-black rounded-lg mt-15 bg-cover bg-center"
           /* style={{ backgroundImage: 'url(/background.png)' }} */ //for netlify
-          style={{ backgroundImage: 'url(/background.png)' }}
+          style={{ backgroundImage: 'url(src/images/background.png)' }}
         >                 
        
         </div>

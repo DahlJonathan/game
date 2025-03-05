@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import StartScreen from "./components/startscreen/startScreen.jsx";
 import SinglePlayer from "./components/startscreen/singlePlayer.jsx";
-import MultiPlayer from "./components/startscreen/multiPlayer.jsx";
+import MultiPlayer from "./components/startscreen/multiplayer.jsx";
 import GameWrapper from "./GameWrapper.jsx";
 import ws from "../public/websocket.js";
 import Scoreboard from "./components/gameinfo/scoreboard.jsx";

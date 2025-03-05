@@ -2,8 +2,8 @@ export default class GameState {
     constructor() {
         this.players = {};
         this.collectables = [];
-        this.collectablesImage = '/gem.png';
-        this.platformImage = '/platform.jpg';
+        this.collectablesImage = 'src/images/gem.png';
+        this.platformImage = 'src/images/platform.jpg';
         //this.collectablesImage = '/gem.png'; for netlify
         //this.platformImage = '/platform.jpg'; for netlify
         this.gravity = 2;
