@@ -11,17 +11,16 @@ function Timer({ children, isPaused, onTimeUp, onQuit }) {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (!isPaused && timer === 0) {
-                clearInterval(interval);
-                setTimeEnd(true);
-            } else if (gameStartTimer > 0) {
+            if (gameStartTimer > 0) {
                 setGameStartTimer((prev) => prev - 1);
                 ws.send(JSON.stringify({ type: "waitForStart" }));
             } else if (!gameStartedNow) {
                 setGameStartedNow(true);
                 setGameStarted(true);  
                 ws.send(JSON.stringify({ type: "startGame" }));
-            } else if (gameStartTimer === 0) {
+            }
+
+            if (gameStartTimer === 0) {
                 setGameStartTimer(null); 
             }
 

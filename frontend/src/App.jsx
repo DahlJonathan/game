@@ -9,11 +9,10 @@ import Timer from "./components/gameinfo/timer.jsx";
 import Fps from "./components/gameinfo/fps.jsx";
 import PauseScreen from "./components/pausescreen/pauseScreen.jsx";
 import HowToPlay from "./components/startscreen/howToPlay.jsx";
-import EndScreen from "./components/endscreen/endScreen.jsx";
 
 function App() {
-  const [gameMode, setGameMode] = useState(null);  
-  const [startGame, setStartGame] = useState(false);  
+  const [gameMode, setGameMode] = useState(null);
+  const [startGame, setStartGame] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [players, setPlayers] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
@@ -23,7 +22,6 @@ function App() {
   const [pausedPlayer, setPausedPlayer] = useState("");
   const [leftGame, setLeftGame] = useState(false);
   const [playerLeft, setPlayerLeft] = useState("");
-  const [timeEnd, setTimeEnd] = useState(false);
   const [gameRooms, setGameRooms] = useState({
     "room 1": [],
     "room 2": [],
@@ -38,23 +36,22 @@ function App() {
         [selectedRoom]: [...gameRooms[selectedRoom], name],
       });
       setPlayers([...gameRooms[selectedRoom], name]);
-      setPlayerName(name); 
-      setTimeEnd(false);
+      setPlayerName(name);
     }
-    ws.send(JSON.stringify({ type: "joinLobby", playerName: name, room: selectedRoom}));
+    ws.send(JSON.stringify({ type: "joinLobby", playerName: name, room: selectedRoom }));
   };
 
   const quit = () => {
     setGameRooms((prevGameRooms) => ({
       ...prevGameRooms,
-       [selectedRoom]: [],
-     }));
-     setPlayers([]);
-     setGameMode(null);
-     setStartGame(false);
-     setIsPaused(false);
-     setShowPauseScreen(false);
-     ws.send(JSON.stringify({ type: "quitGame" }));
+      [selectedRoom]: [],
+    }));
+    setPlayers([]);
+    setGameMode(null);
+    setStartGame(false);
+    setIsPaused(false);
+    setShowPauseScreen(false);
+    ws.send(JSON.stringify({ type: "quitGame" }));
   }
 
   const back = () => {
@@ -76,7 +73,6 @@ function App() {
   };
 
   useEffect(() => {
-
     const handleEscKey = (e) => {
       if (e.key === "Escape") {
         setIsPaused((prev) => {
@@ -87,7 +83,8 @@ function App() {
         });
       }
     };
-        window.addEventListener("keydown", handleEscKey);
+
+    window.addEventListener("keydown", handleEscKey);
 
     return () => {
       window.removeEventListener("keydown", handleEscKey);
@@ -112,7 +109,6 @@ function App() {
         }));
         setScoreboard(updatedScoreboard);
       }
-
       if (data.type === "unPauseGame") {
         setIsPaused(false);
         setShowPauseScreen(false);
@@ -130,17 +126,17 @@ function App() {
         setPlayerLeft(data.playerName);
       }
     };
-  
+
     ws.addEventListener("message", handleMessage);
-  
+
     return () => {
       ws.removeEventListener("message", handleMessage);
     };
   }, []);
-  
+
   return (
     <div className="relative">
-      {!gameMode? (
+      {!gameMode ? (
         <StartScreen
           onSinglePlayer={() => setGameMode("single")}
           onMultiPlayer={() => setGameMode("multi")}
