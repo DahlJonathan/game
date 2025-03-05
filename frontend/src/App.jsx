@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import StartScreen from "./components/startscreen/startScreen.jsx";
 import SinglePlayer from "./components/startscreen/singlePlayer.jsx";
-import MultiPlayer from "./components/startscreen/multiplayer.jsx";
+import MultiPlayer from "./components/startscreen/multiPlayer.jsx";
 import GameWrapper from "./GameWrapper.jsx";
 import ws from "../public/websocket.js";
 import Scoreboard from "./components/gameinfo/scoreboard.jsx";
@@ -185,7 +185,7 @@ function App() {
               <Scoreboard players={scoreboard} />
             </div>
           </div>
-          <Timer>
+          <Timer onQuit={quit}>
             <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
           </Timer>
         </>
