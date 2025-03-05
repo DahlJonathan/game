@@ -53,16 +53,7 @@ function Timer({ children, isPaused, onTimeUp, onQuit }) {
                 <p>sec</p>
             </div>
             {timeUp && (
-            <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center">
-                <div className="bg-gray-800 bg-opacity-50 p-10 rounded-lg shadow-lg backdrop-blur-sm">
-                    <h1>Game Over!</h1>
-                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                    onQuit={onQuit}
-                    >
-                        Quit
-                    </button>
-                </div>
-            </div>
+                <EndScreen onQuit={onQuit} />
         )}
         </div>
     );
