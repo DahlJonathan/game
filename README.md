@@ -99,3 +99,19 @@ Jonathan Dahl
 Laura Levistö       
 
 3/2025
+
+
+ngrok
+
+start ngrok:
+ngrok http 8080
+
+EVERYONE!!!
+copy ngrok adress in websocket.js
+window.__ws = new WebSocket('wss://6948-2001-999-788-5b98-d52a-5ae4-a5ed-78c7.ngrok-free.app');
+
+player with server:
+/root npm start
+
+other players:
+/frontend npm start
