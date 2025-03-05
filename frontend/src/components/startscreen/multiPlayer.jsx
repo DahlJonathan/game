@@ -4,8 +4,9 @@ import GameWrapper from "../../GameWrapper";
 import Scoreboard from "../gameinfo/scoreboard";
 import Timer from "../gameinfo/timer";
 import Fps from "../gameinfo/fps";
+import EndScreen from "../endscreen/endscreen";
 
-const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPause }) => {
+const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPause, onTimeUp }) => {
     const [playerName, setPlayerName] = useState("");
     const [isReady, setIsReady] = useState(false);
     const [players, setPlayers] = useState([]);
@@ -13,9 +14,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
     const [gamePaused, setGamePaused] = useState(false);
     const [message, setMessage] = useState("");
     const [lobbyLeader, setLobbyLeader] = useState(null);
-      const [isPaused, setIsPaused] = useState(false);
-        const [reset, setReset] = useState(false);
-          const [timeEnd, setTimeEnd] = useState(false);
+    const [timeUp, setTimeUp] = useState(false);
 
     useEffect(() => {
         ws.onmessage = (event) => {
@@ -61,6 +60,10 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
         }
     };
 
+    const handleTimeUp = () => {
+        setTimeUp(true);
+    };
+
     const handleReady = () => {
         setIsReady(!isReady);
         ws.send(JSON.stringify({ type: 'ready', playerName, roomId: selectedRoom, isReady: !isReady }));
@@ -83,12 +86,13 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
                         <Scoreboard players={scoreboard} />
                     </div>
                 </div>
-                <Timer setTimeEnd={setTimeEnd} reset={reset} isPaused={isPaused}>
-            <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
-          </Timer>
+                <Timer isPaused={onPause} onTimeUp={handleTimeUp}>
+                    <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
+                </Timer>
             </>
         );
     }
+    
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">

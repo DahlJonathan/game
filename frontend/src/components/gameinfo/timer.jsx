@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import ws from "../../../public/websocket";
+import EndScreen from "../endscreen/endscreen";
 
-function Timer({ children, setTimeEnd, reset, isPaused }) {
-    const [timer, setTimer] = useState(10);
-    const [gameStartTimer, setGameStartTimer] = useState(3);  
+function Timer({ children, isPaused, onTimeUp, onQuit }) {
+    const [timer, setTimer] = useState(5);
+    const [gameStartTimer, setGameStartTimer] = useState(1);  
     const [gameStartedNow, setGameStartedNow] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
-    
+    const [timeUp, setTimeUp] = useState(false);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -22,26 +23,24 @@ function Timer({ children, setTimeEnd, reset, isPaused }) {
                 ws.send(JSON.stringify({ type: "startGame" }));
             } else if (gameStartTimer === 0) {
                 setGameStartTimer(null); 
-            } else if (gameStartedNow && timer > 0 && !isPaused) {
+            }
+
+            if (gameStartedNow && timer > 0 &&!isPaused &&!timeUp) {
                 setTimer((prev) => prev - 1);
+            } else if (gameStartedNow && timer === 0 &&!isPaused &&!timeUp) {
+                onTimeUp();
+                console.log("Time up");
+                setTimeUp(true);
+                clearInterval(interval);
             }
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [gameStartTimer, gameStartedNow, timer, gameStarted, setTimeEnd, isPaused]);
-
-
-    useEffect(() => {
-        if (reset) {
-            setTimer(60);
-            setGameStartTimer(10);
-            setGameStartedNow(false);
-        }
-    })
+    }, [gameStartTimer, gameStartedNow, timer, gameStarted, isPaused, timeUp]);
 
     return (
         <div>
-            {gameStartTimer !== null && (
+            {gameStartTimer!== null && (
                 <div className="absolute flex flex-col rounded-lg p-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-auto bg-gray-800 text-white text-5xl p-4 shadow-lg flex justify-center items-center">
                     <p className="mb-3">Game starts in</p>
                     <p>{gameStartTimer}</p>
@@ -53,6 +52,18 @@ function Timer({ children, setTimeEnd, reset, isPaused }) {
                 <p>{timer}</p>
                 <p>sec</p>
             </div>
+            {timeUp && (
+            <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center">
+                <div className="bg-gray-800 bg-opacity-50 p-10 rounded-lg shadow-lg backdrop-blur-sm">
+                    <h1>Game Over!</h1>
+                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    onQuit={onQuit}
+                    >
+                        Quit
+                    </button>
+                </div>
+            </div>
+        )}
         </div>
     );
 }
