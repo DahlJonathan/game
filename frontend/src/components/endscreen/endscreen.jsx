@@ -1,6 +1,6 @@
 import React from "react";
 
-const EndScreen = ({onQuit }) => {
+const EndScreen = ({ onQuit }) => {
     return (
         <div>
             <div className="flex flex-col border-2 border-black text-white bg-gray-800 p-10 rounded-lg">
