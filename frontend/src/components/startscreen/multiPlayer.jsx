@@ -6,7 +6,7 @@ import Timer from "../gameinfo/timer";
 import Fps from "../gameinfo/fps";
 import EndScreen from "../endscreen/endscreen";
 
-const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPause, onTimeUp }) => {
+const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPause, onTimeUp, onRestart }) => {
     const [playerName, setPlayerName] = useState("");
     const [isReady, setIsReady] = useState(false);
     const [players, setPlayers] = useState([]);
@@ -86,7 +86,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
                         <Scoreboard players={scoreboard} />
                     </div>
                 </div>
-                <Timer isPaused={onPause} onTimeUp={handleTimeUp}>
+                <Timer isPaused={onPause} onTimeUp={handleTimeUp} onRestart={onRestart} onQuit={onBack}>
                     <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
                 </Timer>
             </>

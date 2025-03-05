@@ -175,6 +175,7 @@ function App() {
             onBack={back}
             scoreboard={scoreboard}
             onPause={isPaused}
+            onRestart={restart}
           />
         </>
       ) : (
