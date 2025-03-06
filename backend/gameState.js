@@ -62,13 +62,21 @@ export default class GameState {
             velocityY: 0,
             isJumping: false,
             points: 0,
+            characterId: 1, // Default character ID
+            playerImage: 'src/images/1.png', // Default image
         };
+    }
+
+    updatePlayerCharacter(playerId, characterId) {
+        if (this.players[playerId]) {
+            this.players[playerId].characterId = characterId;
+            this.players[playerId].playerImage = `src/images/${characterId}.png`;
+        }
     }
 
     updatePlayerName(playerId, name) {
         if (this.players[playerId]) {
             this.players[playerId].name = name;
-            console.log(`Updated player ${playerId} name to ${name}`);
             this.players[playerId].points = 0;
             this.collectables = [];
         }
@@ -212,7 +220,7 @@ export default class GameState {
         const playersArray = Object.values(this.players);
         const maxPoints = Math.max(...playersArray.map(player => player.points));
         const topPlayers = playersArray.filter(player => player.points === maxPoints);
-        
+
         if (topPlayers.length > 1) {
             console.log(`Draw! ${topPlayers.map(p => p.name).join(' and ')} have the same amount of points`);
             return topPlayers;
@@ -221,19 +229,16 @@ export default class GameState {
             return topPlayers[0];
         }
     }
-    
+
 
     getGameState() {
-        return { 
-            players: this.players, 
+        return {
+            players: this.players,
             platforms: this.platforms,
-            collectables: this.collectables, 
-            gameOver: this.gameOver, 
-            platformImage: this.platformImage, 
-            collectablesImage: this.collectablesImage, 
-            playerImage: this.playerImage,
-            collectablesImage: this.collectablesImage, 
-            playerImage: this.playerImage
+            collectables: this.collectables,
+            gameOver: this.gameOver,
+            platformImage: this.platformImage,
+            collectablesImage: this.collectablesImage,
         };
     }
 }

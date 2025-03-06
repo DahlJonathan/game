@@ -61,6 +61,13 @@ wss.on('connection', (ws) => {
                 }
             });
         }
+        if (data.type === 'characterSelect') {
+            const player = gameState.players[playerId];
+            if (player) {
+                gameState.updatePlayerCharacter(playerId, data.characterId);
+                player.playerImage = `src/images/${data.characterId}.png`;
+            }
+        }
         if (data.type === "startGame") {
             if (gameState.players[playerId].isLead && Object.values(gameState.players).every(player => player.isReady)) {
                 gameEnded = false;
