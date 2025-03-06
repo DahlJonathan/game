@@ -129,7 +129,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
                 key={room}
                 onClick={() => onGameRoomSelect(room)}
                 className={`px-3 py-1 m-2 font-bold rounded-lg transition ${
-                  selectedRoom === room? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
+                  selectedRoom === room ? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
                 } text-white`}
               >
                 {room}
@@ -139,14 +139,14 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
           {/* Join Button */}
           <button
             onClick={handleJoin}
-            disabled={!selectedRoom || players.length >= 4 ||!playerName.trim() || players.some(player => player.name === playerName.trim())}
+            disabled={!selectedRoom || players.length >= 4 || !playerName.trim() || players.some(player => player.name === playerName.trim())}
             className={`px-6 py-2 mb-2 font-bold rounded-lg transition ${
-              selectedRoom && players.length < 4 && playerName.trim() &&!players.some(player => player.name === playerName.trim())
-               ? "bg-yellow-500 hover:bg-yellow-700"
+              selectedRoom && players.length < 4 && playerName.trim() && !players.some(player => player.name === playerName.trim())
+                ? "bg-yellow-500 hover:bg-yellow-700"
                 : "bg-gray-500 cursor-not-allowed"
             } text-white`}
           >
-            {players.length < 4? "Join Server" : "Server Full"}
+            {players.length < 4 ? "Join Server" : "Server Full"}
           </button>
           <div className="text-red-500 text-2xl">
             {message}
@@ -160,40 +160,44 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
             <ul className="mb-4">
               {players.map((player, index) => (
                 <li key={index} className="text-lg">
-                  {player.name} {player.isReady? '(R)' : ''} {lobbyLeader?.name === player.name? '(Leader)' : ''}
+                  {player.name} {player.isReady ? '(R)' : ''} {lobbyLeader?.name === player.name ? '(Leader)' : ''}
                 </li>
               ))}
             </ul>
           </div>
-          <div>
-            <h2 className="text-xl mb-2 text-center">Choose character</h2>
-            <div className="flex flex-wrap justify-center">
-              {characters.map((character) => (
-                <button
-                  key={character.id}
-                  onClick={() => handleCharacterSelect(character)}
-                  className={`m-2 p-2 rounded-lg transition ${
-                    selectedCharacter?.id === character.id? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
-                  } text-white`}
-                >
-                  <img src={`/characters/${character.image}`} alt={character.name} width={50} height={50} />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Ready Button */}
-          <button
-            onClick={handleReady}
-            disabled={!selectedCharacter}
-            className={`px-6 py-2 mb-2 mt-3 font-bold rounded-lg transition ${
-              isReady? "bg-green-500 hover:bg-green-700" : "bg-blue-500 hover:bg-blue-700"
-            } text-white`}
-          >
-            {isReady? "Unready" : "Ready"}
-          </button>
         </div>
       </div>
+
+      <div>
+        <h2 className="text-xl mb-2 text-center">Choose character</h2>
+        <div className="flex flex-wrap justify-center">
+          {characters.map((character) => (
+            <button
+              key={character.id}
+              onClick={() => handleCharacterSelect(character)}
+              className={`m-2 p-2 rounded-lg transition ${
+                selectedCharacter?.id === character.id ? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
+              } text-white`}
+            >
+              <img src={`/characters/${character.image}`} alt={character.name} width={50} height={50} />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Centered Ready Button */}
+      <div className="flex justify-center">
+        <button
+          onClick={handleReady}
+          disabled={!selectedCharacter}
+          className={`px-6 py-2 mb-2 mt-3 font-bold rounded-lg transition ${
+            isReady ? "bg-green-500 hover:bg-green-700" : "bg-blue-500 hover:bg-blue-700"
+          } text-white`}
+        >
+          {isReady ? "Unready" : "Ready"}
+        </button>
+      </div>
+
       <div className="flex justify-center items-center space-x-4 mt-10">
         {/* Back Button */}
         <button
@@ -205,10 +209,10 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
         {/* Start Game Button */}
         <button
           onClick={handleStartGame}
-          disabled={!lobbyLeader || lobbyLeader.name!== playerName || players.length < 2 ||!players.every(player => player.isReady)}
+          disabled={!lobbyLeader || lobbyLeader.name !== playerName || players.length < 2 || !players.every(player => player.isReady)}
           className={`px-4 py-3 font-bold rounded-lg transition ${
             lobbyLeader && lobbyLeader.name === playerName && players.length >= 2 && players.every(player => player.isReady)
-             ? "bg-green-500 hover:bg-green-700"
+              ? "bg-green-500 hover:bg-green-700"
               : "bg-gray-500 cursor-not-allowed"
           } text-white`}
         >
