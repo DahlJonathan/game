@@ -76,6 +76,29 @@ wss.on('connection', (ws) => {
             }
         }
         if (data.type === "endGame") {
+            const topPlayers = gameState.endGame();
+            if (topPlayers.length > 1) {
+                const drawMessage = JSON.stringify({
+                    type: 'draw',
+                    players: topPlayers.map(player => player.name)
+                });
+                wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(drawMessage);
+                    }
+                });
+            } else {
+                const winnerMessage = JSON.stringify({
+                    type: 'gameOver',
+                    winner: topPlayers.name,
+                    points: topPlayers.points,
+                });
+                wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(winnerMessage);
+                    }
+                });
+            }
             gameEnded = true;
             stopGameLoop();
         };

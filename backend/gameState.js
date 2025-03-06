@@ -209,19 +209,19 @@ export default class GameState {
 
     endGame() {
         this.gameOver = true;
-        const winner = Object.values(this.players).reduce((max, player) => player.points > max.points ? player : max, { points: 0 });
-        console.log(`Game over! Winner: ${winner.name} with ${winner.points} points`);
-        const winnerMessage = JSON.stringify({
-            type: 'gameOver',
-            winner: winner.name,
-            points: winner.points,
-        });
-        wss.clients.forEach(client => {
-            if (client.readyState === client.OPEN) {
-                client.send(winnerMessage);
-            }
-        });
+        const playersArray = Object.values(this.players);
+        const maxPoints = Math.max(...playersArray.map(player => player.points));
+        const topPlayers = playersArray.filter(player => player.points === maxPoints);
+        
+        if (topPlayers.length > 1) {
+            console.log(`Draw! ${topPlayers.map(p => p.name).join(' and ')} have the same amount of points`);
+            return topPlayers;
+        } else {
+            console.log(`Game over! Winner: ${topPlayers[0].name} with ${topPlayers[0].points} points`);
+            return topPlayers[0];
+        }
     }
+    
 
     getGameState() {
         return { 

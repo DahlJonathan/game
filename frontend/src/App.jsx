@@ -28,6 +28,10 @@ function App() {
     "room 3": [],
   })
   const [scoreboard, setScoreboard] = useState([]);
+  const [winnerName, setWinnerName] = useState("");
+  const [winnerPoints, setWinnerPoints] = useState(0);
+  const [draw, setDraw] = useState(false);
+  const [drawPlayers, setDrawPlayers] = useState([]);
 
   const handleJoinGame = (name) => {
     if (selectedRoom && gameRooms[selectedRoom].length < 4 && !gameRooms[selectedRoom].includes(name)) {
@@ -125,6 +129,14 @@ function App() {
         setLeftGame(true);
         setPlayerLeft(data.playerName);
       }
+      if (data.type === "gameOver") {
+        setWinnerName(data.winner);
+        setWinnerPoints(data.points);
+      }
+      if (data.type === "draw") {
+        setDraw(true);
+        setDrawPlayers(data.players);
+      }
     };
 
     ws.addEventListener("message", handleMessage);
@@ -176,6 +188,10 @@ function App() {
             scoreboard={scoreboard}
             onPause={isPaused}
             onRestart={restart}
+            winnerName={winnerName}
+            winnerPoints={winnerPoints}
+            draw={draw}
+            drawPlayers={drawPlayers}
           />
         </>
       ) : (

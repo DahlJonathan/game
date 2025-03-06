@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ws from "../../../public/websocket";
 import EndScreen from "../endscreen/endscreen";
 
-function Timer({ children, isPaused, onTimeUp, onQuit, onRestart }) {
+function Timer({ children, isPaused, onTimeUp, onQuit, onRestart, winnerName, winnerPoints, draw, drawPlayers }) {
     const [timer, setTimer] = useState(5);
     const [gameStartTimer, setGameStartTimer] = useState(1);  
     const [gameStartedNow, setGameStartedNow] = useState(false);
@@ -53,7 +53,7 @@ function Timer({ children, isPaused, onTimeUp, onQuit, onRestart }) {
                 <p>sec</p>
             </div>
             {timeUp && (
-                <EndScreen onQuit={onQuit} onRestart={onRestart}/>
+                <EndScreen onQuit={onQuit} onRestart={onRestart} winnerName={winnerName} winnerPoints={winnerPoints} draw={draw} drawPlayers={drawPlayers}/>
         )}
         </div>
     );

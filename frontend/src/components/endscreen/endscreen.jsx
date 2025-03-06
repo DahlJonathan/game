@@ -1,6 +1,6 @@
 import React from "react";
 
-const EndScreen = ({onQuit, onRestart, playerName}) => {
+const EndScreen = ({onQuit, onRestart, playerName, winnerName, winnerPoints, draw, drawPlayers}) => {
     return (
         <div className="absolute inset-0 flex items-center justify-center">
       {/* Dark Overlay */}
@@ -8,8 +8,17 @@ const EndScreen = ({onQuit, onRestart, playerName}) => {
 
       {/* Pause menu */}
       <div className="relative z-10 border-2 bg-gray-900 rounded-lg p-10 text-center shadow-lg">
-        <h1 className="mb-5 text-3xl text-white">{playerName}</h1>
-        <h1 className="mb-5 text-xl text-white">Collected most coins!</h1>
+        {draw ? (
+          <div>
+          <h1 className="mb-5 text-3xl text-white">Draw!</h1>
+          <h1 className="mb-5 text-xl text-white">{drawPlayers === 2 ? drawPlayers.join(' and ') : drawPlayers.slice(0, -1).join(', ') + ' and ' + drawPlayers.slice(-1)} have the same amount of points!</h1>
+          </div>
+          ) : (
+          <div>
+          <h1 className="mb-5 text-3xl text-white">{winnerName} Wins!</h1>
+          <h1 className="mb-5 text-xl text-white">{winnerName} has {winnerPoints} points!</h1>
+          </div>
+        )}
         <button
           onClick={onQuit}
           className="px-6 py-3 bg-red-500 hover:bg-red-700 text-white font-bold rounded-lg transition m-2"
