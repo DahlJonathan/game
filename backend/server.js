@@ -9,6 +9,7 @@ const app = express();
 const wss = new WebSocketServer({ noServer: true });
 const gameState = new GameState();
 let gameInterval = null;
+let gameEnded = false;
 
 app.get('/favicon.ico', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
@@ -37,7 +38,7 @@ wss.on('connection', (ws) => {
                 ws.send(JSON.stringify({ type: 'error', message: 'Player name already exists' }));
                 return;
             }
-            
+
             playerId = Math.random().toString(36).substring(2, 11);
             gameState.addPlayer(playerId);
             console.log(`${data.playerName} joined the game!`)
@@ -62,6 +63,7 @@ wss.on('connection', (ws) => {
         }
         if (data.type === "startGame") {
             if (gameState.players[playerId].isLead && Object.values(gameState.players).every(player => player.isReady)) {
+                gameEnded = false;
                 gameState.resetCollectables();
                 const initMessage = JSON.stringify({ type: 'init', state: gameState.getGameState(), playerId });
                 wss.clients.forEach(client => {
@@ -73,10 +75,14 @@ wss.on('connection', (ws) => {
                 startGameLoop();
             }
         }
+        if (data.type === "endGame") {
+            gameEnded = true;
+            stopGameLoop();
+        };
         if (data.type === "input") {
             gameState.updatePlayer(playerId, data.input);
         }
-        if (data.type === "pause") {
+        if (data.type === "pause" && !gameEnded) {
             let playerName = gameState.getPlayerName(playerId);
             gameState.pauseGame();
             stopGameLoop();
@@ -87,7 +93,7 @@ wss.on('connection', (ws) => {
                 }
             });
         }
-        if (data.type === "unPause") {
+        if (data.type === "unPause" && !gameEnded) {
             gameState.unpauseGame();
             startGameLoop();
             const unPauseMessage = JSON.stringify({ type: 'unPauseGame', pausedPlayer: "" });
@@ -119,19 +125,19 @@ wss.on('connection', (ws) => {
         if (playerId) {
             gameState.removePlayer(playerId);
             console.log(`Player ${playerId} disconnected`);
-    
+
             // Assign a new leader if the current leader leaves
             const remainingPlayerIds = Object.keys(gameState.players);
             if (remainingPlayerIds.length > 0) {
                 const newLeaderId = remainingPlayerIds[0]; // First remaining player becomes leader
                 gameState.players[newLeaderId].isLead = true;
             }
-    
+
             const deleteMessage = JSON.stringify({
                 type: 'lobbyUpdate',
                 state: gameState.getGameState(),
             });
-    
+
             wss.clients.forEach(client => {
                 if (client.readyState === client.OPEN) {
                     client.send(deleteMessage);
@@ -139,7 +145,7 @@ wss.on('connection', (ws) => {
             });
         }
     });
-    
+
 });
 
 function startGameLoop() {

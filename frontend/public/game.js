@@ -112,7 +112,6 @@ export default class Game {
         }
 
         this.players = {};
-        console.log("players after destroying:", this.players);
     }
 
     gameLoop(timestamp) {

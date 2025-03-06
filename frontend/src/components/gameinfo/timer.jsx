@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ws from "../../../public/websocket";
 import EndScreen from "../endscreen/endscreen";
 
-function Timer({ children, isPaused, onTimeUp, onQuit }) {
+function Timer({ children, isPaused, onTimeUp, onQuit, onRestart }) {
     const [timer, setTimer] = useState(5);
     const [gameStartTimer, setGameStartTimer] = useState(1);  
     const [gameStartedNow, setGameStartedNow] = useState(false);
@@ -31,6 +31,7 @@ function Timer({ children, isPaused, onTimeUp, onQuit }) {
                 console.log("Time up");
                 setTimeUp(true);
                 clearInterval(interval);
+                ws.send(JSON.stringify({ type: "endGame" }));
             }
         }, 1000);
 
@@ -52,7 +53,7 @@ function Timer({ children, isPaused, onTimeUp, onQuit }) {
                 <p>sec</p>
             </div>
             {timeUp && (
-                <EndScreen onQuit={onQuit} />
+                <EndScreen onQuit={onQuit} onRestart={onRestart}/>
         )}
         </div>
     );

@@ -12,7 +12,6 @@ function initGame() {
     if (!gameContainer) return;
 
     if (window.currentGame) {
-        console.log("remove previous game:", window.currentGame);
         window.currentGame.destroy();
     }
 
