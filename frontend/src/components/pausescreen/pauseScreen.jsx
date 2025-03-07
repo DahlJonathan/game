@@ -1,6 +1,6 @@
 import React from "react";
 
-const PauseScreen = ({ onContinue, onQuit, playerName, pausedPlayer, playerLeft, leftGame }) => {
+const PauseScreen = ({ onContinue, onQuit, playerName, pausedPlayer }) => {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       {/* Dark Overlay */}
@@ -8,9 +8,6 @@ const PauseScreen = ({ onContinue, onQuit, playerName, pausedPlayer, playerLeft,
 
       {/* Pause menu */}
       <div className="relative z-10 border-2 bg-gray-900 rounded-lg p-10 text-center shadow-lg">
-        {leftGame && (
-          <h1 className="mb-5 text-3xl text-white">{playerLeft} Left The Game!</h1>
-        )}
         <h1 className="mb-5 text-3xl text-white">{pausedPlayer}</h1>
         <h1 className="mb-5 text-xl text-white">Paused The Game</h1>
         <button

@@ -4,7 +4,6 @@ import GameWrapper from "../../GameWrapper";
 import Scoreboard from "../gameinfo/scoreboard";
 import Timer from "../gameinfo/timer";
 import Fps from "../gameinfo/fps";
-import EndScreen from "../endscreen/endscreen";
 
 const characters = [
   { id: 1, name: "Character 1", image: "../../src/images/1.png" },

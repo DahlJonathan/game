@@ -9,6 +9,7 @@ import Timer from "./components/gameinfo/timer.jsx";
 import Fps from "./components/gameinfo/fps.jsx";
 import PauseScreen from "./components/pausescreen/pauseScreen.jsx";
 import HowToPlay from "./components/startscreen/howToPlay.jsx";
+import LeaveGame from "./components/gameinfo/leaveGame.jsx";
 
 function App() {
   const [gameMode, setGameMode] = useState(null);
@@ -164,20 +165,21 @@ function App() {
         <SinglePlayer onBack={back} />
       ) : !startGame ? (
         <>
-          {isPaused ? (
+          {isPaused && (
             <div className="absolute inset-0">
               <PauseScreen
                 playerName={playerName}
                 pausedPlayer={pausedPlayer}
-                playerLeft={playerLeft}
-                leftGame={leftGame}
                 onContinue={handleContinue}
                 onQuit={quit}
                 onRestart={restart}
                 onPause={isPaused}
               />
             </div>
-          ) : null}
+          )}
+          {leftGame && playerLeft !== "" && (
+            <LeaveGame playerLeft={playerLeft} onClose={() => setLeftGame(false)} />
+          )}
           <MultiPlayer
             onGameRoomSelect={setSelectedRoom}
             selectedRoom={selectedRoom}

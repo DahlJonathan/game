@@ -67,6 +67,20 @@ export default class GameState {
         };
     }
 
+    initializePlayerPos(playerId, index) {
+        const positions = [
+            { x: 0, y: 531 },
+            { x: 1242, y: 531 },
+            { x: 0, y: 15 },
+            { x: 1242, y: 15 },
+        ];
+
+        if (this.players[playerId] && positions[index]) {
+            this.players[playerId].x = positions[index].x;
+            this.players[playerId].y = positions[index].y;
+        }
+    }
+
     updatePlayerCharacter(playerId, characterId) {
         if (this.players[playerId]) {
             this.players[playerId].characterId = characterId;
@@ -87,8 +101,8 @@ export default class GameState {
     }
 
     getPlayerName(playerId) {
-        return this.players[playerId].name
-    }
+        return this.players[playerId] ? this.players[playerId].name : "";
+    }    
 
     updatePlayer(playerId, input) {
         if (this.gameOver) return;

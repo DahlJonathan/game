@@ -73,6 +73,12 @@ wss.on('connection', (ws) => {
                 gameEnded = false;
                 gameState.startGame();
                 gameState.resetCollectables();
+
+                let playerIds = Object.keys(gameState.players);
+                playerIds.forEach((id, index) => {
+                    gameState.initializePlayerPos(id, index);
+                });
+
                 const initMessage = JSON.stringify({ type: 'init', state: gameState.getGameState(), playerId });
                 wss.clients.forEach(client => {
                     if (client.readyState === client.OPEN) {
@@ -154,6 +160,7 @@ wss.on('connection', (ws) => {
 
     ws.on('close', () => {
         if (playerId) {
+            let playerName = gameState.getPlayerName(playerId);
             gameState.removePlayer(playerId);
             console.log(`Player ${playerId} disconnected`);
 
@@ -164,13 +171,21 @@ wss.on('connection', (ws) => {
                 gameState.players[newLeaderId].isLead = true;
             }
 
-            const deleteMessage = JSON.stringify({
+            const lobbyUpdateMessage = JSON.stringify({
                 type: 'lobbyUpdate',
                 state: gameState.getGameState(),
             });
 
+            const deleteMessage = JSON.stringify({
+                type: 'delete',
+                state: gameState.getGameState(),
+                playerId,
+                playerName,
+            })
+
             wss.clients.forEach(client => {
                 if (client.readyState === client.OPEN) {
+                    client.send(lobbyUpdateMessage);
                     client.send(deleteMessage);
                 }
             });

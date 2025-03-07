@@ -3,7 +3,7 @@ import ws from "../../../public/websocket";
 import EndScreen from "../endscreen/endscreen";
 
 function Timer({ children, isPaused, onTimeUp, onQuit, onRestart, winnerName, winnerPoints, draw, drawPlayers }) {
-    const [timer, setTimer] = useState(5);
+    const [timer, setTimer] = useState(500);
     const [gameStartTimer, setGameStartTimer] = useState(1);  
     const [gameStartedNow, setGameStartedNow] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
