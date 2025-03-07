@@ -71,6 +71,7 @@ wss.on('connection', (ws) => {
         if (data.type === "startGame") {
             if (gameState.players[playerId].isLead && Object.values(gameState.players).every(player => player.isReady)) {
                 gameEnded = false;
+                gameState.startGame();
                 gameState.resetCollectables();
                 const initMessage = JSON.stringify({ type: 'init', state: gameState.getGameState(), playerId });
                 wss.clients.forEach(client => {

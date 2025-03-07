@@ -215,6 +215,10 @@ export default class GameState {
         this.gamePaused = false;
     }
 
+    startGame() {
+        this.gameOver = false;
+    }
+
     endGame() {
         this.gameOver = true;
         const playersArray = Object.values(this.players);

@@ -13,7 +13,7 @@ const characters = [
   { id: 4, name: "Character 4", image: "../../src/images/4.png" },
 ];
 
-const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPause, onTimeUp, onRestart, winnerName, winnerPoints, draw, drawPlayers }) => {
+const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, onQuit, scoreboard, onPause, onTimeUp, onRestart, winnerName, winnerPoints, draw, drawPlayers }) => {
   const [playerName, setPlayerName] = useState("");
   const [isReady, setIsReady] = useState(false);
   const [players, setPlayers] = useState([]);
@@ -99,7 +99,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
             <Scoreboard players={scoreboard} />
           </div>
         </div>
-        <Timer isPaused={onPause} onTimeUp={handleTimeUp} onRestart={onRestart} onQuit={onBack} winnerName={winnerName} winnerPoints={winnerPoints} draw={draw} drawPlayers={drawPlayers}>
+        <Timer isPaused={onPause} onTimeUp={handleTimeUp} onRestart={onRestart} onQuit={onQuit} winnerName={winnerName} winnerPoints={winnerPoints} draw={draw} drawPlayers={drawPlayers}>
           <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
         </Timer>
       </>
@@ -116,10 +116,11 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, scoreboard, onPau
           <h2 className="font-bold text-xl mb-3">Enter Unique Username</h2>
           <input
             type="text"
+            maxLength={12}
             value={playerName}
             onChange={(e) => setPlayerName(e.target.value)}
             className="p-2 font-bold text-center text-black rounded-lg mb-2 bg-white"
-            placeholder="Username"
+            placeholder="Username (max 12 characters)"
           />
           <p className="text-xl mt-3">Choose server</p>
           {/* Game Room Selection */}

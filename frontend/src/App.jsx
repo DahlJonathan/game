@@ -112,6 +112,10 @@ function App() {
           points: playerData.points,
         }));
         setScoreboard(updatedScoreboard);
+        setWinnerName("");
+        setWinnerPoints(0);
+        setDraw(false);
+        setDrawPlayers([]);
       }
       if (data.type === "unPauseGame") {
         setIsPaused(false);
@@ -185,6 +189,7 @@ function App() {
               }
             }}
             onBack={back}
+            onQuit={quit}
             scoreboard={scoreboard}
             onPause={isPaused}
             onRestart={restart}
