@@ -23,6 +23,13 @@ const HowToPlay = ({ onBack }) => {
                         <p>Right</p>
                     </div>
                 </div>
+                <div className="text-lg text-center max-w-md mt-4 mb-4">
+                <p>Long jump</p>
+                <img src="src/images/longjump.png" alt="longjump"  />
+                </div>
+               
+                
+                
                 <div className="text-lg text-center max-w-md mb-4"></div>
                 <p>Collect the green collectables to earn points.</p>
                 <div className="flex justify-center items-center mt-2">
