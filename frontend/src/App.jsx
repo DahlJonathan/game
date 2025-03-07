@@ -99,6 +99,8 @@ function App() {
         setWinnerPoints(0);
         setDraw(false);
         setDrawPlayers([]);
+        setLeftGame(false);
+        setPlayerLeft("");
       }
       if (data.type === "unPauseGame") {
         setIsPaused(false);
