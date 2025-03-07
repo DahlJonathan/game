@@ -184,9 +184,9 @@ export default class Game {
             playerEl.style.width = "35px";
             playerEl.style.height = "35px";
             playerEl.style.backgroundImage = `url(${player.playerImage})`; // Set player image
-            playerEl.style.backgroundSize = "cover";
+            playerEl.style.backgroundSize = "contain";
             playerEl.style.backgroundPosition = "center";
-            //playerEl.style.backgroundRepeat = "no-repeat";
+            playerEl.style.backgroundRepeat = "no-repeat";
 
             let t = Math.min((now - player.timestamp) / 50, 1);
             let interpolatedX = player.lastX + (player.x - player.lastX) * t;
