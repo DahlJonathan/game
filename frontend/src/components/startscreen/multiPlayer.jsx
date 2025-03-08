@@ -4,6 +4,7 @@ import GameWrapper from "../../GameWrapper";
 import Scoreboard from "../gameinfo/scoreboard";
 import Timer from "../gameinfo/timer";
 import Fps from "../gameinfo/fps";
+import PowerUp from "../collectables/powerup";
 
 const characters = [
   { id: 1, name: "Character 1", image: "../../src/images/1.png" },
@@ -94,6 +95,8 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, onQuit, scoreboar
       <>
         <div className="flex flex-col items-center justify-center h-screen w-full">
           <GameWrapper players={players} reset={handleRestart} playerName={playerName} />
+          <div>
+          </div>
           <div className="w-[60vw] max-w-[1280px]">
             <Scoreboard players={scoreboard} />
           </div>

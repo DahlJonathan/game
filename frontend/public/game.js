@@ -9,6 +9,7 @@ export default class Game {
         this.collectables = [];
         this.activeKeys = {}; // Track active keys
         this.inputInterval = null; // Timer for sending inputs
+        this.powerUps = [];
 
         this.gameContainer = document.getElementById("game-container");
         if (!this.gameContainer) return;
@@ -72,6 +73,8 @@ export default class Game {
             this.platformImage = data.state.platformImage;
             this.collectables = data.state.collectables;
             this.collectablesImage = data.state.collectablesImage;
+            this.powerUps = data.state.powerUps;
+            this.powerUpImage = data.state.powerUpImage;
             console.log("Received initial game state:", data.state);
             
             for (let playerId in data.state.players) {
@@ -95,6 +98,7 @@ export default class Game {
                 }
             }
             this.collectables = data.state.collectables;
+            this.powerUps = data.state.powerUps;
         } else if (data.type === "delete") {
             const idToDelete = data.playerId;
             delete this.players[idToDelete];
@@ -143,36 +147,61 @@ export default class Game {
         document.querySelectorAll('.player').forEach(el => el.remove());
         document.querySelectorAll(".platform").forEach(el => el.remove());
         document.querySelectorAll(".collectable").forEach(el => el.remove());
+        document.querySelectorAll(".power-up").forEach(el => el.remove());
 
         // Render platforms
-        this.platforms.forEach(platform => {
-            let platformEl = document.createElement("div");
-            platformEl.classList.add("platform");
-            platformEl.style.position = "absolute";
-            platformEl.style.left = `${platform.left}px`;
-            platformEl.style.top = `${platform.top}px`;
-            platformEl.style.width = `${platform.width}px`;
-            platformEl.style.height = `${platform.height}px`;
-            platformEl.style.backgroundImage = `url(${this.platformImage})`;
-            platformEl.style.backgroundSize = "cover";
-            gameArea.appendChild(platformEl);
-        });
+        if (this.platforms) {
+            this.platforms.forEach(platform => {
+                let platformEl = document.createElement("div");
+                platformEl.classList.add("platform");
+                platformEl.style.position = "absolute";
+                platformEl.style.left = `${platform.left}px`;
+                platformEl.style.top = `${platform.top}px`;
+                platformEl.style.width = `${platform.width}px`;
+                platformEl.style.height = `${platform.height}px`;
+                platformEl.style.backgroundImage = `url(${this.platformImage})`;
+                platformEl.style.backgroundSize = "cover";
+                gameArea.appendChild(platformEl);
+            });
+        }
 
         // Render collectables
-        this.collectables.forEach(collectable => {
-            if (!collectable.collected) {
-                let collectableEl = document.createElement("div");
-                collectableEl.classList.add("collectable");
-                collectableEl.style.position = "absolute";
-                collectableEl.style.left = `${collectable.x}px`;
-                collectableEl.style.top = `${collectable.y}px`;
-                collectableEl.style.width = `${collectable.width}px`;
-                collectableEl.style.height = `${collectable.height}px`;
-                collectableEl.style.backgroundImage = `url(${this.collectablesImage})`;
-                collectableEl.style.backgroundSize = "cover";
-                gameArea.appendChild(collectableEl);
-            }
-        });
+        if (this.collectables) {
+            this.collectables.forEach(collectable => {
+                if (!collectable.collected) {
+                    let collectableEl = document.createElement("div");
+                    collectableEl.classList.add("collectable");
+                    collectableEl.style.position = "absolute";
+                    collectableEl.style.left = `${collectable.x}px`;
+                    collectableEl.style.top = `${collectable.y}px`;
+                    collectableEl.style.width = `${collectable.width}px`;
+                    collectableEl.style.height = `${collectable.height}px`;
+                    collectableEl.style.backgroundImage = `url(${this.collectablesImage})`;
+                    collectableEl.style.backgroundSize = "cover";
+                    gameArea.appendChild(collectableEl);
+                }
+            });
+        }
+
+        // Render powerups
+        if (this.powerUps) {
+            this.powerUps.forEach(powerUp => {
+                if (!powerUp.collected) {
+                    let powerUpEl = document.createElement("div");
+                    powerUpEl.classList.add("power-up");
+                    powerUpEl.style.position = "absolute";
+                    powerUpEl.style.left = `${powerUp.x}px`;
+                    powerUpEl.style.top = `${powerUp.y}px`;
+                    powerUpEl.style.width = `${powerUp.width}px`;
+                    powerUpEl.style.height = `${powerUp.height}px`;
+                    powerUpEl.style.backgroundImage = `url(${this.powerUpImage})`;
+                    powerUpEl.style.backgroundSize = "contain";
+                    powerUpEl.style.backgroundPosition = "center";
+                    powerUpEl.style.backgroundRepeat = "no-repeat";
+                    gameArea.appendChild(powerUpEl);
+                }
+            });
+        }
 
         const now = Date.now();
         // Render each player

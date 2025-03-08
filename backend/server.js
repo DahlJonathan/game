@@ -73,6 +73,7 @@ wss.on('connection', (ws) => {
                 gameEnded = false;
                 gameState.startGame();
                 gameState.resetCollectables();
+                gameState.resetPowerUp();
 
                 let playerIds = Object.keys(gameState.players);
                 playerIds.forEach((id, index) => {

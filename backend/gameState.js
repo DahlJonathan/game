@@ -2,6 +2,8 @@ export default class GameState {
     constructor() {
         this.players = {};
         this.collectables = [];
+        this.powerUps = []; 
+        this.powerUpImage = 'src/images/powerup.png';
         this.collectablesImage = 'src/images/gem.png';
         this.platformImage = 'src/images/platform.jpg';
         this.playerImage = 'src/images/1.png';
@@ -11,6 +13,7 @@ export default class GameState {
 
         this.gravity = 2;
         this.jumpStrength = 25;
+        this.frameRate = 60; // Frames per second
         this.platforms = [
             { left: 0, top: 50, width: 100, height: 10 }, //left upper corner
             { left: 1180, top: 50, width: 100, height: 10 },//right upper coorner
@@ -37,10 +40,11 @@ export default class GameState {
 
         this.gameOver = false;
         this.gamePaused = false;
+        this.lastUpdateTime = Date.now();
     }
 
     generateCollectables() {
-        return Array.from({ length: 50 }, () => ({
+        return Array.from({ length: 1 }, () => ({
             x: Math.random() * 1200,
             y: Math.random() * 500,
             width: 25,
@@ -49,9 +53,23 @@ export default class GameState {
         }));
     }
 
+    generatePowerUP() {
+        return Array.from({ length: 1 }, () => ({
+            x: Math.random() * 1200,
+            y: Math.random() * 500,
+            width: 40,
+            height: 40,
+            collected: false,
+        }));
+    }
+
     resetCollectables() {
         this.collectables = this.generateCollectables();
         // console.log("Reset collectables:", this.collectables);
+    }
+
+    resetPowerUp() {
+        this.powerUps = this.generatePowerUP();
     }
 
     addPlayer(playerId, name = "") {
@@ -64,6 +82,8 @@ export default class GameState {
             points: 0,
             characterId: 1, // Default character ID
             playerImage: 'src/images/1.png', // Default image
+            jumpStrength: this.jumpStrength, // Default jump strength
+            powerUpDuration: 0, // Duration of the power-up effect
         };
     }
 
@@ -111,6 +131,17 @@ export default class GameState {
         let player = this.players[playerId];
         if (!player) return;
 
+        const currentTime = Date.now();
+        const elapsedTime = (currentTime - this.lastUpdateTime) / 1000; // Elapsed time in seconds
+        this.lastUpdateTime = currentTime;
+
+        // Decrease power-up duration if active
+        if (player.powerUpDuration > 0) {
+            player.powerUpDuration -= elapsedTime;
+        } else {
+            player.jumpStrength = this.jumpStrength; // Reset to default jump strength
+        }
+
         // Store the old position for horizontal collision checking.
         const oldX = player.x;
 
@@ -119,7 +150,7 @@ export default class GameState {
         if (input.moveRight) player.x += 10;
         if (input.jump && !player.isJumping) {
             player.isJumping = true;
-            player.velocityY = -this.jumpStrength;
+            player.velocityY = -player.jumpStrength;
         }
 
         // Apply gravity
@@ -203,6 +234,21 @@ export default class GameState {
             }
         });
 
+        // Check for powerup collisions
+        this.powerUps.forEach(powerUp => {
+            if (
+                !powerUp.collected &&
+                player.x < powerUp.x + powerUp.width &&
+                player.x + 35 > powerUp.x &&
+                player.y < powerUp.y + powerUp.height &&
+                player.y + 35 > powerUp.y
+            ) {
+                powerUp.collected = true;
+                player.jumpStrength = 45; // Increase jump strength
+                player.powerUpDuration = 15; // Set power-up duration in seconds
+            }
+        });
+
         // Stay within game-area bounds.
         if (player.y >= 531) {
             player.y = 531;
@@ -257,6 +303,8 @@ export default class GameState {
             gameOver: this.gameOver,
             platformImage: this.platformImage,
             collectablesImage: this.collectablesImage,
+            powerUps: this.powerUps,
+            powerUpImage: this.powerUpImage,
         };
     }
 }
