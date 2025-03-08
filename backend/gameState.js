@@ -60,6 +60,8 @@ export default class GameState {
             x: 0,
             y: 531, // Start on the ground
             velocityY: 0,
+            pushVelocityX: 0,
+            lastPushTime: 0,
             isJumping: false,
             points: 0,
             characterId: 1, // Default character ID
@@ -102,7 +104,7 @@ export default class GameState {
 
     getPlayerName(playerId) {
         return this.players[playerId] ? this.players[playerId].name : "";
-    }    
+    }
 
     updatePlayer(playerId, input) {
         if (this.gameOver) return;
@@ -165,6 +167,45 @@ export default class GameState {
         // Update vertical position if no vertical collision was resolved
         if (!verticalResolved) {
             player.y = newY;
+        }
+
+        // Check for push input
+        if (input.push) {
+            // Add a cooldown to prevent spam
+            const cooldownTime = 500;
+            const now = Date.now();
+            if (!player.lastPushTime || (now - player.lastPushTime >= cooldownTime)) {
+                player.lastPushTime = now;
+                const pushForce = 20;
+                for (let otherId in this.players) {
+                    // Ignore push on yourself
+                    if (otherId === playerId) continue;
+                    let otherPlayer = this.players[otherId];
+
+                    // Apply push if within another player boundaries
+                    if (
+                        player.x < otherPlayer.x + 35 &&
+                        player.x + 35 > otherPlayer.x &&
+                        player.y < otherPlayer.y + 35 &&
+                        player.y + 35 > otherPlayer.y
+                    ) {
+                        if (player.x < otherPlayer.x) {
+                            otherPlayer.pushVelocityX += pushForce;
+                        } else {
+                            otherPlayer.pushVelocityX -= pushForce;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (player.pushVelocityX) {
+            player.x += player.pushVelocityX;
+            // Apply damping to smooth out the movement over time
+            player.pushVelocityX *= 0.9;
+            if (Math.abs(player.pushVelocityX) < 1) {
+                player.pushVelocityX = 0;
+            }
         }
 
         // Handle horizontal collisions

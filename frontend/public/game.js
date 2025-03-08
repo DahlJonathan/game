@@ -53,6 +53,7 @@ export default class Game {
             moveLeft: this.activeKeys["ArrowLeft"] || false,
             moveRight: this.activeKeys["ArrowRight"] || false,
             jump: this.activeKeys["ArrowUp"] || false,
+            push: this.activeKeys["Spacebar"] || false, // Added push mechanic
         };
 
         this.ws.send(JSON.stringify({ type: "input", input }));
