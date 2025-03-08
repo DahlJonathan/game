@@ -103,9 +103,15 @@ export default class Game {
                     this.players[id].y = playerData.y;
                     this.players[id].points = playerData.points;
                     this.players[id].hasPowerUp = playerData.hasPowerUp; // Ensure hasPowerUp is updated
-                    if (playerData.hasPowerUp && !this.players[id].powerUpCollectedAt) {
-                        this.players[id].powerUpCollectedAt = Date.now(); // Set powerUpCollectedAt if hasPowerUp is true and not already set
+                    if (playerData.hasPowerUp &&!this.players[id].powerUpCollectedAt) {
+                        this.players[id].powerUpCollectedAt = Date.now(); 
                     }
+        
+                    if (this.players[id].hasPowerUp && this.players[id].powerUpCollectedAt && Date.now() - this.players[id].powerUpCollectedAt >= 15000) {
+                        this.players[id].hasPowerUp = false;
+                        this.players[id].powerUpCollectedAt = null;
+                    }
+        
                     this.players[id].timestamp = Date.now();
                 }
             }
@@ -229,16 +235,26 @@ export default class Game {
             playerEl.style.backgroundPosition = "center";
             playerEl.style.backgroundRepeat = "no-repeat";
 
-            if (player.hasPowerUp && player.powerUpCollectedAt && (now - player.powerUpCollectedAt) < 15000) {
-                playerEl.style.border = "3px solid red";
-                playerEl.style.borderRadius = "50%";
-            } else {
-                if (player.hasPowerUp) {
-                    this.players[id].hasPowerUp = false; // Reset player state in the game class
+            // Create a nested div for the boots
+            if (player.hasPowerUp && player.powerUpCollectedAt) {
+                if (now - player.powerUpCollectedAt >= 15000) {
+                    this.players[id].hasPowerUp = false;
                     this.players[id].powerUpCollectedAt = null;
+                } else {
+                    let bootsEl = document.createElement("div");
+                    bootsEl.style.position = "absolute";
+                    bootsEl.style.width = "100%";
+                    bootsEl.style.height = "35%"; // Adjust height to fit the bottom part of the player
+                    bootsEl.style.bottom = "0"; // Position at the bottom
+                    bootsEl.style.backgroundImage = `url(src/images/boots.png)`;
+                    bootsEl.style.backgroundSize = "contain";
+                    bootsEl.style.backgroundPosition = "center";
+                    bootsEl.style.backgroundRepeat = "no-repeat";
+                    playerEl.appendChild(bootsEl);
                 }
+            } else {
+                playerEl.style.border = "none"; // Explicitly remove the border
             }
-            
 
             let t = Math.min((now - player.timestamp) / 50, 1);
             let interpolatedX = player.lastX + (player.x - player.lastX) * t;
