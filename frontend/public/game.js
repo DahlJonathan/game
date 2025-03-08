@@ -177,7 +177,9 @@ export default class Game {
                     collectableEl.style.width = `${collectable.width}px`;
                     collectableEl.style.height = `${collectable.height}px`;
                     collectableEl.style.backgroundImage = `url(${this.collectablesImage})`;
-                    collectableEl.style.backgroundSize = "cover";
+                    collectableEl.style.backgroundSize = "contain";
+                    collectableEl.style.backgroundPosition = "center";
+                    collectableEl.style.backgroundRepeat = "no-repeat";
                     gameArea.appendChild(collectableEl);
                 }
             });
