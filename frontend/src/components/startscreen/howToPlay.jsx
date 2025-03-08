@@ -25,22 +25,26 @@ const HowToPlay = ({ onBack }) => {
                 </div>
                 <div className="text-lg text-center max-w-md mt-4 mb-4">
                     <p>Long jump</p>
-                    <div className="flex justify-center">
+                    <div className="flex flex-col items-center">
                         <img src="src/images/longjump.png" alt="longjump"/>
+                        <p>Long jump</p>
                     </div>
                 </div>
-               
-                
-                
                 <div className="text-lg text-center max-w-md mb-4"></div>
-                <p>Collect the green and pink diamonds to earn points.</p>
-                <div className="flex justify-center items-center mt-2 space-x-5">
-                    <img src="src/images/gem.png" alt="collectables" />
-                    <img src="src/images/pink.png" alt="collectables" />
-                </div>
-                <div className="flex justify-center items-center mt-2 space-x-5">
+                <p>Collect the green and pink diamonds to earn points and powerup to get advantage.</p>
+                <div className="flex justify-center items-center mt-4 space-x-5">
+                    <div className="flex flex-col items-center">
+                        <img src="src/images/gem.png" alt="collectables" />
                         <p>1 point</p>
-                        <p>5 point</p>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <img src="src/images/pink.png" alt="collectables" />
+                        <p>5 points</p>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <img src="src/images/powerup.png" alt="collectables" />
+                        <p>jumppower</p>
+                    </div>
                 </div>              
             </div>
             <button

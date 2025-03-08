@@ -44,7 +44,7 @@ export default class GameState {
     }
 
     generateCollectables() {
-        return Array.from({ length: 1 }, () => ({
+        return Array.from({ length: 50 }, () => ({
             x: Math.random() * 1200,
             y: Math.random() * 500,
             width: 25,
@@ -57,8 +57,8 @@ export default class GameState {
         return Array.from({ length: 1 }, () => ({
             x: Math.random() * 1200,
             y: Math.random() * 500,
-            width: 40,
-            height: 40,
+            width: 30,
+            height: 30,
             collected: false,
         }));
     }
@@ -244,7 +244,7 @@ export default class GameState {
                 player.y + 35 > powerUp.y
             ) {
                 powerUp.collected = true;
-                player.jumpStrength = 45; // Increase jump strength
+                player.jumpStrength = 40; // Increase jump strength
                 player.powerUpDuration = 15; // Set power-up duration in seconds
             }
         });
