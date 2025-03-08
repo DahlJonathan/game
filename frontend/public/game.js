@@ -87,13 +87,25 @@ export default class Game {
         } else if (data.type === "update") {
             for (const [id, playerData] of Object.entries(data.state.players)) {
                 if (!this.players[id]) {
-                    this.players[id] = { x: playerData.x, y: playerData.y, lastX: playerData.x, lastY: playerData.y, points: playerData.points };
+                    this.players[id] = { 
+                        x: playerData.x, 
+                        y: playerData.y, 
+                        lastX: playerData.x, 
+                        lastY: playerData.y, 
+                        points: playerData.points,
+                        hasPowerUp: playerData.hasPowerUp, // Ensure hasPowerUp is updated
+                        powerUpCollectedAt: playerData.hasPowerUp ? Date.now() : null // Set powerUpCollectedAt if hasPowerUp is true
+                    };
                 } else {
                     this.players[id].lastX = this.players[id].x;
                     this.players[id].lastY = this.players[id].y;
                     this.players[id].x = playerData.x;
                     this.players[id].y = playerData.y;
                     this.players[id].points = playerData.points;
+                    this.players[id].hasPowerUp = playerData.hasPowerUp; // Ensure hasPowerUp is updated
+                    if (playerData.hasPowerUp && !this.players[id].powerUpCollectedAt) {
+                        this.players[id].powerUpCollectedAt = Date.now(); // Set powerUpCollectedAt if hasPowerUp is true and not already set
+                    }
                     this.players[id].timestamp = Date.now();
                 }
             }
@@ -216,6 +228,17 @@ export default class Game {
             playerEl.style.backgroundSize = "contain";
             playerEl.style.backgroundPosition = "center";
             playerEl.style.backgroundRepeat = "no-repeat";
+
+            if (player.hasPowerUp && player.powerUpCollectedAt && (now - player.powerUpCollectedAt) < 15000) {
+                playerEl.style.border = "3px solid red";
+                playerEl.style.borderRadius = "50%";
+            } else {
+                if (player.hasPowerUp) {
+                    this.players[id].hasPowerUp = false; // Reset player state in the game class
+                    this.players[id].powerUpCollectedAt = null;
+                }
+            }
+            
 
             let t = Math.min((now - player.timestamp) / 50, 1);
             let interpolatedX = player.lastX + (player.x - player.lastX) * t;
