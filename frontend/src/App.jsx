@@ -2,11 +2,7 @@ import React, { useState, useEffect } from "react";
 import StartScreen from "./components/startscreen/startScreen.jsx";
 import SinglePlayer from "./components/startscreen/singlePlayer.jsx";
 import MultiPlayer from "./components/startscreen/multiPlayer.jsx";
-import GameWrapper from "./GameWrapper.jsx";
 import ws from "../public/websocket.js";
-import Scoreboard from "./components/gameinfo/scoreboard.jsx";
-import Timer from "./components/gameinfo/timer.jsx";
-import Fps from "./components/gameinfo/fps.jsx";
 import PauseScreen from "./components/pausescreen/pauseScreen.jsx";
 import HowToPlay from "./components/startscreen/howToPlay.jsx";
 import LeaveGame from "./components/gameinfo/leaveGame.jsx";
@@ -14,7 +10,7 @@ import LeaveGame from "./components/gameinfo/leaveGame.jsx";
 function App() {
   const [gameMode, setGameMode] = useState(null);
   const [startGame, setStartGame] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState("Server 1");
   const [players, setPlayers] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
   const [showPauseScreen, setShowPauseScreen] = useState(false);
@@ -24,27 +20,13 @@ function App() {
   const [leftGame, setLeftGame] = useState(false);
   const [playerLeft, setPlayerLeft] = useState("");
   const [gameRooms, setGameRooms] = useState({
-    "room 1": [],
-    "room 2": [],
-    "room 3": [],
+    "Server 1": [],
   })
   const [scoreboard, setScoreboard] = useState([]);
   const [winnerName, setWinnerName] = useState("");
   const [winnerPoints, setWinnerPoints] = useState(0);
   const [draw, setDraw] = useState(false);
   const [drawPlayers, setDrawPlayers] = useState([]);
-
-  const handleJoinGame = (name) => {
-    if (selectedRoom && gameRooms[selectedRoom].length < 4 && !gameRooms[selectedRoom].includes(name)) {
-      setGameRooms({
-        ...gameRooms,
-        [selectedRoom]: [...gameRooms[selectedRoom], name],
-      });
-      setPlayers([...gameRooms[selectedRoom], name]);
-      setPlayerName(name);
-    }
-    ws.send(JSON.stringify({ type: "joinLobby", playerName: name, room: selectedRoom }));
-  };
 
   const quit = () => {
     setGameRooms((prevGameRooms) => ({
@@ -79,7 +61,7 @@ function App() {
 
   useEffect(() => {
     const handleEscKey = (e) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && startGame) {
         setIsPaused((prev) => {
           const newPausedState = !prev;
           setShowPauseScreen(newPausedState);
@@ -94,7 +76,7 @@ function App() {
     return () => {
       window.removeEventListener("keydown", handleEscKey);
     };
-  }, []);
+  }, [startGame]);
 
   const handleContinue = () => {
     console.log("unPause game")
@@ -117,6 +99,8 @@ function App() {
         setWinnerPoints(0);
         setDraw(false);
         setDrawPlayers([]);
+        setLeftGame(false);
+        setPlayerLeft("");
       }
       if (data.type === "unPauseGame") {
         setIsPaused(false);
@@ -163,9 +147,9 @@ function App() {
         <HowToPlay onBack={back} />
       ) : gameMode === "single" ? (
         <SinglePlayer onBack={back} />
-      ) : !startGame ? (
+      ) : (
         <>
-          {isPaused && (
+          {isPaused && startGame && (
             <div className="absolute inset-0">
               <PauseScreen
                 playerName={playerName}
@@ -177,18 +161,27 @@ function App() {
               />
             </div>
           )}
-          {leftGame && playerLeft !== "" && (
+          {leftGame && playerLeft !== "" && startGame && (
             <LeaveGame playerLeft={playerLeft} onClose={() => setLeftGame(false)} />
           )}
           <MultiPlayer
             onGameRoomSelect={setSelectedRoom}
             selectedRoom={selectedRoom}
             players={players}
-            onJoinGame={handleJoinGame}
+            onJoinGame={(name) => {
+              setGameRooms({
+                ...gameRooms,
+                [selectedRoom]: [...gameRooms[selectedRoom], name],
+              });
+              setPlayers([...gameRooms[selectedRoom], name]);
+              setPlayerName(name);
+            }}
             onGameStart={() => {
-              if (gameRooms[selectedRoom].length >= 1) {
-                setStartGame(true);
+              if (!selectedRoom || !gameRooms[selectedRoom]) {
+                console.error("No valid room selected.");
+                return;
               }
+              setStartGame(true);
             }}
             onBack={back}
             onQuit={quit}
@@ -200,18 +193,6 @@ function App() {
             draw={draw}
             drawPlayers={drawPlayers}
           />
-        </>
-      ) : (
-        <>
-          <div className="flex flex-col items-center justify-center h-screen w-full">
-            <GameWrapper players={gameRooms[selectedRoom] || []} pause={isPaused} reset={reset} playerName={playerName} />
-            <div className="w-[60vw] w-[1280px]">
-              <Scoreboard players={scoreboard} />
-            </div>
-          </div>
-          <Timer onQuit={quit}>
-            <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
-          </Timer>
         </>
       )}
     </div>

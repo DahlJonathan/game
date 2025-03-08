@@ -13,7 +13,7 @@ const characters = [
   { id: 4, name: "Character 4", image: "../../src/images/4.png" },
 ];
 
-const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, onQuit, scoreboard, onPause, onTimeUp, onRestart, winnerName, winnerPoints, draw, drawPlayers }) => {
+const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, onBack, onQuit, scoreboard, onPause, onTimeUp, onRestart, winnerName, winnerPoints, draw, drawPlayers }) => {
   const [playerName, setPlayerName] = useState("");
   const [isReady, setIsReady] = useState(false);
   const [players, setPlayers] = useState([]);
@@ -37,6 +37,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, onQuit, scoreboar
 
       } else if (data.type === 'init') {
         setGameStarted(true);
+        onGameStart();
       } else if (data.type === 'pause') {
         setGamePaused(true);
       } else if (data.type === 'unPause') {
@@ -63,6 +64,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onBack, onQuit, scoreboar
       ws.send(JSON.stringify({ type: 'joinLobby', playerName, room: selectedRoom }));
       setPlayerName(playerName.trim());
       setMessage("");
+      onJoinGame(playerName.trim());
     } else {
       setMessage("Username already taken");
     }
