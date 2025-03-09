@@ -113,7 +113,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
       <h1 className="font-bold text-3xl mb-3">Join a Game Room!</h1>
 
       <div className="flex flex-col md:flex-row w-full justify-center items-start">
-        <div className="flex flex-col items-center w-full md:w-1/4 p-4">
+        <div className="flex flex-col items-center max-w-[300px] md:w-1/4">
           {/* Username Input */}
           <h2 className="font-bold text-xl mb-3">Enter Unique Username</h2>
           <input
@@ -154,7 +154,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
           </div>
         </div>
 
-        <div className="flex flex-col items-center w-full md:w-1/4 p-4">
+        <div className="flex flex-col items-center max-w-[300px] md:w-1/4 p-4">
           {/* Player List */}
           <div className="border-2 border-white p-4 rounded-lg mb-4 max-w-[240px] h-[200px]">
             <h2 className="text-xl mb-2">Players on server: {players.length}/4</h2>
