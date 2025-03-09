@@ -2,9 +2,11 @@ export default class GameState {
     constructor() {
         this.players = {};
         this.collectables = [];
-        this.powerUps = []; 
+        this.powerUps = [];
+        this.powerSpeed = [];  
         this.hasPowerUp = false;
-        this.powerUpImage = 'src/images/powerup.png';
+        this.powerSpeedImage = 'src/images/powerspeed.png';
+        this.powerUpImage = 'src/images/powerjump.png';
         this.collectablesImage = 'src/images/gem.png';
         this.platformImage = 'src/images/platform.jpg';
         this.playerImage = 'src/images/1.png';
@@ -42,10 +44,14 @@ export default class GameState {
         this.gameOver = false;
         this.gamePaused = false;
         this.lastUpdateTime = Date.now();
+
+    
+        this.resetPowerUp();
+        this.startCollectableTimer();
     }
 
     generateCollectables() {
-        return Array.from({ length: 50 }, () => ({
+        return Array.from({ length: 40 }, () => ({
             x: Math.random() * 1200,
             y: Math.random() * 500,
             width: 25,
@@ -54,7 +60,27 @@ export default class GameState {
         }));
     }
 
-    generatePowerUP() {
+    generatePowerJump() {
+        return Array.from({ length: 1 }, () => ({
+            x: Math.random() * 1200,
+            y: Math.random() * 500,
+            width: 40,
+            height: 40,
+            collected: false,
+        }));
+    }
+
+    generatePowerSpeed() {
+        return Array.from({ length: 1 }, () => ({
+            x: Math.random() * 1200,
+            y: Math.random() * 500,
+            width: 40,
+            height: 40,
+            collected: false,
+        }));
+    }
+
+    generatePowerSpeed() {
         return Array.from({ length: 1 }, () => ({
             x: Math.random() * 1200,
             y: Math.random() * 500,
@@ -70,7 +96,15 @@ export default class GameState {
     }
 
     resetPowerUp() {
-        this.powerUps = this.generatePowerUP();
+        this.powerUps = this.generatePowerJump();
+        this.powerSpeed = this.generatePowerSpeed();
+    }
+
+    startCollectableTimer() {
+        setInterval(() => {
+            this.resetCollectables();
+            this.resetPowerUp();
+        }, 15000); // 30 seconds
     }
 
     addPlayer(playerId, name = "") {
@@ -86,6 +120,8 @@ export default class GameState {
             jumpStrength: this.jumpStrength, // Default jump strength
             powerUpDuration: 0, // Duration of the power-up effect
             hasPowerUp: false, 
+            hasPowerSpeed: false,
+            speed: 10, // Default speed
         };
     }
 
@@ -142,14 +178,15 @@ export default class GameState {
             player.powerUpDuration -= elapsedTime;
         } else {
             player.jumpStrength = this.jumpStrength; // Reset to default jump strength
+            player.speed = 10; // Reset to default speed
         }
 
         // Store the old position for horizontal collision checking.
         const oldX = player.x;
 
         // Handle movement inputs.
-        if (input.moveLeft) player.x -= 10;
-        if (input.moveRight) player.x += 10;
+        if (input.moveLeft) player.x -= player.speed;
+        if (input.moveRight) player.x += player.speed;
         if (input.jump && !player.isJumping) {
             player.isJumping = true;
             player.velocityY = -player.jumpStrength;
@@ -232,7 +269,7 @@ export default class GameState {
             ) {
                 collectable.collected = true;
                 player.points += 1;
-                console.log(`Player ${player.name} (ID: ${playerId}) collected a collectable and now has ${player.points} points.`);
+                //console.log(`Player ${player.name} (ID: ${playerId}) collected a collectable and now has ${player.points} points.`);
             }
         });
 
@@ -249,6 +286,22 @@ export default class GameState {
                 player.jumpStrength = 40; // Increase jump strength
                 player.powerUpDuration = 15; // Set power-up duration in seconds
                 player.hasPowerUp = true;
+            }
+        });
+
+        // Check for powerspeed collisions
+        this.powerSpeed.forEach(powerSpeed => {
+            if (
+                !powerSpeed.collected &&
+                player.x < powerSpeed.x + powerSpeed.width &&
+                player.x + 35 > powerSpeed.x &&
+                player.y < powerSpeed.y + powerSpeed.height &&
+                player.y + 35 > powerSpeed.y
+            ) {
+                powerSpeed.collected = true;
+                player.speed = 20; // Increase speed
+                player.powerUpDuration = 15; // Set power-up duration in seconds
+                player.hasPowerSpeed = true;
             }
         });
 
@@ -297,7 +350,6 @@ export default class GameState {
         }
     }
 
-
     getGameState() {
         return {
             players: this.players,
@@ -308,6 +360,8 @@ export default class GameState {
             collectablesImage: this.collectablesImage,
             powerUps: this.powerUps,
             powerUpImage: this.powerUpImage,
+            powerSpeed: this.powerSpeed,
+            powerSpeedImage: this.powerSpeedImage,
         };
     }
 }
