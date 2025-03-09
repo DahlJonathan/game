@@ -3,7 +3,7 @@ import ws from "../../../public/websocket";
 import EndScreen from "../endscreen/endscreen";
 
 function Timer({ children, isPaused, onTimeUp, onQuit, onRestart, winnerName, winnerPoints, draw, drawPlayers }) {
-    const [timer, setTimer] = useState(60);
+    const [timer, setTimer] = useState(600);
     const [gameStartTimer, setGameStartTimer] = useState(1);  
     const [gameStartedNow, setGameStartedNow] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
@@ -41,12 +41,12 @@ function Timer({ children, isPaused, onTimeUp, onQuit, onRestart, winnerName, wi
     return (
         <div>
             {gameStartTimer!== null && (
-                <div className="absolute flex flex-col rounded-lg p-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-auto bg-gray-800 text-white text-5xl p-4 shadow-lg flex justify-center items-center">
+                <div className="absolute flex flex-col rounded-lg p-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-auto bg-gray-800 text-white text-5xl shadow-lg justify-center items-center z-10">
                     <p className="mb-3">Game starts in</p>
                     <p>{gameStartTimer}</p>
                 </div>
             )}
-            <div className="absolute top-0 w-[90vw] max-w-[1280px] h-16 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-5xl p-4 shadow-lg flex justify-center items-center gap-2 rounded-lg">
+            <div className="absolute w-full max-w-[1280px] h-16 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-5xl p-4 shadow-lg flex justify-center items-center gap-2 rounded-lg">
                 {children}
                 <p>Game time</p>
                 <p>{timer}</p>

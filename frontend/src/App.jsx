@@ -93,6 +93,7 @@ function App() {
         const updatedScoreboard = Object.entries(playersData).map(([id, playerData]) => ({
           name: playerData.name || id,
           points: playerData.points,
+          character: playerData.playerImage,
         }));
         setScoreboard(updatedScoreboard);
         setWinnerName("");

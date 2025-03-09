@@ -59,7 +59,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
       playerName.trim() &&
       selectedRoom &&
       players.length < 4 &&
-     !players.some(player => player.name === playerName.trim())
+      !players.some(player => player.name === playerName.trim())
     ) {
       ws.send(JSON.stringify({ type: 'joinLobby', playerName, room: selectedRoom }));
       setPlayerName(playerName.trim());
@@ -76,15 +76,15 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
 
   const handleReady = () => {
     setIsReady(!isReady);
-    ws.send(JSON.stringify({ type:'ready', playerName, roomId: selectedRoom, isReady:!isReady }));
+    ws.send(JSON.stringify({ type: 'ready', playerName, roomId: selectedRoom, isReady: !isReady }));
   };
 
   const handleStartGame = () => {
-    ws.send(JSON.stringify({ type:'startGame' }));
+    ws.send(JSON.stringify({ type: 'startGame' }));
   };
 
   const handleRestart = () => {
-    ws.send(JSON.stringify({ type:'startGame' }));
+    ws.send(JSON.stringify({ type: 'startGame' }));
   };
 
   const handleCharacterSelect = (character) => {
@@ -95,17 +95,15 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
   if (gameStarted) {
     return (
       <>
-        <div className="flex flex-col items-center justify-center h-screen w-full">
+        <div className="relative flex flex-col items-center justify-center h-screen w-full">
+          <Timer isPaused={onPause} onTimeUp={handleTimeUp} onRestart={onRestart} onQuit={onQuit} winnerName={winnerName} winnerPoints={winnerPoints} draw={draw} drawPlayers={drawPlayers}>
+            <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg rounded-lg" />
+          </Timer>
           <GameWrapper players={players} reset={handleRestart} playerName={playerName} />
-          <div>
-          </div>
-          <div className="w-[60vw] max-w-[1280px]">
+          <div className="w-full max-w-[1280px]">
             <Scoreboard players={scoreboard} />
           </div>
         </div>
-        <Timer isPaused={onPause} onTimeUp={handleTimeUp} onRestart={onRestart} onQuit={onQuit} winnerName={winnerName} winnerPoints={winnerPoints} draw={draw} drawPlayers={drawPlayers}>
-          <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg" />
-        </Timer>
       </>
     );
   }
@@ -133,9 +131,8 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
               <button
                 key={room}
                 onClick={() => onGameRoomSelect(room)}
-                className={`px-3 py-1 m-2 font-bold rounded-lg transition ${
-                  selectedRoom === room ? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
-                } text-white`}
+                className={`px-3 py-1 m-2 font-bold rounded-lg transition ${selectedRoom === room ? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
+                  } text-white`}
               >
                 {room}
               </button>
@@ -145,11 +142,10 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
           <button
             onClick={handleJoin}
             disabled={!selectedRoom || players.length >= 4 || !playerName.trim() || players.some(player => player.name === playerName.trim())}
-            className={`px-6 py-2 mb-2 font-bold rounded-lg transition ${
-              selectedRoom && players.length < 4 && playerName.trim() && !players.some(player => player.name === playerName.trim())
-                ? "bg-yellow-500 hover:bg-yellow-700"
-                : "bg-gray-500 cursor-not-allowed"
-            } text-white`}
+            className={`px-6 py-2 mb-2 font-bold rounded-lg transition ${selectedRoom && players.length < 4 && playerName.trim() && !players.some(player => player.name === playerName.trim())
+              ? "bg-yellow-500 hover:bg-yellow-700"
+              : "bg-gray-500 cursor-not-allowed"
+              } text-white`}
           >
             {players.length < 4 ? "Join Server" : "Server Full"}
           </button>
@@ -180,9 +176,8 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
             <button
               key={character.id}
               onClick={() => handleCharacterSelect(character)}
-              className={`m-2 p-2 rounded-lg transition ${
-                selectedCharacter?.id === character.id ? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
-              } text-white`}
+              className={`m-2 p-2 rounded-lg transition ${selectedCharacter?.id === character.id ? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
+                } text-white`}
             >
               <img src={`/characters/${character.image}`} alt={character.name} width={50} height={50} />
             </button>
@@ -195,9 +190,8 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
         <button
           onClick={handleReady}
           disabled={!selectedCharacter}
-          className={`px-6 py-2 mb-2 mt-3 font-bold rounded-lg transition ${
-            isReady ? "bg-green-500 hover:bg-green-700" : "bg-blue-500 hover:bg-blue-700"
-          } text-white`}
+          className={`px-6 py-2 mb-2 mt-3 font-bold rounded-lg transition ${isReady ? "bg-green-500 hover:bg-green-700" : "bg-blue-500 hover:bg-blue-700"
+            } text-white`}
         >
           {isReady ? "Unready" : "Ready"}
         </button>
@@ -215,11 +209,10 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
         <button
           onClick={handleStartGame}
           disabled={!lobbyLeader || lobbyLeader.name !== playerName || players.length < 2 || !players.every(player => player.isReady)}
-          className={`px-4 py-3 font-bold rounded-lg transition ${
-            lobbyLeader && lobbyLeader.name === playerName && players.length >= 2 && players.every(player => player.isReady)
-              ? "bg-green-500 hover:bg-green-700"
-              : "bg-gray-500 cursor-not-allowed"
-          } text-white`}
+          className={`px-4 py-3 font-bold rounded-lg transition ${lobbyLeader && lobbyLeader.name === playerName && players.length >= 2 && players.every(player => player.isReady)
+            ? "bg-green-500 hover:bg-green-700"
+            : "bg-gray-500 cursor-not-allowed"
+            } text-white`}
         >
           Start Game
         </button>
