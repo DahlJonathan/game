@@ -3,6 +3,7 @@ export default class GameState {
         this.players = {};
         this.collectables = [];
         this.powerUps = []; 
+        this.hasPowerUp = false;
         this.powerUpImage = 'src/images/powerup.png';
         this.collectablesImage = 'src/images/gem.png';
         this.platformImage = 'src/images/platform.jpg';
@@ -84,6 +85,7 @@ export default class GameState {
             playerImage: 'src/images/1.png', // Default image
             jumpStrength: this.jumpStrength, // Default jump strength
             powerUpDuration: 0, // Duration of the power-up effect
+            hasPowerUp: false, 
         };
     }
 
@@ -246,6 +248,7 @@ export default class GameState {
                 powerUp.collected = true;
                 player.jumpStrength = 40; // Increase jump strength
                 player.powerUpDuration = 15; // Set power-up duration in seconds
+                player.hasPowerUp = true;
             }
         });
 

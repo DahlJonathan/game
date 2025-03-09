@@ -87,13 +87,31 @@ export default class Game {
         } else if (data.type === "update") {
             for (const [id, playerData] of Object.entries(data.state.players)) {
                 if (!this.players[id]) {
-                    this.players[id] = { x: playerData.x, y: playerData.y, lastX: playerData.x, lastY: playerData.y, points: playerData.points };
+                    this.players[id] = { 
+                        x: playerData.x, 
+                        y: playerData.y, 
+                        lastX: playerData.x, 
+                        lastY: playerData.y, 
+                        points: playerData.points,
+                        hasPowerUp: playerData.hasPowerUp, // Ensure hasPowerUp is updated
+                        powerUpCollectedAt: playerData.hasPowerUp ? Date.now() : null // Set powerUpCollectedAt if hasPowerUp is true
+                    };
                 } else {
                     this.players[id].lastX = this.players[id].x;
                     this.players[id].lastY = this.players[id].y;
                     this.players[id].x = playerData.x;
                     this.players[id].y = playerData.y;
                     this.players[id].points = playerData.points;
+                    this.players[id].hasPowerUp = playerData.hasPowerUp; // Ensure hasPowerUp is updated
+                    if (playerData.hasPowerUp &&!this.players[id].powerUpCollectedAt) {
+                        this.players[id].powerUpCollectedAt = Date.now(); 
+                    }
+        
+                    if (this.players[id].hasPowerUp && this.players[id].powerUpCollectedAt && Date.now() - this.players[id].powerUpCollectedAt >= 15000) {
+                        this.players[id].hasPowerUp = false;
+                        this.players[id].powerUpCollectedAt = null;
+                    }
+        
                     this.players[id].timestamp = Date.now();
                 }
             }
@@ -218,6 +236,24 @@ export default class Game {
             playerEl.style.backgroundSize = "contain";
             playerEl.style.backgroundPosition = "center";
             playerEl.style.backgroundRepeat = "no-repeat";
+
+            // Create a nested div for the boots
+            if (player.hasPowerUp && player.powerUpCollectedAt) {
+                if (now - player.powerUpCollectedAt >= 15000) {
+                    this.players[id].hasPowerUp = false;
+                    this.players[id].powerUpCollectedAt = null;
+                } else {
+                    let bootsEl = document.createElement("div");
+                    bootsEl.style.position = "absolute";
+                    bootsEl.style.width = "100%";
+                    bootsEl.style.height = "45%"; // Adjust height to fit the bottom part of the player
+                    bootsEl.style.backgroundImage = `url(src/images/powerup.png)`;
+                    bootsEl.style.backgroundSize = "contain";
+                    bootsEl.style.backgroundPosition = "center";
+                    bootsEl.style.backgroundRepeat = "no-repeat";
+                    playerEl.appendChild(bootsEl);
+                }
+            } 
 
             let t = Math.min((now - player.timestamp) / 50, 1);
             let interpolatedX = player.lastX + (player.x - player.lastX) * t;
