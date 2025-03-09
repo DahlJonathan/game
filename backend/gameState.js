@@ -219,12 +219,14 @@ export default class GameState {
             // Check if player and platform vertically overlap
             if (player.y + 35 >= platformTop && player.y <= platformBottom) {
                 // If moving right, check for collision with the platform's left side
-                if (input.moveRight && oldX + 35 <= platformLeft && player.x + 35 > platformLeft) {
+                if (oldX + 35 <= platformLeft && player.x + 35 > platformLeft) {
                     player.x = platformLeft - 35;
+                    player.pushVelocityX = 0;
                 }
                 // If moving left, check for collision with the platform's right side
-                if (input.moveLeft && oldX >= platformRight && player.x < platformRight) {
+                if (oldX >= platformRight && player.x < platformRight) {
                     player.x = platformRight;
+                    player.pushVelocityX = 0;
                 }
             }
         }
@@ -256,9 +258,11 @@ export default class GameState {
         }
         if (player.x < 0) {
             player.x = 0;
+            player.pushVelocityX = 0;
         }
         if (player.x > 1242) {
             player.x = 1242;
+            player.pushVelocityX = 0;
         }
     }
 
