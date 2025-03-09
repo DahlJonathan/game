@@ -244,17 +244,14 @@ export default class Game {
                     let bootsEl = document.createElement("div");
                     bootsEl.style.position = "absolute";
                     bootsEl.style.width = "100%";
-                    bootsEl.style.height = "35%"; // Adjust height to fit the bottom part of the player
-                    bootsEl.style.bottom = "0"; // Position at the bottom
-                    bootsEl.style.backgroundImage = `url(src/images/boots.png)`;
+                    bootsEl.style.height = "45%"; // Adjust height to fit the bottom part of the player
+                    bootsEl.style.backgroundImage = `url(src/images/powerup.png)`;
                     bootsEl.style.backgroundSize = "contain";
                     bootsEl.style.backgroundPosition = "center";
                     bootsEl.style.backgroundRepeat = "no-repeat";
                     playerEl.appendChild(bootsEl);
                 }
-            } else {
-                playerEl.style.border = "none"; // Explicitly remove the border
-            }
+            } 
 
             let t = Math.min((now - player.timestamp) / 50, 1);
             let interpolatedX = player.lastX + (player.x - player.lastX) * t;
