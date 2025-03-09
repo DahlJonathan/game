@@ -102,16 +102,11 @@ export default class Game {
                     this.players[id].x = playerData.x;
                     this.players[id].y = playerData.y;
                     this.players[id].points = playerData.points;
-                    this.players[id].hasPowerUp = playerData.hasPowerUp; // Ensure hasPowerUp is updated
-                    if (playerData.hasPowerUp &&!this.players[id].powerUpCollectedAt) {
-                        this.players[id].powerUpCollectedAt = Date.now(); 
+                    if (playerData.hasPowerUp && !this.players[id].hasPowerUp) {
+                        this.players[id].hasPowerUp = true;
+                        this.players[id].powerUpCollectedAt = Date.now(); // Only set once
                     }
-        
-                    if (this.players[id].hasPowerUp && this.players[id].powerUpCollectedAt && Date.now() - this.players[id].powerUpCollectedAt >= 15000) {
-                        this.players[id].hasPowerUp = false;
-                        this.players[id].powerUpCollectedAt = null;
-                    }
-        
+                    
                     this.players[id].timestamp = Date.now();
                 }
             }
@@ -166,6 +161,7 @@ export default class Game {
         document.querySelectorAll(".platform").forEach(el => el.remove());
         document.querySelectorAll(".collectable").forEach(el => el.remove());
         document.querySelectorAll(".power-up").forEach(el => el.remove());
+        document.querySelectorAll(".playerpowerup").forEach(el => el.remove());
 
         // Render platforms
         if (this.platforms) {
@@ -234,24 +230,32 @@ export default class Game {
             playerEl.style.backgroundSize = "contain";
             playerEl.style.backgroundPosition = "center";
             playerEl.style.backgroundRepeat = "no-repeat";
+            playerEl.style.zIndex = "2"; // Ensure player is in front
 
-            // Create a nested div for the boots
-            if (player.hasPowerUp && player.powerUpCollectedAt) {
-                if (now - player.powerUpCollectedAt >= 15000) {
-                    this.players[id].hasPowerUp = false;
-                    this.players[id].powerUpCollectedAt = null;
-                } else {
-                    let bootsEl = document.createElement("div");
-                    bootsEl.style.position = "absolute";
-                    bootsEl.style.width = "100%";
-                    bootsEl.style.height = "45%"; // Adjust height to fit the bottom part of the player
-                    bootsEl.style.backgroundImage = `url(src/images/powerup.png)`;
-                    bootsEl.style.backgroundSize = "contain";
-                    bootsEl.style.backgroundPosition = "center";
-                    bootsEl.style.backgroundRepeat = "no-repeat";
-                    playerEl.appendChild(bootsEl);
-                }
-            } 
+            let playerPowerUpEl = document.querySelector(`.playerpowerup-${id}`);
+            if (!playerPowerUpEl) {
+                playerPowerUpEl = document.createElement("div");
+                playerPowerUpEl.classList.add("playerpowerup", `playerpowerup-${id}`);
+                playerPowerUpEl.style.position = "absolute";
+                playerPowerUpEl.style.width = "50px"; // Make power-up bigger than player
+                playerPowerUpEl.style.height = "50px"; // Make power-up bigger than player
+                playerPowerUpEl.style.backgroundImage = `url(src/images/showpowerup.png)`;
+                playerPowerUpEl.style.backgroundSize = "contain";
+                playerPowerUpEl.style.backgroundPosition = "center";
+                playerPowerUpEl.style.backgroundRepeat = "no-repeat";
+                playerPowerUpEl.style.zIndex = "1"; // Ensure power-up is behind player
+                gameArea.appendChild(playerPowerUpEl);
+            }
+
+            // Update the visibility of the power-up based on the power-up status
+            if (player.hasPowerUp && player.powerUpCollectedAt && (now - player.powerUpCollectedAt) < 15000) {
+                playerPowerUpEl.style.display = "block";
+                console.log(`Player ${id} power-up time remaining: ${15000 - (now - player.powerUpCollectedAt)} ms`);
+            } else {
+                playerPowerUpEl.style.display = "none";
+                player.hasPowerUp = false; // Reset hasPowerUp if the duration has elapsed
+                player.powerUpCollectedAt = null; // Reset powerUpCollectedAt
+            }
 
             let t = Math.min((now - player.timestamp) / 50, 1);
             let interpolatedX = player.lastX + (player.x - player.lastX) * t;
@@ -259,6 +263,9 @@ export default class Game {
 
             playerEl.style.left = `${interpolatedX}px`;
             playerEl.style.top = `${interpolatedY}px`;
+
+            playerPowerUpEl.style.left = `${interpolatedX - 7.5}px`; // Center the power-up behind the player
+            playerPowerUpEl.style.top = `${interpolatedY - 7.5}px`; // Center the power-up behind the player
 
             gameArea.appendChild(playerEl);
         }
