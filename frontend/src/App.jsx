@@ -6,6 +6,7 @@ import ws from "../public/websocket.js";
 import PauseScreen from "./components/pausescreen/pauseScreen.jsx";
 import HowToPlay from "./components/startscreen/howToPlay.jsx";
 import LeaveGame from "./components/gameinfo/leaveGame.jsx";
+import RestartScreen from "./components/pausescreen/restartScreen.jsx";
 
 function App() {
   const [gameMode, setGameMode] = useState(null);
@@ -27,6 +28,7 @@ function App() {
   const [winnerPoints, setWinnerPoints] = useState(0);
   const [draw, setDraw] = useState(false);
   const [drawPlayers, setDrawPlayers] = useState([]);
+  const [restartScreen, setRestartScreen] = useState(false);
 
   const quit = () => {
     setGameRooms((prevGameRooms) => ({
@@ -38,6 +40,7 @@ function App() {
     setStartGame(false);
     setIsPaused(false);
     setShowPauseScreen(false);
+    setRestartScreen(false);
     ws.send(JSON.stringify({ type: "quitGame" }));
   }
 
@@ -51,12 +54,7 @@ function App() {
   };
 
   const restart = () => {
-    setShowPauseScreen(false);
-    setIsPaused(false);
-    setReset(true);
-    setTimeout(() => {
-      setReset(false);
-    }, 100);
+    setRestartScreen(true);
   };
 
   useEffect(() => {
@@ -160,6 +158,11 @@ function App() {
                 onRestart={restart}
                 onPause={isPaused}
               />
+            </div>
+          )}
+          {restartScreen && (
+            <div className="absolute inset-0">
+            <RestartScreen player={pausedPlayer} onQuit={quit}/>
             </div>
           )}
           {leftGame && playerLeft !== "" && startGame && (

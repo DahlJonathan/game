@@ -1,6 +1,6 @@
 import React from "react";
 
-const PauseScreen = ({ onContinue, onQuit, playerName, pausedPlayer }) => {
+const PauseScreen = ({ onContinue, onQuit, onRestart, pausedPlayer }) => {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
       {/* Dark Overlay */}
@@ -18,6 +18,13 @@ const PauseScreen = ({ onContinue, onQuit, playerName, pausedPlayer }) => {
           className="px-6 py-3 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg transition m-2"
         >
           Continue
+        </button>
+
+        <button
+          onClick={onRestart}
+          className="px-6 py-3 bg-yellow-500 hover:bg-yellow-700 text-white font-bold rounded-lg transition m-2"
+        >
+          Restart
         </button>
 
         <button
