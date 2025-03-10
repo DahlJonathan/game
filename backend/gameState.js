@@ -73,7 +73,7 @@ export default class GameState {
     }
 
     generatePowerJump() {
-        return Array.from({ length: 0 }, () => ({
+        return Array.from({ length: 1 }, () => ({
             x: Math.random() * 1200,
             y: Math.random() * 500,
             width: 40,
@@ -83,7 +83,7 @@ export default class GameState {
     }
 
     generatePowerSpeed() {
-        return Array.from({ length: 0 }, () => ({
+        return Array.from({ length: 1 }, () => ({
             x: Math.random() * 1200,
             y: Math.random() * 500,
             width: 40,
