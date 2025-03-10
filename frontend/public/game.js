@@ -7,6 +7,7 @@ export default class Game {
         this.players = {};
         this.platforms = [];
         this.collectables = [];
+        this.diamonds = [];
         this.activeKeys = {}; // Track active keys
         this.inputInterval = null; // Timer for sending inputs
         this.powerUps = [];
@@ -79,6 +80,8 @@ export default class Game {
             this.powerUpImage = data.state.powerUpImage;
             this.powerSpeed = data.state.powerSpeed;
             this.powerSpeedImage = data.state.powerSpeedImage;
+            this.diamonds = data.state.diamonds;
+            this.diamondsImage = data.state.diamondsImage;
             console.log("Received initial game state:", data.state);
             
             for (let playerId in data.state.players) {
@@ -119,6 +122,7 @@ export default class Game {
             this.collectables = data.state.collectables;
             this.powerUps = data.state.powerUps;
             this.powerSpeed = data.state.powerSpeed;
+            this.diamonds = data.state.diamonds;
         } else if (data.type === "delete") {
             const idToDelete = data.playerId;
             delete this.players[idToDelete];
@@ -169,6 +173,8 @@ export default class Game {
         document.querySelectorAll(".collectable").forEach(el => el.remove());
         document.querySelectorAll(".power-up").forEach(el => el.remove());
         document.querySelectorAll(".powerspeed").forEach(el => el.remove());
+        document.querySelectorAll(".diamonds").forEach(el => el.remove());
+
         /* document.querySelectorAll(".playerpowerup").forEach(el => el.remove()); */
 
         // Render platforms
@@ -203,6 +209,26 @@ export default class Game {
                     collectableEl.style.backgroundPosition = "center";
                     collectableEl.style.backgroundRepeat = "no-repeat";
                     gameArea.appendChild(collectableEl);
+                }
+            });
+        }
+
+        // Render diamonds
+        if (this.diamonds) {
+            this.diamonds.forEach(diamond => {
+                if (!diamond.collected) {
+                    let diamondEl = document.createElement("div");
+                    diamondEl.classList.add("diamonds");
+                    diamondEl.style.position = "absolute";
+                    diamondEl.style.left = `${diamond.x}px`;
+                    diamondEl.style.top = `${diamond.y}px`;
+                    diamondEl.style.width = `${diamond.width}px`;
+                    diamondEl.style.height = `${diamond.height}px`;
+                    diamondEl.style.backgroundImage = `url(${this.diamondsImage})`;
+                    diamondEl.style.backgroundSize = "contain";
+                    diamondEl.style.backgroundPosition = "center";
+                    diamondEl.style.backgroundRepeat = "no-repeat";
+                    gameArea.appendChild(diamondEl);
                 }
             });
         }

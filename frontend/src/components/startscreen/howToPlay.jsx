@@ -38,12 +38,16 @@ const HowToPlay = ({ onBack }) => {
                         <p>1 point</p>
                     </div>
                     <div className="flex flex-col items-center">
-                        <img src="src/images/pink.png" alt="collectables" />
+                        <img src="src/images/diamond.png" alt="collectables" />
                         <p>5 points</p>
                     </div>
                     <div className="flex flex-col items-center">
-                        <img src="src/images/powerup.png" alt="collectables" />
-                        <p>jumppower</p>
+                        <img src="src/images/powerjump.png" alt="collectables" style={{ width: '42px', height: '70px' }} />
+                        <p>jump</p>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <img src="src/images/powerspeed.png" alt="collectables" style={{ width: '42px', height: '70px' }} />
+                        <p>speed</p>
                     </div>
                 </div>              
             </div>

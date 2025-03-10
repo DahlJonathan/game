@@ -5,6 +5,8 @@ export default class GameState {
         this.powerUps = [];
         this.powerSpeed = [];  
         this.hasPowerUp = false;
+        this.diamonds = [];
+        this.diamondsImage = 'src/images/diamond.png';
         this.powerSpeedImage = 'src/images/powerspeed.png';
         this.powerUpImage = 'src/images/powerjump.png';
         this.collectablesImage = 'src/images/gem.png';
@@ -60,8 +62,18 @@ export default class GameState {
         }));
     }
 
+    generateDiamonds() {
+        return Array.from({ length: 3 }, () => ({
+            x: Math.random() * 1200,
+            y: Math.random() * 500,
+            width: 40,
+            height: 40,
+            collected: false,
+        }));
+    }
+
     generatePowerJump() {
-        return Array.from({ length: 1 }, () => ({
+        return Array.from({ length: 0 }, () => ({
             x: Math.random() * 1200,
             y: Math.random() * 500,
             width: 40,
@@ -71,28 +83,18 @@ export default class GameState {
     }
 
     generatePowerSpeed() {
-        return Array.from({ length: 1 }, () => ({
+        return Array.from({ length: 0 }, () => ({
             x: Math.random() * 1200,
             y: Math.random() * 500,
             width: 40,
             height: 40,
-            collected: false,
-        }));
-    }
-
-    generatePowerSpeed() {
-        return Array.from({ length: 1 }, () => ({
-            x: Math.random() * 1200,
-            y: Math.random() * 500,
-            width: 30,
-            height: 30,
             collected: false,
         }));
     }
 
     resetCollectables() {
         this.collectables = this.generateCollectables();
-        // console.log("Reset collectables:", this.collectables);
+        this.diamonds = this.generateDiamonds();
     }
 
     resetPowerUp() {
@@ -316,6 +318,21 @@ export default class GameState {
             }
         });
 
+        // Check for diamond collisions
+        this.diamonds.forEach(diamond => {
+            if (
+                !diamond.collected &&
+                player.x < diamond.x + diamond.width &&
+                player.x + 35 > diamond.x &&
+                player.y < diamond.y + diamond.height &&
+                player.y + 35 > diamond.y
+            ) {
+                diamond.collected = true;
+                player.points += 5;
+                //console.log(`Player ${player.name} (ID: ${playerId}) collected a collectable and now has ${player.points} points.`);
+            }
+        });
+
         // Check for powerup collisions
         this.powerUps.forEach(powerUp => {
             if (
@@ -407,6 +424,8 @@ export default class GameState {
             powerUpImage: this.powerUpImage,
             powerSpeed: this.powerSpeed,
             powerSpeedImage: this.powerSpeedImage,
+            diamonds: this.diamonds,
+            diamondsImage: this.diamondsImage,
         };
     }
 }
