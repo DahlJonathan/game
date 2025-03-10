@@ -62,4 +62,9 @@ audio.loadSound('jump', 'src/audio/jump.wav');
 audio.loadSound('gempoint', 'src/audio/collected.wav');
 audio.loadSound('diapoint', 'src/audio/collectedBig.wav');
 
+audio.setVolume('background', 0.02);
+audio.setVolume('gempoint', 0.3);
+audio.setVolume('diapoint', 0.3);
+audio.setVolume('jump', 1);
+
 export default audio;
