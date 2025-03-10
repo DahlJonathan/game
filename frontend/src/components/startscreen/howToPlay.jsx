@@ -2,32 +2,37 @@ import React from "react";
 
 const HowToPlay = ({ onBack }) => {
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
             <h1 className="text-4xl font-bold mb-6">Panic Point Sprint</h1>
             <p className="text-lg text-center max-w-md">
                 Panic Point Sprint is a fast-paced multiplayer game where you and your friends compete to collect as many points as possible in a limited time. The player with the most points at the end of the game wins.
             </p>
             <div className="text-lg text-center max-w-md mt-4 mb-4">
-                <p>Use the arrow keys to move:</p>
+                <p className="mb-2">Use the arrow keys to move:</p>
                 <div className="flex justify-center space-x-4">
                     <div className="flex flex-col items-center">
-                        <span className="font-bold">⬅️</span>
+                    <img src="src/images/left.png" alt="keys" />
                         <p>Left</p>
                     </div>
                     <div className="flex flex-col items-center">
-                        <span className="font-bold">⬆️</span>
+                    <img src="src/images/up.png" alt="keys" />
                         <p>Jump</p>
                     </div>
                     <div className="flex flex-col items-center">
-                        <span className="font-bold">➡️</span>
+                    <img src="src/images/right.png" alt="keys" />
                         <p>Right</p>
+                    </div>
+                </div>
+                <div className="flex justify-center mt-2">
+                    <div className="flex flex-col items-center">
+                    <img src="src/images/esc.png" alt="keys" />
+                        <p>Pause</p>
                     </div>
                 </div>
                 <div className="text-lg text-center max-w-md mt-4 mb-4">
                     <p>Long jump</p>
                     <div className="flex flex-col items-center">
                         <img src="src/images/longjump.png" alt="longjump"/>
-                        <p>Long jump</p>
                     </div>
                 </div>
                 <div className="text-lg text-center max-w-md mb-4"></div>
