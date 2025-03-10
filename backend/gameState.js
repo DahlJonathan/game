@@ -1,5 +1,6 @@
 export default class GameState {
-    constructor() {
+    constructor(wss) {
+        this.wss = wss; // Store the WebSocket server instance
         this.players = {};
         this.collectables = [];
         this.powerUps = [];
@@ -14,8 +15,8 @@ export default class GameState {
         this.playerImage = 'src/images/1.png';
         //this.collectablesImage = '/gem.png'; for netlify
         //this.platformImage = '/platform.jpg'; for netlify
-        //this.playerImage = '1.png';
-
+        this.playerImage = '/1.png';
+        //this.playerImage = 'src/images/1.png';
         this.gravity = 2;
         this.jumpStrength = 25;
         this.frameRate = 60; // Frames per second
@@ -313,6 +314,15 @@ export default class GameState {
                 player.y + 35 > collectable.y
             ) {
                 collectable.collected = true;
+                const soundMessage = JSON.stringify({
+                    type: 'collectableCollected',
+                    playerId: playerId,
+                });
+                this.wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(soundMessage);
+                    }
+                });    
                 player.points += 1;
                 //console.log(`Player ${player.name} (ID: ${playerId}) collected a collectable and now has ${player.points} points.`);
             }
@@ -328,6 +338,15 @@ export default class GameState {
                 player.y + 35 > diamond.y
             ) {
                 diamond.collected = true;
+                const soundMessage = JSON.stringify({
+                    type: 'diamondCollected',
+                    playerId: playerId,
+                });
+                this.wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(soundMessage);
+                    }
+                }); 
                 player.points += 5;
                 //console.log(`Player ${player.name} (ID: ${playerId}) collected a collectable and now has ${player.points} points.`);
             }
@@ -364,6 +383,7 @@ export default class GameState {
                 player.hasPowerSpeed = true;
             }
         });
+
 
         // Stay within game-area bounds.
         if (player.y >= 531) {

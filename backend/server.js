@@ -7,7 +7,7 @@ import path from 'path';
 
 const app = express();
 const wss = new WebSocketServer({ noServer: true });
-const gameState = new GameState();
+const gameState = new GameState(wss);
 let gameInterval = null;
 let gameEnded = false;
 

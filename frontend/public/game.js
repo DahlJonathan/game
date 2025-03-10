@@ -1,4 +1,5 @@
 import ws from "./websocket.js";
+import audio from '../src/audio';
 
 export default class Game {
     constructor() {
@@ -36,12 +37,22 @@ export default class Game {
 
         this.ws.addEventListener("message", (event) => this.handleServerMessage(event));
 
+
+        // Play background audio when the game starts
+        audio.playSound('background');
+
         requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
     }
 
     handleKeyChange(event, isPressed) {
         const key = event.key === " " ? "Spacebar" : event.key;
         this.activeKeys[key] = isPressed;
+
+
+        // Play jump sound when the player jumps
+        if (key === "ArrowUp" && isPressed) {
+            audio.playSound('jump');
+        }
 
         // Start sending inputs at a fixed interval if not already running
         if (!this.inputInterval) {

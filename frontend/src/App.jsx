@@ -6,6 +6,7 @@ import ws from "../public/websocket.js";
 import PauseScreen from "./components/pausescreen/pauseScreen.jsx";
 import HowToPlay from "./components/startscreen/howToPlay.jsx";
 import LeaveGame from "./components/gameinfo/leaveGame.jsx";
+import audio from './audio.js';
 
 function App() {
   const [gameMode, setGameMode] = useState(null);
@@ -122,10 +123,18 @@ function App() {
       if (data.type === "gameOver") {
         setWinnerName(data.winner);
         setWinnerPoints(data.points);
+        audio.stopSound('background');
       }
       if (data.type === "draw") {
         setDraw(true);
         setDrawPlayers(data.players);
+      }
+      if (data.type === "collectableCollected") {
+        audio.playSound('gempoint'); // Play collectable sound
+      }
+
+      if (data.type === "diamondCollected") {
+        audio.playSound('diapoint'); // Play diamond sound
       }
     };
 
