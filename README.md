@@ -87,10 +87,10 @@ web-game
 2. **Single Mode**: Added later.
 3. **Multi Mode**: User joins a game room / server.
 3. **How to Play**: Lists keys to move the player, how to pause the game, collectables and powerups.
-4. **Game**: Lists all players in the game room, max 4 players. When all players have chosen their character and clicked ready button, leader can start the game.
-5. **Game Screen Page**: Timer goes from one minute to zero, scoreboard shows points.
-6. **Pause menu**: When clicked `esc` pause menu appers with `contiue`, `quit` and `restart` buttons.
-8. **Game End**: When time ends a endscreen appear with the `winner` name, `quit` and `restart` buttons.
+4. **Game Room**: Lists all players in the game room, max 4 players. When all players have chosen their character and clicked ready button, leader can start the game.
+5. **Game**: Timer goes from one minute to zero, scoreboard shows points.
+6. **Pause menu**: When clicked `esc` pause menu appears with `contiue`, `quit` and `restart` buttons.
+8. **Game Ends**: When time ends an endscreen appears with the `winner` name, `quit` and `restart` buttons.
 9. **Leaving the Game**: User is redirected to opening page.
 
 ## Developers

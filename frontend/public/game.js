@@ -39,7 +39,7 @@ export default class Game {
 
 
         // Play background audio when the game starts
-        audio.playSound('background');
+       // audio.playSound('background');
 
         requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
     }
@@ -50,9 +50,9 @@ export default class Game {
 
 
         // Play jump sound when the player jumps
-        if (key === "ArrowUp" && isPressed) {
-            audio.playSound('jump');
-        }
+        //if (key === "ArrowUp" && isPressed) {
+        //    audio.playSound('jump');
+        //}
 
         // Start sending inputs at a fixed interval if not already running
         if (!this.inputInterval) {

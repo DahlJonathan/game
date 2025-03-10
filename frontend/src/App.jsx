@@ -28,6 +28,7 @@ function App() {
   const [winnerPoints, setWinnerPoints] = useState(0);
   const [draw, setDraw] = useState(false);
   const [drawPlayers, setDrawPlayers] = useState([]);
+  const [isMuted, setIsMuted] = useState(false);
 
   const quit = () => {
     setGameRooms((prevGameRooms) => ({
@@ -39,6 +40,7 @@ function App() {
     setStartGame(false);
     setIsPaused(false);
     setShowPauseScreen(false);
+    audio.stopSound('background'); // Stop the background audio
     ws.send(JSON.stringify({ type: "quitGame" }));
   }
 
@@ -49,15 +51,22 @@ function App() {
     setStartGame(false);
     setIsPaused(false);
     setShowPauseScreen(false);
+    audio.stopSound('background'); // Stop the background audio
   };
 
   const restart = () => {
     setShowPauseScreen(false);
     setIsPaused(false);
     setReset(true);
+    audio.stopSound('background'); // Stop the background audio
     setTimeout(() => {
       setReset(false);
     }, 100);
+  };
+
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+    audio.muteAll(!isMuted);
   };
 
   useEffect(() => {
@@ -136,6 +145,9 @@ function App() {
       if (data.type === "diamondCollected") {
         audio.playSound('diapoint'); // Play diamond sound
       }
+      if (data.type === "jump") {
+        audio.playSound('jump'); // Play jump sound
+      }
     };
 
     ws.addEventListener("message", handleMessage);
@@ -147,6 +159,9 @@ function App() {
 
   return (
     <div className="relative">
+      <button onClick={toggleMute} style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
+        {isMuted ? "Unmute" : "Mute"}
+      </button>
       {!gameMode ? (
         <StartScreen
           onSinglePlayer={() => setGameMode("single")}
@@ -192,6 +207,7 @@ function App() {
                 return;
               }
               setStartGame(true);
+              audio.playSound('background'); // Play the background audio when the game starts
             }}
             onBack={back}
             onQuit={quit}

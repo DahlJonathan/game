@@ -194,6 +194,16 @@ export default class GameState {
         if (input.moveRight) player.x += player.speed;
         if (input.jump && !player.isJumping) {
             player.isJumping = true;
+            // Send jump message to frontend
+            const message = JSON.stringify({
+                type: 'jump',
+                playerId: playerId
+            });
+            this.wss.clients.forEach(client => {
+                if (client.readyState === client.OPEN) {
+                    client.send(message);
+                }
+            });
             player.velocityY = -player.jumpStrength;
         }
 
