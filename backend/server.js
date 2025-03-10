@@ -141,7 +141,7 @@ wss.on('connection', (ws) => {
                 }
             });
         }
-        if (data.type === "quitGame") {
+        if (data.type === "quitGame" || data.type === "leaveLobby") {
             let playerName = gameState.getPlayerName(playerId);
             gameState.removePlayer(playerId);
             console.log(`Player ${playerName} disconnected`);

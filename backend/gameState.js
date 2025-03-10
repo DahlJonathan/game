@@ -126,7 +126,14 @@ export default class GameState {
             hasPowerUp: false, 
             hasPowerSpeed: false,
             speed: 10, // Default speed
+            isReady: false,
+            isLeader: false,
         };
+                // Assign leader if there is no leader
+        if (!this.leaderId) {
+            this.leaderId = playerId;
+            this.players[playerId].isLeader = true;
+        }
     }
 
     initializePlayerPos(playerId, index) {
