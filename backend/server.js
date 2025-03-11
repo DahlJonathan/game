@@ -33,6 +33,13 @@ wss.on('connection', (ws) => {
     ws.on('message', (message) => {
         const data = JSON.parse(message);
         if (data.type === 'joinLobby') {
+
+            if (gameState.gameStarted) {
+                ws.send(JSON.stringify({ type: 'error', message: 'Game already started' }));
+                return;
+            }
+
+
             const existingPlayer = Object.values(gameState.players).find(player => player.name === data.playerName.trim());
             if (existingPlayer) {
                 ws.send(JSON.stringify({ type: 'error', message: 'Player name already exists' }));
@@ -50,16 +57,18 @@ wss.on('connection', (ws) => {
             wss.clients.forEach(client => client.send(state));
         }
         if (data.type === 'ready') {
-            gameState.players[playerId].isReady = data.isReady;
-            const updateMessage = JSON.stringify({
-                type: 'lobbyUpdate',
-                state: gameState.getGameState(),
-            });
-            wss.clients.forEach(client => {
-                if (client.readyState === client.OPEN) {
-                    client.send(updateMessage);
-                }
-            });
+            if (gameState.players[playerId]) {
+                gameState.players[playerId].isReady = data.isReady;
+                const updateMessage = JSON.stringify({
+                    type: 'lobbyUpdate',
+                    state: gameState.getGameState(),
+                });
+                wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(updateMessage);
+                    }
+                });
+            }
         }
         if (data.type === 'characterSelect') {
             const player = gameState.players[playerId];
@@ -92,7 +101,17 @@ wss.on('connection', (ws) => {
         }
         if (data.type === "endGame") {
             const topPlayers = gameState.endGame();
-            if (topPlayers.length > 1) {
+            if (topPlayers === null) {
+                const noPlayersMessage = JSON.stringify({
+                    type: 'gameOver',
+                    message: 'No players left in the game.',
+                });
+                wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(noPlayersMessage);
+                    }
+                });
+            } else if (Array.isArray(topPlayers)) {
                 const drawMessage = JSON.stringify({
                     type: 'draw',
                     players: topPlayers.map(player => player.name)
@@ -156,6 +175,20 @@ wss.on('connection', (ws) => {
                     client.send(deleteMessage);
                 }
             });
+
+            // End game if no players are left
+            if (Object.keys(gameState.players).length === 0) {
+                gameState.endGame();
+                gameEnded = true;
+                stopGameLoop();
+                const endMessage = JSON.stringify({ type: 'endGame' });
+                wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(endMessage);
+                    }
+                });
+            }
+
         }
     });
 
@@ -190,6 +223,20 @@ wss.on('connection', (ws) => {
                     client.send(deleteMessage);
                 }
             });
+
+            // End game if no players are left
+            if (Object.keys(gameState.players).length === 0) {
+                gameState.endGame();
+                gameEnded = true;
+                stopGameLoop();
+                const endMessage = JSON.stringify({ type: 'endGame' });
+                wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(endMessage);
+                    }
+                });
+            }
+
         }
     });
 

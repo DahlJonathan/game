@@ -27,6 +27,7 @@ function App() {
   const [winnerPoints, setWinnerPoints] = useState(0);
   const [draw, setDraw] = useState(false);
   const [drawPlayers, setDrawPlayers] = useState([]);
+  const [gameStarted, setGameStarted] = useState(false);
 
   const quit = () => {
     setGameRooms((prevGameRooms) => ({
@@ -126,6 +127,9 @@ function App() {
       if (data.type === "draw") {
         setDraw(true);
         setDrawPlayers(data.players);
+      }
+      if (data.type === "endGame") {
+        setGameStarted(false);
       }
     };
 

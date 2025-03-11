@@ -16,6 +16,7 @@ export default class GameState {
         //this.collectablesImage = '/gem.png'; for netlify
         //this.platformImage = '/platform.jpg'; for netlify
         //this.playerImage = '1.png';
+        this.gameStarted = false;
 
         this.gravity = 2;
         this.jumpStrength = 25;
@@ -418,13 +419,21 @@ export default class GameState {
 
     startGame() {
         this.gameOver = false;
+        this.gameStarted = true;
     }
 
     endGame() {
         this.gameOver = true;
+        this.gameStarted = false;
+        this.leaderId = null;
         const playersArray = Object.values(this.players);
         const maxPoints = Math.max(...playersArray.map(player => player.points));
         const topPlayers = playersArray.filter(player => player.points === maxPoints);
+
+        if (topPlayers.length === 0) {
+            console.log("Game over! No players left.");
+            return null;
+        }
 
         if (topPlayers.length > 1) {
             console.log(`Draw! ${topPlayers.map(p => p.name).join(' and ')} have the same amount of points`);
@@ -449,6 +458,7 @@ export default class GameState {
             powerSpeedImage: this.powerSpeedImage,
             diamonds: this.diamonds,
             diamondsImage: this.diamondsImage,
+            gameStarted: this.gameStarted,
         };
     }
 }
