@@ -148,6 +148,9 @@ function App() {
       if (data.type === "jump") {
         audio.playSound('jump'); // Play jump sound
       }
+      if (data.type === "powerupCollected") {
+        audio.playSound('powerup'); // Play powerup sound
+      }
     };
 
     ws.addEventListener("message", handleMessage);

@@ -61,6 +61,7 @@ audio.loadSound('background', 'src/audio/Artur Aravidi - Royale Battle.mp3');
 audio.loadSound('jump', 'src/audio/jump.wav');
 audio.loadSound('gempoint', 'src/audio/collected.wav');
 audio.loadSound('diapoint', 'src/audio/collectedBig.wav');
+audio.loadSound('powerup', 'src/audio/collectedBig.wav');
 
 audio.setVolume('background', 0.02);
 audio.setVolume('gempoint', 0.3);

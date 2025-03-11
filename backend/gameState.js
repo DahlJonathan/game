@@ -372,6 +372,15 @@ export default class GameState {
                 player.y + 35 > powerUp.y
             ) {
                 powerUp.collected = true;
+                const soundMessage = JSON.stringify({
+                    type: 'powerupCollected',
+                    playerId: playerId,
+                });
+                this.wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(soundMessage);
+                    }
+                }); 
                 player.jumpStrength = 40; // Increase jump strength
                 player.powerUpDuration = 15; // Set power-up duration in seconds
                 player.hasPowerUp = true;
@@ -388,6 +397,15 @@ export default class GameState {
                 player.y + 35 > powerSpeed.y
             ) {
                 powerSpeed.collected = true;
+                const soundMessage = JSON.stringify({
+                    type: 'powerupCollected',
+                    playerId: playerId,
+                });
+                this.wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(soundMessage);
+                    }
+                }); 
                 player.speed = 20; // Increase speed
                 player.powerUpDuration = 15; // Set power-up duration in seconds
                 player.hasPowerSpeed = true;
