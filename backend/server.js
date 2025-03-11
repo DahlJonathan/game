@@ -68,6 +68,67 @@ wss.on('connection', (ws) => {
                 player.playerImage = `src/images/${data.characterId}.png`;
             }
         }
+        if (data.type === "restartRequest") {
+            const player = gameState.getPlayerName(playerId);
+            Object.values(gameState.players).forEach(player => {
+                player.isReady = false;
+            })
+            const restartPlayer = data.player;
+            const restartMessage = JSON.stringify({ type: "restart", state: gameState.getGameState(), player: player, restartPlayer: restartPlayer });
+            wss.clients.forEach(client => {
+                if (client.readyState === client.OPEN) {
+                    client.send(restartMessage);
+                }
+            });
+        }
+        if (data.type === "accept") {
+            const player = gameState.getPlayerName(playerId);
+            console.log("player ready:", player);
+            gameState.players[playerId].isReady = data.isReady;
+
+            const readyMessage = JSON.stringify({ type: "rematchUpdate", player: player, state: gameState.getGameState() })
+
+            wss.clients.forEach(client => {
+                if (client.readyState === client.OPEN) {
+                    client.send(readyMessage);
+                }
+            });
+        }
+        if (data.type === "waitForStart") {
+            gameState.pauseGame();
+            stopGameLoop();
+        }
+        if (data.type === "restartGame") {
+            if (gameState.players[playerId].isLead && Object.values(gameState.players).every(player => player.isReady)) {
+                gameEnded = false;
+                gameState.startGame();
+                gameState.resetCollectables();
+                gameState.resetPowerUp();
+
+                let playerIds = Object.keys(gameState.players);
+                playerIds.forEach((id, index) => {
+                    gameState.initializePlayerPos(id, index);
+                    gameState.resetPlayerPoints(id);
+                });
+
+                const initMessage = JSON.stringify({ type: 'initRestart', state: gameState.getGameState(), playerId });
+                wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(initMessage);
+                    }
+                });
+                gameState.unpauseGame();
+                startGameLoop();
+            }
+        }
+        if (data.type === "closeRestart") {
+            const closeMessage = JSON.stringify({ type: "closeRematch" });
+            wss.clients.forEach(client => {
+                if (client.readyState === client.OPEN) {
+                    client.send(closeMessage);
+                }
+            });
+        }
         if (data.type === "startGame") {
             if (gameState.players[playerId].isLead && Object.values(gameState.players).every(player => player.isReady)) {
                 gameEnded = false;
