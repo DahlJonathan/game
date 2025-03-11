@@ -28,7 +28,8 @@ function App() {
   const [winnerPoints, setWinnerPoints] = useState(0);
   const [draw, setDraw] = useState(false);
   const [drawPlayers, setDrawPlayers] = useState([]);
-  const [isMuted, setIsMuted] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [isMuted, setIsMuted] = useState(false)
 
   const quit = () => {
     setGameRooms((prevGameRooms) => ({
@@ -137,6 +138,9 @@ function App() {
       if (data.type === "draw") {
         setDraw(true);
         setDrawPlayers(data.players);
+      }
+      if (data.type === "endGame") {
+        setGameStarted(false);
       }
       if (data.type === "collectableCollected") {
         audio.playSound('gempoint'); // Play collectable sound

@@ -33,6 +33,13 @@ wss.on('connection', (ws) => {
     ws.on('message', (message) => {
         const data = JSON.parse(message);
         if (data.type === 'joinLobby') {
+
+            if (gameState.gameStarted) {
+                ws.send(JSON.stringify({ type: 'error', message: 'Game already started' }));
+                return;
+            }
+
+
             const existingPlayer = Object.values(gameState.players).find(player => player.name === data.playerName.trim());
             if (existingPlayer) {
                 ws.send(JSON.stringify({ type: 'error', message: 'Player name already exists' }));
@@ -44,22 +51,24 @@ wss.on('connection', (ws) => {
             console.log(`${data.playerName} joined the game!`)
             gameState.updatePlayerName(playerId, data.playerName);
             if (Object.keys(gameState.players).length === 1) {
-                gameState.players[playerId].isLead = true;
+                gameState.players[playerId].isLeader = true;
             }
             const state = JSON.stringify({ type: 'lobbyUpdate', state: gameState.getGameState(), playerId });
             wss.clients.forEach(client => client.send(state));
         }
         if (data.type === 'ready') {
-            gameState.players[playerId].isReady = data.isReady;
-            const updateMessage = JSON.stringify({
-                type: 'lobbyUpdate',
-                state: gameState.getGameState(),
-            });
-            wss.clients.forEach(client => {
-                if (client.readyState === client.OPEN) {
-                    client.send(updateMessage);
-                }
-            });
+            if (gameState.players[playerId]) {
+                gameState.players[playerId].isReady = data.isReady;
+                const updateMessage = JSON.stringify({
+                    type: 'lobbyUpdate',
+                    state: gameState.getGameState(),
+                });
+                wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(updateMessage);
+                    }
+                });
+            }
         }
         if (data.type === 'characterSelect') {
             const player = gameState.players[playerId];
@@ -69,7 +78,7 @@ wss.on('connection', (ws) => {
             }
         }
         if (data.type === "startGame") {
-            if (gameState.players[playerId].isLead && Object.values(gameState.players).every(player => player.isReady)) {
+            if (gameState.players[playerId].isLeader && Object.values(gameState.players).every(player => player.isReady)) {
                 gameEnded = false;
                 gameState.startGame();
                 gameState.resetCollectables();
@@ -92,7 +101,17 @@ wss.on('connection', (ws) => {
         }
         if (data.type === "endGame") {
             const topPlayers = gameState.endGame();
-            if (topPlayers.length > 1) {
+            if (topPlayers === null) {
+                const noPlayersMessage = JSON.stringify({
+                    type: 'gameOver',
+                    message: 'No players left in the game.',
+                });
+                wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(noPlayersMessage);
+                    }
+                });
+            } else if (Array.isArray(topPlayers)) {
                 const drawMessage = JSON.stringify({
                     type: 'draw',
                     players: topPlayers.map(player => player.name)
@@ -141,7 +160,7 @@ wss.on('connection', (ws) => {
                 }
             });
         }
-        if (data.type === "quitGame") {
+        if (data.type === "quitGame" || data.type === "leaveLobby") {
             let playerName = gameState.getPlayerName(playerId);
             gameState.removePlayer(playerId);
             console.log(`Player ${playerName} disconnected`);
@@ -156,6 +175,20 @@ wss.on('connection', (ws) => {
                     client.send(deleteMessage);
                 }
             });
+
+            // End game if no players are left
+            if (Object.keys(gameState.players).length === 0) {
+                gameState.endGame();
+                gameEnded = true;
+                stopGameLoop();
+                const endMessage = JSON.stringify({ type: 'endGame' });
+                wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(endMessage);
+                    }
+                });
+            }
+
         }
     });
 
@@ -169,7 +202,7 @@ wss.on('connection', (ws) => {
             const remainingPlayerIds = Object.keys(gameState.players);
             if (remainingPlayerIds.length > 0) {
                 const newLeaderId = remainingPlayerIds[0]; // First remaining player becomes leader
-                gameState.players[newLeaderId].isLead = true;
+                gameState.players[newLeaderId].isLeader = true;
             }
 
             const lobbyUpdateMessage = JSON.stringify({
@@ -190,6 +223,20 @@ wss.on('connection', (ws) => {
                     client.send(deleteMessage);
                 }
             });
+
+            // End game if no players are left
+            if (Object.keys(gameState.players).length === 0) {
+                gameState.endGame();
+                gameEnded = true;
+                stopGameLoop();
+                const endMessage = JSON.stringify({ type: 'endGame' });
+                wss.clients.forEach(client => {
+                    if (client.readyState === client.OPEN) {
+                        client.send(endMessage);
+                    }
+                });
+            }
+
         }
     });
 

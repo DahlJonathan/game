@@ -2,6 +2,7 @@ export default class GameState {
     constructor(wss) {
         this.wss = wss; // Store the WebSocket server instance
         this.players = {};
+        this.leaderId = null;
         this.collectables = [];
         this.powerUps = [];
         this.powerSpeed = [];  
@@ -17,6 +18,9 @@ export default class GameState {
         //this.platformImage = '/platform.jpg'; for netlify
         this.playerImage = '/1.png';
         //this.playerImage = 'src/images/1.png';
+        //this.playerImage = '1.png';
+        this.gameStarted = false;
+
         this.gravity = 2;
         this.jumpStrength = 25;
         this.frameRate = 60; // Frames per second
@@ -127,7 +131,14 @@ export default class GameState {
             hasPowerUp: false, 
             hasPowerSpeed: false,
             speed: 10, // Default speed
+            isReady: false,
+            isLeader: false,
         };
+                // Assign leader if there is no leader
+        if (!this.leaderId) {
+            this.leaderId = playerId;
+            this.players[playerId].isLeader = true;
+        }
     }
 
     initializePlayerPos(playerId, index) {
@@ -161,6 +172,21 @@ export default class GameState {
 
     removePlayer(playerId) {
         delete this.players[playerId];
+
+        if (playerId === this.leaderId) {
+            this.assignNewLeader();
+        }
+    }
+
+    assignNewLeader() {
+        const playerIds = Object.keys(this.players);
+        if (playerIds.length > 0) {
+            this.leaderId = playerIds[0];
+            this.players[this.leaderId].isLeader = true;
+        } else {
+            this.leaderId = null;
+        }
+
     }
 
     getPlayerName(playerId) {
@@ -356,7 +382,7 @@ export default class GameState {
                     if (client.readyState === client.OPEN) {
                         client.send(soundMessage);
                     }
-                }); 
+                });  
                 player.points += 5;
                 //console.log(`Player ${player.name} (ID: ${playerId}) collected a collectable and now has ${player.points} points.`);
             }
@@ -380,7 +406,7 @@ export default class GameState {
                     if (client.readyState === client.OPEN) {
                         client.send(soundMessage);
                     }
-                }); 
+                });
                 player.jumpStrength = 40; // Increase jump strength
                 player.powerUpDuration = 15; // Set power-up duration in seconds
                 player.hasPowerUp = true;
@@ -443,13 +469,21 @@ export default class GameState {
 
     startGame() {
         this.gameOver = false;
+        this.gameStarted = true;
     }
 
     endGame() {
         this.gameOver = true;
+        this.gameStarted = false;
+        this.leaderId = null;
         const playersArray = Object.values(this.players);
         const maxPoints = Math.max(...playersArray.map(player => player.points));
         const topPlayers = playersArray.filter(player => player.points === maxPoints);
+
+        if (topPlayers.length === 0) {
+            console.log("Game over! No players left.");
+            return null;
+        }
 
         if (topPlayers.length > 1) {
             console.log(`Draw! ${topPlayers.map(p => p.name).join(' and ')} have the same amount of points`);
@@ -474,6 +508,7 @@ export default class GameState {
             powerSpeedImage: this.powerSpeedImage,
             diamonds: this.diamonds,
             diamondsImage: this.diamondsImage,
+            gameStarted: this.gameStarted,
         };
     }
 }

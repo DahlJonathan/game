@@ -23,6 +23,12 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
   const [lobbyLeader, setLobbyLeader] = useState(null);
   const [timeUp, setTimeUp] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
+  const [hasJoined, setHasJoined] = useState(false);
+
+  const back = () => {
+    setPlayers([]);
+    ws.send(JSON.stringify({ type: 'leaveLobby', playerName, room: selectedRoom }));
+  };
 
   useEffect(() => {
     ws.onmessage = (event) => {
@@ -32,7 +38,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
         setPlayers(updatedPlayers);
 
         // Find the leader from the players list
-        const leader = updatedPlayers.find(player => player.isLead);
+        const leader = updatedPlayers.find(player => player.isLeader);
         setLobbyLeader(leader);
 
       } else if (data.type === 'init') {
@@ -64,6 +70,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
       ws.send(JSON.stringify({ type: 'joinLobby', playerName, room: selectedRoom }));
       setPlayerName(playerName.trim());
       setMessage("");
+      setHasJoined(true);
       onJoinGame(playerName.trim());
     } else {
       setMessage("Username already taken");
@@ -80,7 +87,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
   };
 
   const handleStartGame = () => {
-    ws.send(JSON.stringify({ type: 'startGame' }));
+    ws.send(JSON.stringify({ type: 'startGame', playerName, room: selectedRoom }));
   };
 
   const handleRestart = () => {
@@ -131,6 +138,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
               <button
                 key={room}
                 onClick={() => onGameRoomSelect(room)}
+                disabled={!playerName.trim()}
                 className={`px-3 py-1 m-2 font-bold rounded-lg transition ${selectedRoom === room ? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
                   } text-white`}
               >
@@ -176,6 +184,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
             <button
               key={character.id}
               onClick={() => handleCharacterSelect(character)}
+              disabled={!hasJoined}
               className={`m-2 p-2 rounded-lg transition ${selectedCharacter?.id === character.id ? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
                 } text-white`}
             >
@@ -189,7 +198,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
       <div className="flex justify-center">
         <button
           onClick={handleReady}
-          disabled={!selectedCharacter}
+          disabled={!selectedCharacter || !hasJoined}
           className={`px-6 py-2 mb-2 mt-3 font-bold rounded-lg transition ${isReady ? "bg-green-500 hover:bg-green-700" : "bg-blue-500 hover:bg-blue-700"
             } text-white`}
         >
@@ -200,7 +209,10 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
       <div className="flex justify-center items-center space-x-4 mt-10">
         {/* Back Button */}
         <button
-          onClick={onBack}
+          onClick={() => {
+            onBack();
+            back();
+          }}
           className="px-6 py-3 bg-red-500 hover:bg-red-700 text-white font-bold rounded-lg transition"
         >
           Back
