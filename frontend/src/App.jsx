@@ -166,9 +166,6 @@ function App() {
 
   return (
     <div className="relative">
-      <button onClick={toggleMute} style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 1000 }}>
-        {isMuted ? "Unmute" : "Mute"}
-      </button>
       {!gameMode ? (
         <StartScreen
           onSinglePlayer={() => setGameMode("single")}

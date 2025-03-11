@@ -4,7 +4,8 @@ import GameWrapper from "../../GameWrapper";
 import Scoreboard from "../gameinfo/scoreboard";
 import Timer from "../gameinfo/timer";
 import Fps from "../gameinfo/fps";
-import PowerUp from "../collectables/powerup";
+import audio from "../../audio";
+import Mute from "../gameinfo/mute";
 
 const characters = [
   { id: 1, name: "Character 1", image: "../../src/images/1.png" },
@@ -24,10 +25,16 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
   const [timeUp, setTimeUp] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [hasJoined, setHasJoined] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
 
   const back = () => {
     setPlayers([]);
     ws.send(JSON.stringify({ type: 'leaveLobby', playerName, room: selectedRoom }));
+  };
+
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+    audio.muteAll(!isMuted);
   };
 
   useEffect(() => {
@@ -104,7 +111,13 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
       <>
         <div className="relative flex flex-col items-center justify-center h-screen w-full">
           <Timer isPaused={onPause} onTimeUp={handleTimeUp} onRestart={onRestart} onQuit={onQuit} winnerName={winnerName} winnerPoints={winnerPoints} draw={draw} drawPlayers={drawPlayers}>
-            <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg rounded-lg" />
+            <Fps className="absolute left-0 top-0 text-lg rounded-lg" />
+            <div className="absolute right-0 top-0 text-lg rounded-lg">
+            <Mute
+              isMuted={isMuted}
+              toggleMute={toggleMute}
+            />
+            </div>
           </Timer>
           <GameWrapper players={players} reset={handleRestart} playerName={playerName} />
           <div className="w-full max-w-[1280px]">
