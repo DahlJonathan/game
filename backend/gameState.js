@@ -1,6 +1,7 @@
 export default class GameState {
     constructor() {
         this.players = {};
+        this.leaderId = null;
         this.collectables = [];
         this.powerUps = [];
         this.powerSpeed = [];  
@@ -167,6 +168,21 @@ export default class GameState {
 
     removePlayer(playerId) {
         delete this.players[playerId];
+
+        if (playerId === this.leaderId) {
+            this.assignNewLeader();
+        }
+    }
+
+    assignNewLeader() {
+        const playerIds = Object.keys(this.players);
+        if (playerIds.length > 0) {
+            this.leaderId = playerIds[0];
+            this.players[this.leaderId].isLeader = true;
+        } else {
+            this.leaderId = null;
+        }
+
     }
 
     getPlayerName(playerId) {

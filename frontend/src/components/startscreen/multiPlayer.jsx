@@ -38,7 +38,7 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
         setPlayers(updatedPlayers);
 
         // Find the leader from the players list
-        const leader = updatedPlayers.find(player => player.isLead);
+        const leader = updatedPlayers.find(player => player.isLeader);
         setLobbyLeader(leader);
 
       } else if (data.type === 'init') {

@@ -44,7 +44,7 @@ wss.on('connection', (ws) => {
             console.log(`${data.playerName} joined the game!`)
             gameState.updatePlayerName(playerId, data.playerName);
             if (Object.keys(gameState.players).length === 1) {
-                gameState.players[playerId].isLead = true;
+                gameState.players[playerId].isLeader = true;
             }
             const state = JSON.stringify({ type: 'lobbyUpdate', state: gameState.getGameState(), playerId });
             wss.clients.forEach(client => client.send(state));
@@ -69,7 +69,7 @@ wss.on('connection', (ws) => {
             }
         }
         if (data.type === "startGame") {
-            if (gameState.players[playerId].isLead && Object.values(gameState.players).every(player => player.isReady)) {
+            if (gameState.players[playerId].isLeader && Object.values(gameState.players).every(player => player.isReady)) {
                 gameEnded = false;
                 gameState.startGame();
                 gameState.resetCollectables();
@@ -169,7 +169,7 @@ wss.on('connection', (ws) => {
             const remainingPlayerIds = Object.keys(gameState.players);
             if (remainingPlayerIds.length > 0) {
                 const newLeaderId = remainingPlayerIds[0]; // First remaining player becomes leader
-                gameState.players[newLeaderId].isLead = true;
+                gameState.players[newLeaderId].isLeader = true;
             }
 
             const lobbyUpdateMessage = JSON.stringify({
