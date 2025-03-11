@@ -35,8 +35,8 @@ const HowToPlay = ({ onBack }) => {
                 <div>
                     <div className="flex justify-center mt-2">
                     <div className="flex flex-col items-center">
-                    <img src="src/images/esc.png" alt="keys" />
-                        <p>Push other players near them</p>
+                    <img src="src/images/space.png" alt="keys" />
+                        <p>Push other players near you</p>
                     </div>
                  </div>
                  </div>

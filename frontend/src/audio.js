@@ -67,5 +67,6 @@ audio.setVolume('background', 0.02);
 audio.setVolume('gempoint', 0.3);
 audio.setVolume('diapoint', 0.3);
 audio.setVolume('jump', 1);
+audio.setVolume('powerup', 0.6);
 
 export default audio;
