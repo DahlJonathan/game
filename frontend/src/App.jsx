@@ -7,7 +7,7 @@ import PauseScreen from "./components/pausescreen/pauseScreen.jsx";
 import HowToPlay from "./components/startscreen/howToPlay.jsx";
 import LeaveGame from "./components/gameinfo/leaveGame.jsx";
 import RestartScreen from "./components/pausescreen/restartScreen.jsx";
-import audio from './audio.js';
+import audio from "./audio.js";
 
 function App() {
   const [gameMode, setGameMode] = useState(null);
@@ -46,7 +46,7 @@ function App() {
     setStartGame(false);
     setIsPaused(false);
     setShowPauseScreen(false);
-    audio.stopSound('background'); // Stop the background audio
+    audio.stopSound("background"); // Stop the background audio
     setRestartScreen(false);
     ws.send(JSON.stringify({ type: "quitGame" }));
   };
@@ -58,19 +58,18 @@ function App() {
     setStartGame(false);
     setIsPaused(false);
     setShowPauseScreen(false);
-    audio.stopSound('background'); // Stop the background audio
+    audio.stopSound("background"); // Stop the background audio
   };
 
   const restart = () => {
     setShowPauseScreen(false);
     setIsPaused(false);
     setReset(true);
-    audio.stopSound('background'); // Stop the background audio
+    audio.stopSound("background"); // Stop the background audio
     setTimeout(() => {
       setReset(false);
     }, 100);
   };
-
 
   const handleStartGame = () => {
     ws.send(JSON.stringify({ type: "startGame" }));
@@ -163,7 +162,7 @@ function App() {
       if (data.type === "gameOver") {
         setWinnerName(data.winner);
         setWinnerPoints(data.points);
-        audio.stopSound('background');
+        audio.stopSound("background");
       }
       if (data.type === "draw") {
         setDraw(true);
@@ -183,9 +182,9 @@ function App() {
         setPausedPlayer("");
       }
       if (data.type === "initRestart") {
-        console.log("initRestart bebuggaus lisätty");
         setGameKey((prev) => prev + 1);
         setRestartTimer(true);
+        setIsPaused(false);
         setRestartScreen(false);
         setRestartPlayer("");
       }
@@ -193,17 +192,17 @@ function App() {
         setGameStarted(false);
       }
       if (data.type === "collectableCollected") {
-        audio.playSound('gempoint'); // Play collectable sound
+        audio.playSound("gempoint"); // Play collectable sound
       }
 
       if (data.type === "diamondCollected") {
-        audio.playSound('diapoint'); // Play diamond sound
+        audio.playSound("diapoint"); // Play diamond sound
       }
       if (data.type === "jump") {
-        audio.playSound('jump'); // Play jump sound
+        audio.playSound("jump"); // Play jump sound
       }
       if (data.type === "powerupCollected") {
-        audio.playSound('powerup'); // Play powerup sound
+        audio.playSound("powerup"); // Play powerup sound
       }
     };
 
@@ -235,7 +234,7 @@ function App() {
                 pausedPlayer={pausedPlayer}
                 onContinue={handleContinue}
                 onQuit={quit}
-                onRestart={restart}
+                onRestart={handleRestart}
                 onPause={isPaused}
               />
             </div>
@@ -276,14 +275,13 @@ function App() {
                 return;
               }
               setStartGame(true);
-              audio.playSound('background'); // Play the background audio when the game starts
+              audio.playSound("background"); // Play the background audio when the game starts
             }}
             handleStartGame={handleStartGame}
             onBack={back}
             onQuit={quit}
             scoreboard={scoreboard}
             onPause={isPaused}
-            
             onRestart={handleRestart}
             winnerName={winnerName}
             winnerPoints={winnerPoints}

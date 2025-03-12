@@ -36,16 +36,16 @@ const EndScreen = ({
           </div>
         )}
         <button
-          onClick={onQuit}
-          className="px-6 py-3 bg-red-500 hover:bg-red-700 text-white font-bold rounded-lg transition m-2"
-        >
-          Quit
-        </button>
-        <button
           onClick={onRestart}
           className="px-6 py-3 bg-green-500 hover:bg-green-700 text-white font-bold rounded-lg transition m-2"
         >
           Rematch
+        </button>
+        <button
+          onClick={onQuit}
+          className="px-6 py-3 bg-red-500 hover:bg-red-700 text-white font-bold rounded-lg transition m-2"
+        >
+          Quit
         </button>
       </div>
     </div>

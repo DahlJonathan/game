@@ -91,6 +91,7 @@ wss.on('connection', (ws) => {
             });
         }
         if (data.type === "accept") {
+            if (playerId === null) return;
             const player = gameState.getPlayerName(playerId);
             console.log("player ready:", player);
             gameState.players[playerId].isReady = data.isReady;
@@ -108,6 +109,7 @@ wss.on('connection', (ws) => {
             stopGameLoop();
         }
         if (data.type === "restartGame") {
+            if (playerId === null) return;
             if (gameState.players[playerId].isLeader && Object.values(gameState.players).every(player => player.isReady)) {
                 gameEnded = false;
 
@@ -135,6 +137,7 @@ wss.on('connection', (ws) => {
             });
         }
         if (data.type === "startGame") {
+            if (playerId === null) return;
             if (gameState.players[playerId].isLeader && Object.values(gameState.players).every(player => player.isReady)) {
                 gameEnded = false;
                 gameState.startGame();
@@ -245,7 +248,7 @@ wss.on('connection', (ws) => {
                     }
                 });
             }
-
+            playerId = null;
         }
     });
 
@@ -293,7 +296,7 @@ wss.on('connection', (ws) => {
                     }
                 });
             }
-
+            playerId = null;
         }
     });
 

@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ws from "../../../public/websocket";
 
-function RestartScreen({ player, players: initialPlayers, onQuit, onClose }) {
+function RestartScreen({
+  player,
+  players: initialPlayers,
+  onQuit,
+  onClose,
+}) {
   const [players, setPlayers] = useState(initialPlayers);
   const [isReady, setIsReady] = useState(false);
   const [allReady, setAllReady] = useState(false);
@@ -62,7 +67,6 @@ function RestartScreen({ player, players: initialPlayers, onQuit, onClose }) {
         >
           Leave Game
         </button>
-
       </div>
     </div>
   );

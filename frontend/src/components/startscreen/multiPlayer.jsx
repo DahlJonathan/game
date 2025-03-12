@@ -66,7 +66,7 @@ const MultiPlayer = ({
         // Find the leader from the players list
         const leader = updatedPlayers.find(player => player.isLeader);
         setLobbyLeader(leader);
-      } else if (data.type === "init" || data.type === "initRestart") {
+      } else if (data.type === "init") {
         setGameStarted(true);
         setTime(20);
         setCountdown(1);
