@@ -6,6 +6,7 @@ import ws from "../public/websocket.js";
 import PauseScreen from "./components/pausescreen/pauseScreen.jsx";
 import HowToPlay from "./components/startscreen/howToPlay.jsx";
 import LeaveGame from "./components/gameinfo/leaveGame.jsx";
+import RestartScreen from "./components/pausescreen/restartScreen.jsx";
 import audio from './audio.js';
 
 function App() {
@@ -22,12 +23,16 @@ function App() {
   const [playerLeft, setPlayerLeft] = useState("");
   const [gameRooms, setGameRooms] = useState({
     "Server 1": [],
-  })
+  });
   const [scoreboard, setScoreboard] = useState([]);
   const [winnerName, setWinnerName] = useState("");
   const [winnerPoints, setWinnerPoints] = useState(0);
   const [draw, setDraw] = useState(false);
   const [drawPlayers, setDrawPlayers] = useState([]);
+  const [restartScreen, setRestartScreen] = useState(false);
+  const [restartPlayer, setRestartPlayer] = useState("");
+  const [gameKey, setGameKey] = useState(0);
+  const [restartTimer, setRestartTimer] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [isMuted, setIsMuted] = useState(false)
 
@@ -42,8 +47,9 @@ function App() {
     setIsPaused(false);
     setShowPauseScreen(false);
     audio.stopSound('background'); // Stop the background audio
+    setRestartScreen(false);
     ws.send(JSON.stringify({ type: "quitGame" }));
-  }
+  };
 
   const back = () => {
     setGameMode(null);
@@ -65,6 +71,22 @@ function App() {
     }, 100);
   };
 
+
+  const handleStartGame = () => {
+    ws.send(JSON.stringify({ type: "startGame" }));
+  };
+
+  const handleRestart = () => {
+    setGameKey((prev) => prev + 1);
+    setRestartScreen(true);
+    ws.send(JSON.stringify({ type: "restartRequest", player: playerName }));
+  };
+
+  const handleClose = () => {
+    setRestartScreen(false);
+    ws.send(JSON.stringify({ type: "closeRestart" }));
+  };
+
   const toggleMute = () => {
     setIsMuted(!isMuted);
     audio.muteAll(!isMuted);
@@ -76,7 +98,12 @@ function App() {
         setIsPaused((prev) => {
           const newPausedState = !prev;
           setShowPauseScreen(newPausedState);
-          ws.send(JSON.stringify({ type: newPausedState ? "pause" : "unPause", pausedPlayer: playerName }));
+          ws.send(
+            JSON.stringify({
+              type: newPausedState ? "pause" : "unPause",
+              pausedPlayer: playerName,
+            })
+          );
           return newPausedState;
         });
       }
@@ -90,7 +117,7 @@ function App() {
   }, [startGame]);
 
   const handleContinue = () => {
-    console.log("unPause game")
+    console.log("unPause game");
     setIsPaused(false);
     setShowPauseScreen(false);
     ws.send(JSON.stringify({ type: "unPause" }));
@@ -101,11 +128,13 @@ function App() {
       const data = JSON.parse(message.data);
       if (data.type === "update") {
         const playersData = data.state.players;
-        const updatedScoreboard = Object.entries(playersData).map(([id, playerData]) => ({
-          name: playerData.name || id,
-          points: playerData.points,
-          character: playerData.playerImage,
-        }));
+        const updatedScoreboard = Object.entries(playersData).map(
+          ([id, playerData]) => ({
+            name: playerData.name || id,
+            points: playerData.points,
+            character: playerData.playerImage,
+          })
+        );
         setScoreboard(updatedScoreboard);
         setWinnerName("");
         setWinnerPoints(0);
@@ -113,6 +142,7 @@ function App() {
         setDrawPlayers([]);
         setLeftGame(false);
         setPlayerLeft("");
+        setRestartTimer(false);
       }
       if (data.type === "unPauseGame") {
         setIsPaused(false);
@@ -138,6 +168,26 @@ function App() {
       if (data.type === "draw") {
         setDraw(true);
         setDrawPlayers(data.players);
+      }
+      if (data.type === "restart") {
+        setRestartScreen(true);
+        setRestartPlayer(data.restartPlayer);
+        const updatedPlayers = Object.values(data.state.players);
+        setPlayers(updatedPlayers);
+      }
+      if (data.type === "closeRematch") {
+        setRestartScreen(false);
+        setRestartPlayer("");
+        setIsPaused(false);
+        setShowPauseScreen(false);
+        setPausedPlayer("");
+      }
+      if (data.type === "initRestart") {
+        console.log("initRestart bebuggaus lisätty");
+        setGameKey((prev) => prev + 1);
+        setRestartTimer(true);
+        setRestartScreen(false);
+        setRestartPlayer("");
       }
       if (data.type === "endGame") {
         setGameStarted(false);
@@ -190,11 +240,26 @@ function App() {
               />
             </div>
           )}
+          {restartScreen && (
+            <div className="absolute inset-0">
+              <RestartScreen
+                player={restartPlayer}
+                players={players}
+                onQuit={quit}
+                onRestart={handleRestart}
+                onClose={handleClose}
+              />
+            </div>
+          )}
           {leftGame && playerLeft !== "" && startGame && (
-            <LeaveGame playerLeft={playerLeft} onClose={() => setLeftGame(false)} />
+            <LeaveGame
+              playerLeft={playerLeft}
+              onClose={() => setLeftGame(false)}
+            />
           )}
           <MultiPlayer
             onGameRoomSelect={setSelectedRoom}
+            restartTimer={restartTimer}
             selectedRoom={selectedRoom}
             players={players}
             onJoinGame={(name) => {
@@ -213,15 +278,18 @@ function App() {
               setStartGame(true);
               audio.playSound('background'); // Play the background audio when the game starts
             }}
+            handleStartGame={handleStartGame}
             onBack={back}
             onQuit={quit}
             scoreboard={scoreboard}
             onPause={isPaused}
-            onRestart={restart}
+            
+            onRestart={handleRestart}
             winnerName={winnerName}
             winnerPoints={winnerPoints}
             draw={draw}
             drawPlayers={drawPlayers}
+            gameKey={gameKey}
           />
         </>
       )}

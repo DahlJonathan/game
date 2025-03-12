@@ -14,7 +14,24 @@ const characters = [
   { id: 4, name: "Character 4", image: "../../src/images/4.png" },
 ];
 
-const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, onBack, onQuit, scoreboard, onPause, onTimeUp, onRestart, winnerName, winnerPoints, draw, drawPlayers }) => {
+const MultiPlayer = ({
+  onGameRoomSelect,
+  selectedRoom,
+  onJoinGame,
+  onGameStart,
+  onBack,
+  onQuit,
+  scoreboard,
+  onPause,
+  onTimeUp,
+  onRestart,
+  winnerName,
+  winnerPoints,
+  draw,
+  drawPlayers,
+  gameKey,
+  restartTimer,
+}) => {
   const [playerName, setPlayerName] = useState("");
   const [isReady, setIsReady] = useState(false);
   const [players, setPlayers] = useState([]);
@@ -24,6 +41,8 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
   const [lobbyLeader, setLobbyLeader] = useState(null);
   const [timeUp, setTimeUp] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
+  const [time, setTime] = useState(5);
+  const [countdown, setCountdown] = useState(1);
   const [hasJoined, setHasJoined] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
@@ -40,28 +59,29 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
   useEffect(() => {
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'lobbyUpdate') {
+      if (data.type === "lobbyUpdate") {
         const updatedPlayers = Object.values(data.state.players);
         setPlayers(updatedPlayers);
 
         // Find the leader from the players list
         const leader = updatedPlayers.find(player => player.isLeader);
         setLobbyLeader(leader);
-
-      } else if (data.type === 'init') {
+      } else if (data.type === "init" || data.type === "initRestart") {
         setGameStarted(true);
+        setTime(20);
+        setCountdown(1);
         onGameStart();
-      } else if (data.type === 'pause') {
+      } else if (data.type === "pause") {
         setGamePaused(true);
-      } else if (data.type === 'unPause') {
+      } else if (data.type === "unPause") {
         setGamePaused(false);
-      } else if (data.type === 'playerJoined' || data.type === 'playerLeft') {
+      } else if (data.type === "playerJoined" || data.type === "playerLeft") {
         const updatedPlayers = Object.values(data.state.players);
         setPlayers(updatedPlayers);
         if (updatedPlayers.length > 0) {
           setLobbyLeader(updatedPlayers[0]);
         }
-      } else if (data.type === 'error') {
+      } else if (data.type === "error") {
         setMessage(data.message);
       }
     };
@@ -72,9 +92,11 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
       playerName.trim() &&
       selectedRoom &&
       players.length < 4 &&
-      !players.some(player => player.name === playerName.trim())
+      !players.some((player) => player.name === playerName.trim())
     ) {
-      ws.send(JSON.stringify({ type: 'joinLobby', playerName, room: selectedRoom }));
+      ws.send(
+        JSON.stringify({ type: "joinLobby", playerName, room: selectedRoom })
+      );
       setPlayerName(playerName.trim());
       setMessage("");
       setHasJoined(true);
@@ -98,20 +120,38 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
   };
 
   const handleRestart = () => {
-    ws.send(JSON.stringify({ type: 'startGame' }));
+    ws.send(JSON.stringify({ type: "startGame" }));
   };
 
   const handleCharacterSelect = (character) => {
     setSelectedCharacter(character);
-    ws.send(JSON.stringify({ type: 'characterSelect', playerName, characterId: character.id }));
+    ws.send(
+      JSON.stringify({
+        type: "characterSelect",
+        playerName,
+        characterId: character.id,
+      })
+    );
   };
 
   if (gameStarted) {
     return (
       <>
         <div className="relative flex flex-col items-center justify-center h-screen w-full">
-          <Timer isPaused={onPause} onTimeUp={handleTimeUp} onRestart={onRestart} onQuit={onQuit} winnerName={winnerName} winnerPoints={winnerPoints} draw={draw} drawPlayers={drawPlayers}>
-            <Fps className="absolute left-0 top-0 text-lg rounded-lg" />
+          <Timer
+            time={time}
+            countdown={countdown}
+            isPaused={onPause}
+            onTimeUp={handleTimeUp}
+            onRestart={onRestart}
+            onQuit={onQuit}
+            winnerName={winnerName}
+            winnerPoints={winnerPoints}
+            draw={draw}
+            drawPlayers={drawPlayers}
+            restartTimer={restartTimer}
+          >
+            <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg rounded-lg" />
             <div className="absolute right-0 top-0 text-lg rounded-lg">
             <Mute
               isMuted={isMuted}
@@ -119,7 +159,13 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
             />
             </div>
           </Timer>
-          <GameWrapper players={players} reset={handleRestart} playerName={playerName} />
+          <GameWrapper
+            players={players}
+            reset={onRestart}
+            playerName={playerName}
+            gameKey={gameKey}
+            onRestart={handleStartGame}
+          />
           <div className="w-full max-w-[1280px]">
             <Scoreboard players={scoreboard} />
           </div>
@@ -152,8 +198,11 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
                 key={room}
                 onClick={() => onGameRoomSelect(room)}
                 disabled={!playerName.trim()}
-                className={`px-3 py-1 m-2 font-bold rounded-lg transition ${selectedRoom === room ? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
-                  } text-white`}
+                className={`px-3 py-1 m-2 font-bold rounded-lg transition ${
+                  selectedRoom === room
+                    ? "bg-blue-500"
+                    : "bg-red-500 hover:bg-red-700"
+                } text-white`}
               >
                 {room}
               </button>
@@ -162,27 +211,37 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
           {/* Join Button */}
           <button
             onClick={handleJoin}
-            disabled={!selectedRoom || players.length >= 4 || !playerName.trim() || players.some(player => player.name === playerName.trim())}
-            className={`px-6 py-2 mb-2 font-bold rounded-lg transition ${selectedRoom && players.length < 4 && playerName.trim() && !players.some(player => player.name === playerName.trim())
-              ? "bg-yellow-500 hover:bg-yellow-700"
-              : "bg-gray-500 cursor-not-allowed"
-              } text-white`}
+            disabled={
+              !selectedRoom ||
+              players.length >= 4 ||
+              !playerName.trim() ||
+              players.some((player) => player.name === playerName.trim())
+            }
+            className={`px-6 py-2 mb-2 font-bold rounded-lg transition ${
+              selectedRoom &&
+              players.length < 4 &&
+              playerName.trim() &&
+              !players.some((player) => player.name === playerName.trim())
+                ? "bg-yellow-500 hover:bg-yellow-700"
+                : "bg-gray-500 cursor-not-allowed"
+            } text-white`}
           >
             {players.length < 4 ? "Join Server" : "Server Full"}
           </button>
-          <div className="text-red-500 text-2xl">
-            {message}
-          </div>
+          <div className="text-red-500 text-2xl">{message}</div>
         </div>
 
         <div className="flex flex-col items-center mt-5 max-w-[300px] md:w-1/4 p-4">
           {/* Player List */}
           <div className="border-2 border-white p-4 rounded-lg mb-4 max-w-[240px] h-[200px]">
-            <h2 className="text-xl mb-2">Players on server: {players.length}/4</h2>
+            <h2 className="text-xl mb-2">
+              Players on server: {players.length}/4
+            </h2>
             <ul className="mb-4">
               {players.map((player, index) => (
                 <li key={index} className="text-lg">
-                  {player.name} {player.isReady ? '(R)' : ''} {lobbyLeader?.name === player.name ? '(Leader)' : ''}
+                  {player.name} {player.isReady ? "(R)" : ""}{" "}
+                  {lobbyLeader?.name === player.name ? "(Leader)" : ""}
                 </li>
               ))}
             </ul>
@@ -198,10 +257,18 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
               key={character.id}
               onClick={() => handleCharacterSelect(character)}
               disabled={!hasJoined}
-              className={`m-2 p-2 rounded-lg transition ${selectedCharacter?.id === character.id ? "bg-blue-500" : "bg-red-500 hover:bg-red-700"
-                } text-white`}
+              className={`m-2 p-2 rounded-lg transition ${
+                selectedCharacter?.id === character.id
+                  ? "bg-blue-500"
+                  : "bg-red-500 hover:bg-red-700"
+              } text-white`}
             >
-              <img src={`/characters/${character.image}`} alt={character.name} width={50} height={50} />
+              <img
+                src={`/characters/${character.image}`}
+                alt={character.name}
+                width={50}
+                height={50}
+              />
             </button>
           ))}
         </div>
@@ -233,11 +300,20 @@ const MultiPlayer = ({ onGameRoomSelect, selectedRoom, onJoinGame, onGameStart, 
         {/* Start Game Button */}
         <button
           onClick={handleStartGame}
-          disabled={!lobbyLeader || lobbyLeader.name !== playerName || players.length < 2 || !players.every(player => player.isReady)}
-          className={`px-4 py-3 font-bold rounded-lg transition ${lobbyLeader && lobbyLeader.name === playerName && players.length >= 2 && players.every(player => player.isReady)
-            ? "bg-green-500 hover:bg-green-700"
-            : "bg-gray-500 cursor-not-allowed"
-            } text-white`}
+          disabled={
+            !lobbyLeader ||
+            lobbyLeader.name !== playerName ||
+            players.length < 2 ||
+            !players.every((player) => player.isReady)
+          }
+          className={`px-4 py-3 font-bold rounded-lg transition ${
+            lobbyLeader &&
+            lobbyLeader.name === playerName &&
+            players.length >= 2 &&
+            players.every((player) => player.isReady)
+              ? "bg-green-500 hover:bg-green-700"
+              : "bg-gray-500 cursor-not-allowed"
+          } text-white`}
         >
           Start Game
         </button>

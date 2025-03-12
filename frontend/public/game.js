@@ -81,7 +81,7 @@ export default class Game {
     handleServerMessage(event) {
         const data = JSON.parse(event.data);
 
-        if (data.type === "init") {
+        if (data.type === "init" || data.type === "initRestart") {
             this.playerId = data.playerId;
             this.platforms = data.state.platforms;
             this.platformImage = data.state.platformImage;

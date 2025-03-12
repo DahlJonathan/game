@@ -155,6 +155,10 @@ export default class GameState {
         }
     }
 
+    resetPlayerPoints(playerId) {
+        this.players[playerId].points = 0;
+    }
+
     updatePlayerCharacter(playerId, characterId) {
         if (this.players[playerId]) {
             this.players[playerId].characterId = characterId;
@@ -191,6 +195,10 @@ export default class GameState {
 
     getPlayerName(playerId) {
         return this.players[playerId] ? this.players[playerId].name : "";
+    }
+
+    getPlayerList() {
+        return this.players;
     }
 
     updatePlayer(playerId, input) {

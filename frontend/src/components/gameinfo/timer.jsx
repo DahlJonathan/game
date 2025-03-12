@@ -2,12 +2,22 @@ import React, { useEffect, useState } from "react";
 import ws from "../../../public/websocket";
 import EndScreen from "../endscreen/endscreen";
 
-function Timer({ children, isPaused, onTimeUp, onQuit, onRestart, winnerName, winnerPoints, draw, drawPlayers }) {
-    const [timer, setTimer] = useState(100);
-    const [gameStartTimer, setGameStartTimer] = useState(1);  
+function Timer({ children, time, countdown, isPaused, onTimeUp, onQuit, onRestart, winnerName, winnerPoints, draw, drawPlayers, restartTimer }) {
+    const [timer, setTimer] = useState(time);
+    const [gameStartTimer, setGameStartTimer] = useState(countdown);  
     const [gameStartedNow, setGameStartedNow] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
     const [timeUp, setTimeUp] = useState(false);
+
+    useEffect(() => {
+        if (restartTimer) {
+            setTimer(time);
+            setGameStartTimer(countdown);
+            setGameStartedNow(false);
+            setGameStarted(false);
+            setTimeUp(false);
+        }
+    }, [restartTimer, time, countdown]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -36,7 +46,7 @@ function Timer({ children, isPaused, onTimeUp, onQuit, onRestart, winnerName, wi
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [gameStartTimer, gameStartedNow, timer, gameStarted, isPaused, timeUp]);
+    }, [gameStartTimer, gameStartedNow, timer, gameStarted, isPaused, timeUp, time, countdown, restartTimer]);
 
     return (
         <div>
