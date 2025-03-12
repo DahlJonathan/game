@@ -79,7 +79,32 @@ web-game
     npm start
     ```
 
-2. Open your web browser and navigate to `http://localhost:5173/` to start the game.
+3. Open your web browser and navigate to `http://localhost:5173/` to start the game.
+    for local testing you can open many windows or in same network try it on different computers.
+
+4. to play agaist other players on the web you have to download and install ngrok. https://ngrok.com/downloads/
+
+when ngrok is set up, run this in cmd
+
+```sh
+ngrok http 8080
+```
+
+everyone that wants to play need to add ngrok link in websocket.js
+
+example
+```sh
+window.__ws = new WebSocket('wss://2d78-87-95-197-167.ngrok-free.app');
+```
+after that everyone can start by navigating to web-game/frontend and start
+
+```sh
+npm start
+```
+
+Open your web browser and navigate to `http://localhost:5173/` to play.
+
+
 
 ## Game Flow
 

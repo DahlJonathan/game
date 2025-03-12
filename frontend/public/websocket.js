@@ -1,8 +1,7 @@
 // frontend/public/websocket.js
 if (!window.__ws) {
-    // for ngrok
-    // window.__ws = new WebSocket('wss://6948-2001-999-788-5b98-d52a-5ae4-a5ed-78c7.ngrok-free.app');
-    window.__ws = new WebSocket('ws://localhost:8080');
+
+    window.__ws = new WebSocket('wss://2d78-87-95-197-167.ngrok-free.app'); //ngrok adress here
 
     window.__ws.onopen = () => {
         console.log('WebSocket connection established');
