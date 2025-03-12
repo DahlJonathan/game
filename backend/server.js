@@ -108,16 +108,14 @@ wss.on('connection', (ws) => {
             stopGameLoop();
         }
         if (data.type === "restartGame") {
-            if (gameState.players[playerId].isLead && Object.values(gameState.players).every(player => player.isReady)) {
+            if (gameState.players[playerId].isLeader && Object.values(gameState.players).every(player => player.isReady)) {
                 gameEnded = false;
-                gameState.startGame();
-                gameState.resetCollectables();
-                gameState.resetPowerUp();
 
                 let playerIds = Object.keys(gameState.players);
                 playerIds.forEach((id, index) => {
                     gameState.initializePlayerPos(id, index);
                     gameState.resetPlayerPoints(id);
+                    gameState.resetPlayerPowerups(id);
                 });
 
                 const initMessage = JSON.stringify({ type: 'initRestart', state: gameState.getGameState(), playerId });
@@ -126,8 +124,6 @@ wss.on('connection', (ws) => {
                         client.send(initMessage);
                     }
                 });
-                gameState.unpauseGame();
-                startGameLoop();
             }
         }
         if (data.type === "closeRestart") {

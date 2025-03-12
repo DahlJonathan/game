@@ -152,11 +152,20 @@ export default class GameState {
         if (this.players[playerId] && positions[index]) {
             this.players[playerId].x = positions[index].x;
             this.players[playerId].y = positions[index].y;
+            this.players[playerId].isJumping = false;
         }
     }
 
     resetPlayerPoints(playerId) {
         this.players[playerId].points = 0;
+    }
+
+    resetPlayerPowerups(playerId) {
+        this.players[playerId].powerUpDuration = 0;
+        this.players[playerId].hasPowerSpeed = false;
+        this.players[playerId].hasPowerUp = false;
+        this.players[playerId].jumpStrength = 25;
+        this.players[playerId].speed = 10;
     }
 
     updatePlayerCharacter(playerId, characterId) {

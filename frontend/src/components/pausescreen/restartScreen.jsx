@@ -34,7 +34,6 @@ function RestartScreen({ player, players: initialPlayers, onQuit, onClose }) {
   useEffect(() => {
     if (players.every((p) => p.isReady)) {
       setAllReady(true);
-      console.log("All players ready, should start rematch...");
       ws.send(JSON.stringify({ type: "restartGame" }));
     }
   }, [players]);
@@ -64,12 +63,6 @@ function RestartScreen({ player, players: initialPlayers, onQuit, onClose }) {
           Leave Game
         </button>
 
-        <button
-          onClick={onClose}
-          className="px-6 py-3 bg-yellow-500 hover:bg-yellow-700 text-white font-bold rounded-lg transition m-2"
-        >
-          Close
-        </button>
       </div>
     </div>
   );
