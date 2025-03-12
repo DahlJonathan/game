@@ -137,7 +137,7 @@ const MultiPlayer = ({
   if (gameStarted) {
     return (
       <>
-        <div className="relative flex flex-col items-center justify-center h-screen w-full">
+        <div className="relative flex flex-col items-center justify-center h-screen w-full overflow-hidden">
           <Timer
             time={time}
             countdown={countdown}

@@ -192,6 +192,7 @@ function App() {
         setIsPaused(false);
         setRestartScreen(false);
         setRestartPlayer("");
+        audio.playSound("background");
       }
       if (data.type === "endGame") {
         setGameStarted(false);
