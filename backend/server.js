@@ -30,6 +30,8 @@ wss.on('connection', (ws) => {
 
     console.log(`Player connected`);
 
+    playerId = Math.random().toString(36).substring(2, 11);
+
     ws.on('message', (message) => {
         const data = JSON.parse(message);
         if (data.type === 'joinLobby') {
@@ -46,9 +48,15 @@ wss.on('connection', (ws) => {
                 return;
             }
 
-            playerId = Math.random().toString(36).substring(2, 11);
-            gameState.addPlayer(playerId);
-            console.log(`${data.playerName} joined the game!`)
+            if (playerId === null) {
+                gameState.removePlayer(playerId);
+                playerId = Math.random().toString(36).substring(2, 11);
+            }
+            const playerName = gameState.getPlayerName(playerId)
+            if (playerName === "") {
+                gameState.addPlayer(playerId);
+                console.log(`${data.playerName} joined the game!`)
+            }
             gameState.updatePlayerName(playerId, data.playerName);
             if (Object.keys(gameState.players).length === 1) {
                 gameState.players[playerId].isLeader = true;
@@ -230,9 +238,14 @@ wss.on('connection', (ws) => {
                 playerId,
                 playerName,
             });
+            const lobbyUpdateMessage = JSON.stringify({
+                type: 'lobbyUpdate',
+                state: gameState.getGameState(),
+            });
             wss.clients.forEach(client => {
                 if (client.readyState === client.OPEN) {
                     client.send(deleteMessage);
+                    client.send(lobbyUpdateMessage);
                 }
             });
 

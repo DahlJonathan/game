@@ -5,7 +5,7 @@ export default class GameState {
         this.leaderId = null;
         this.collectables = [];
         this.powerUps = [];
-        this.powerSpeed = [];  
+        this.powerSpeed = [];
         this.hasPowerUp = false;
         this.diamonds = [];
         this.diamondsImage = 'src/images/diamond.png';
@@ -52,7 +52,7 @@ export default class GameState {
         this.gamePaused = false;
         this.lastUpdateTime = Date.now();
 
-    
+
         this.resetPowerUp();
         this.startCollectableTimer();
     }
@@ -128,13 +128,13 @@ export default class GameState {
             playerImage: 'src/images/1.png', // Default image
             jumpStrength: this.jumpStrength, // Default jump strength
             powerUpDuration: 0, // Duration of the power-up effect
-            hasPowerUp: false, 
+            hasPowerUp: false,
             hasPowerSpeed: false,
             speed: 10, // Default speed
             isReady: false,
             isLeader: false,
         };
-                // Assign leader if there is no leader
+        // Assign leader if there is no leader
         if (!this.leaderId) {
             this.leaderId = playerId;
             this.players[playerId].isLeader = true;
@@ -177,7 +177,10 @@ export default class GameState {
 
     updatePlayerName(playerId, name) {
         if (this.players[playerId]) {
-            this.players[playerId].name = name;
+            if (this.players[playerId].name !== name) {
+                console.log(`Update ${this.players[playerId].name} to ${name}`);
+                this.players[playerId].name = name;
+            }
             this.players[playerId].points = 0;
             this.collectables = [];
         }
@@ -375,7 +378,7 @@ export default class GameState {
                     if (client.readyState === client.OPEN) {
                         client.send(soundMessage);
                     }
-                });    
+                });
                 player.points += 1;
                 //console.log(`Player ${player.name} (ID: ${playerId}) collected a collectable and now has ${player.points} points.`);
             }
@@ -399,7 +402,7 @@ export default class GameState {
                     if (client.readyState === client.OPEN) {
                         client.send(soundMessage);
                     }
-                });  
+                });
                 player.points += 5;
                 //console.log(`Player ${player.name} (ID: ${playerId}) collected a collectable and now has ${player.points} points.`);
             }
@@ -448,7 +451,7 @@ export default class GameState {
                     if (client.readyState === client.OPEN) {
                         client.send(soundMessage);
                     }
-                }); 
+                });
                 player.speed = 20; // Increase speed
                 player.powerUpDuration = 15; // Set power-up duration in seconds
                 player.hasPowerSpeed = true;
