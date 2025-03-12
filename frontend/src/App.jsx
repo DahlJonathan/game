@@ -34,7 +34,7 @@ function App() {
   const [gameKey, setGameKey] = useState(0);
   const [restartTimer, setRestartTimer] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
-  const [isMuted, setIsMuted] = useState(false)
+  const [isMuted, setIsMuted] = useState(false);
 
   const quit = () => {
     setGameRooms((prevGameRooms) => ({
@@ -94,17 +94,21 @@ function App() {
   useEffect(() => {
     const handleEscKey = (e) => {
       if (e.key === "Escape" && startGame) {
-        setIsPaused((prev) => {
-          const newPausedState = !prev;
-          setShowPauseScreen(newPausedState);
-          ws.send(
-            JSON.stringify({
-              type: newPausedState ? "pause" : "unPause",
-              pausedPlayer: playerName,
-            })
-          );
-          return newPausedState;
-        });
+        if (isPaused) {
+          if (playerName === pausedPlayer || !pausedPlayer) {
+            console.log("Unpause game");
+            setIsPaused(false);
+            setShowPauseScreen(false);
+            ws.send(
+              JSON.stringify({ type: "unPause", pausedPlayer: playerName })
+            );
+          }
+        } else {
+          console.log("Pause game");
+          setIsPaused(true);
+          setShowPauseScreen(true);
+          ws.send(JSON.stringify({ type: "pause", pausedPlayer: playerName }));
+        }
       }
     };
 
@@ -113,10 +117,10 @@ function App() {
     return () => {
       window.removeEventListener("keydown", handleEscKey);
     };
-  }, [startGame]);
+  }, [startGame, pausedPlayer, isPaused, playerName]);
 
   const handleContinue = () => {
-    console.log("unPause game");
+    if (playerName !== pausedPlayer) return;
     setIsPaused(false);
     setShowPauseScreen(false);
     ws.send(JSON.stringify({ type: "unPause" }));
@@ -158,6 +162,7 @@ function App() {
       if (data.type === "delete") {
         setLeftGame(true);
         setPlayerLeft(data.playerName);
+        setPausedPlayer("");
       }
       if (data.type === "gameOver") {
         setWinnerName(data.winner);
