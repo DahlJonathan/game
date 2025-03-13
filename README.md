@@ -16,40 +16,40 @@ web-game
 │   ├── config.js         # Configuration (port, network settings)       
 │   ├── gameState.js      # Rules, scoring, and updates
 │   ├── README.md         # Backend documentation
-│   ├── server.js         # WebSocket server, game state management
-│
-├── docs/          
-│   ├── logic.txt         # Logic of the game
-│   ├── review_kohdat.txt # Everything must be implemented and working properly
-│
+│   └── server.js         # WebSocket server, game state management
 ├── frontend/
 │   ├── node_modules/
 │   ├── public/
 │   │   ├── app.js        # Initializes the game and handles WebSocket messages
 │   │   ├── game.js       # Contains the game logic and rendering
-│   │   ├── websocket.js  # Handles WebSocket connections
+│   │   └── websocket.js  # Handles WebSocket connections
 │   ├── src/
 │   │   ├── audio/
 │   │   ├── components/
 │   │   │   ├── collectables/
-│   │   │   │   ├── collectable.jsx
+│   │   │   |   ├── collectable.jsx
+│   │   │   │   ├── diamonds.jsx
+│   │   │   │   └── powerup.jsx
 │   │   │   ├── gameinfo/
-│   │   │   │   ├── fps.jsx
-│   │   │   │   ├── scoreboard.jsx  # Displays the scoreboard
-│   │   │   │   ├── timer.jsx       # Displays the game timer
+│   │   │   │   ├── fps.jsx             # Displays FPS
+│   │   │   │   ├── leaveGame.jsx       # Displays who left the game
+│   │   │   │   ├── mute.jsx
+│   │   │   │   ├── scoreboard.jsx      # Displays the scoreboard
+│   │   │   │   └── timer.jsx           # Displays the game timer
 │   │   │   ├── pausescreen/
-│   │   │   │   ├── pausescreen.jsx # Displays the pause screen
+│   │   │   │   ├── pauseScreen.jsx     # Displays the pause screen
+│   │   │   │   └── restartScreen.jsx   # Displays the rematching screen
 │   │   │   ├── startscreen/
-│   │   │   │   ├── howToPlay.jsx
-│   │   │   │   ├── multiplayer.jsx # Handles multiplayer start screen
-│   │   │   │   ├── singleplayer.jsx# Handles singleplayer start screen
-│   │   │   │   ├── startscreen.jsx # Displays the start screen
+│   │   │   │   ├── howToPlay.jsx       # Shows controls
+│   │   │   │   ├── multiPlayer.jsx     # Handles multiplayer start screen
+│   │   │   │   ├── singlePlayer.jsx    # Handles singleplayer start screen
+│   │   │   │   └── startScreen.jsx     # Displays the start screen
 │   ├── images/
 │   │   ├── App.jsx                 # Main React component
 │   │   ├── audio.js                # Sounds for the game
 │   │   ├── GameWrapper.jsx         # Wraps the game area and loads the game script
 │   │   ├── main.css                # Main CSS file
-│   │   ├── main.jsx                # Entry point for the React application
+│   │   └── main.jsx                # Entry point for the React application
 │   ├── .gitignore                  # Ignore node_modules
 │   ├── eslint.config.js            # ESLint configuration
 │   ├── index.html                  # HTML template
@@ -58,13 +58,13 @@ web-game
 │   ├── postcss.config.mjs          # PostCSS configuration
 │   ├── README.md                   # Frontend documentation
 │   ├── tailwind.config.js          # Tailwind CSS configuration
-│   ├── vite.config.js              # Vite configuration
+│   └── vite.config.js              # Vite configuration
 │
 ├── node_modules/
 ├── .gitignore                       # Ignore node_modules
 ├── package-lock.json                # Lock file for npm dependencies
 ├── package.json                     # Project metadata and dependencies
-├── README.md                        # Project documentation
+└── README.md                        # Project documentation
 ```
 
 ## How to Run
@@ -99,7 +99,7 @@ window.__ws = new WebSocket('wss://2d78-87-95-197-167.ngrok-free.app');
 after that everyone can start by navigating to web-game/frontend and start
 
 ```sh
-npm start
+npm run start
 ```
 
 Open your web browser and navigate to `http://localhost:5173/` to play.

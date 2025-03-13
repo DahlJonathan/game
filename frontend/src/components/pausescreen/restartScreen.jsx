@@ -5,11 +5,9 @@ function RestartScreen({
   player,
   players: initialPlayers,
   onQuit,
-  onClose,
 }) {
   const [players, setPlayers] = useState(initialPlayers);
   const [isReady, setIsReady] = useState(false);
-  const [allReady, setAllReady] = useState(false);
 
   const onAccept = () => {
     const newReadyState = !isReady;
@@ -38,7 +36,6 @@ function RestartScreen({
 
   useEffect(() => {
     if (players.every((p) => p.isReady)) {
-      setAllReady(true);
       ws.send(JSON.stringify({ type: "restartGame" }));
     }
   }, [players]);

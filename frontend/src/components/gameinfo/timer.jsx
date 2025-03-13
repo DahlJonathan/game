@@ -17,6 +17,7 @@ function Timer({
   restartTimer,
   endGame,
   onlyPlayer,
+  setCountdownActive,
 }) {
   const [timer, setTimer] = useState(time);
   const [gameStartTimer, setGameStartTimer] = useState(countdown);
@@ -38,10 +39,12 @@ function Timer({
     const interval = setInterval(() => {
       if (gameStartTimer > 0) {
         setGameStartTimer((prev) => prev - 1);
+        setCountdownActive(true);
         ws.send(JSON.stringify({ type: "waitForStart" }));
       } else if (!gameStartedNow) {
         setGameStartedNow(true);
         setGameStarted(true);
+        setCountdownActive(false);
         ws.send(JSON.stringify({ type: "startGame" }));
       }
 
@@ -56,7 +59,6 @@ function Timer({
         endGame
       ) {
         onTimeUp();
-        console.log("Time up");
         setTimeUp(true);
         clearInterval(interval);
         ws.send(JSON.stringify({ type: "endRound" }));

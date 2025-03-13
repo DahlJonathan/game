@@ -9,7 +9,6 @@ const PauseScreen = ({
 }) => {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
-      {/* Dark Overlay */}
       <div className="absolute inset-0"></div>
 
       {/* Pause menu */}

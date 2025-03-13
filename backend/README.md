@@ -20,11 +20,11 @@ backend/
 
 This file contains configuration settings for the backend server.
 
-## ID Generation
+## Gamestate
 
-### `idGenerator.js`
+### `gameState.js`
 
-This file contains the logic for generating unique IDs.
+This file is responsible for managing the state of the game and players.
 
 ## WebSocket Server
 

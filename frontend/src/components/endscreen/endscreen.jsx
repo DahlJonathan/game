@@ -11,10 +11,8 @@ const EndScreen = ({
 }) => {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
-      {/* Dark Overlay */}
       <div className="absolute inset-0"></div>
 
-      {/* Pause menu */}
       <div className="relative z-10 border-2 bg-gray-900 rounded-lg p-10 text-center shadow-lg">
         {draw ? (
           <div>

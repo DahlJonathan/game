@@ -23,7 +23,6 @@ const MultiPlayer = ({
   onQuit,
   scoreboard,
   onPause,
-  onTimeUp,
   onRestart,
   winnerName,
   winnerPoints,
@@ -35,18 +34,17 @@ const MultiPlayer = ({
   onlyPlayer,
   setPlayerName,
   playerName,
-  isWaiting,
+  setCountdownActive,
 }) => {
   const [isReady, setIsReady] = useState(false);
   const [players, setPlayers] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
-  const [gamePaused, setGamePaused] = useState(false);
   const [message, setMessage] = useState("");
   const [lobbyLeader, setLobbyLeader] = useState(null);
   const [timeUp, setTimeUp] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
-  const [time, setTime] = useState(15);
-  const [countdown, setCountdown] = useState(1);
+  const [time, setTime] = useState(60);
+  const [countdown, setCountdown] = useState(5);
   const [hasJoined, setHasJoined] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
@@ -80,13 +78,9 @@ const MultiPlayer = ({
         setLobbyLeader(leader);
       } else if (data.type === "init") {
         setGameStarted(true);
-        setTime(15);
-        setCountdown(1);
+        setTime(60);
+        setCountdown(5);
         onGameStart();
-      } else if (data.type === "pause") {
-        setGamePaused(true);
-      } else if (data.type === "unPause") {
-        setGamePaused(false);
       } else if (data.type === "playerJoined" || data.type === "playerLeft") {
         const updatedPlayers = Object.values(data.state.players);
         setPlayers(updatedPlayers);
@@ -173,6 +167,7 @@ const MultiPlayer = ({
             restartTimer={restartTimer}
             endGame={endGame}
             onlyPlayer={onlyPlayer}
+            setCountdownActive={setCountdownActive}
           >
             <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg rounded-lg" />
             <div className="absolute right-0 top-0 text-lg rounded-lg">

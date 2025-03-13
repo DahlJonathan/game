@@ -1,5 +1,4 @@
 import ws from "./websocket.js";
-import audio from '../src/audio';
 
 export default class Game {
     constructor() {
@@ -39,7 +38,6 @@ export default class Game {
 
 
         // Play background audio when the game starts
-       // audio.playSound('background');
 
         requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
     }
@@ -47,12 +45,6 @@ export default class Game {
     handleKeyChange(event, isPressed) {
         const key = event.key === " " ? "Spacebar" : event.key;
         this.activeKeys[key] = isPressed;
-
-
-        // Play jump sound when the player jumps
-        //if (key === "ArrowUp" && isPressed) {
-        //    audio.playSound('jump');
-        //}
 
         // Start sending inputs at a fixed interval if not already running
         if (!this.inputInterval) {
@@ -186,8 +178,6 @@ export default class Game {
         document.querySelectorAll(".powerspeed").forEach(el => el.remove());
         document.querySelectorAll(".diamonds").forEach(el => el.remove());
 
-        /* document.querySelectorAll(".playerpowerup").forEach(el => el.remove()); */
-
         // Render platforms
         if (this.platforms) {
             this.platforms.forEach(platform => {
@@ -297,24 +287,7 @@ export default class Game {
             playerEl.style.backgroundSize = "contain";
             playerEl.style.backgroundPosition = "center";
             playerEl.style.backgroundRepeat = "no-repeat";
-            playerEl.style.zIndex = "2"; // Ensure player is in front
-
-            /* let playerPowerUpEl = document.querySelector(`.playerpowerup-${id}`);
-            if (!playerPowerUpEl) {
-                playerPowerUpEl = document.createElement("div");
-                playerPowerUpEl.classList.add("playerpowerup", `playerpowerup-${id}`);
-                playerPowerUpEl.style.position = "absolute";
-                playerPowerUpEl.style.width = "50px"; // Make power-up bigger than player
-                playerPowerUpEl.style.height = "50px"; // Make power-up bigger than player
-                playerPowerUpEl.style.backgroundImage = `url(src/images/showpowerup.png)`;
-                playerPowerUpEl.style.backgroundSize = "contain";
-                playerPowerUpEl.style.backgroundPosition = "center";
-                playerPowerUpEl.style.backgroundRepeat = "no-repeat";
-                playerPowerUpEl.style.zIndex = "1"; // Ensure power-up is behind player
-                gameArea.appendChild(playerPowerUpEl);
-            } */
-
-        
+            playerEl.style.zIndex = "2"; // Ensure player is in front    
 
             let t = Math.min((now - player.timestamp) / 50, 1);
             let interpolatedX = player.lastX + (player.x - player.lastX) * t;
@@ -322,9 +295,6 @@ export default class Game {
 
             playerEl.style.left = `${interpolatedX}px`;
             playerEl.style.top = `${interpolatedY}px`;
-
-            /* playerPowerUpEl.style.left = `${interpolatedX - 7.5}px`; // Center the power-up behind the player
-            playerPowerUpEl.style.top = `${interpolatedY - 7.5}px`; // Center the power-up behind the player */
 
             gameArea.appendChild(playerEl);
         }

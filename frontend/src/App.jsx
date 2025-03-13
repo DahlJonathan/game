@@ -15,8 +15,6 @@ function App() {
   const [selectedRoom, setSelectedRoom] = useState("Server 1");
   const [players, setPlayers] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
-  const [showPauseScreen, setShowPauseScreen] = useState(false);
-  const [reset, setReset] = useState(false);
   const [playerName, setPlayerName] = useState("");
   const [pausedPlayer, setPausedPlayer] = useState("");
   const [leftGame, setLeftGame] = useState(false);
@@ -33,11 +31,10 @@ function App() {
   const [restartPlayer, setRestartPlayer] = useState("");
   const [gameKey, setGameKey] = useState(0);
   const [restartTimer, setRestartTimer] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [endGame, setEndGame] = useState(false);
   const [onlyPlayer, setOnlyPlayer] = useState(false);
   const [isWaiting, setIsWaiting] = useState(false);
+  const [countdownActive, setCountdownActive] = useState(false);
 
   const quit = () => {
     setGameRooms((prevGameRooms) => ({
@@ -48,7 +45,6 @@ function App() {
     setGameMode(null);
     setStartGame(false);
     setIsPaused(false);
-    setShowPauseScreen(false);
     audio.stopSound("background"); // Stop the background audio
     setRestartScreen(false);
     ws.send(JSON.stringify({ type: "quitGame" }));
@@ -60,38 +56,13 @@ function App() {
     setPlayers([]);
     setStartGame(false);
     setIsPaused(false);
-    setShowPauseScreen(false);
     audio.stopSound("background"); // Stop the background audio
-  };
-
-  const restart = () => {
-    setShowPauseScreen(false);
-    setIsPaused(false);
-    setReset(true);
-    audio.stopSound("background"); // Stop the background audio
-    setTimeout(() => {
-      setReset(false);
-    }, 100);
-  };
-
-  const handleStartGame = () => {
-    ws.send(JSON.stringify({ type: "startGame" }));
   };
 
   const handleRestart = () => {
     setGameKey((prev) => prev + 1);
     setRestartScreen(true);
     ws.send(JSON.stringify({ type: "restartRequest", player: playerName }));
-  };
-
-  const handleClose = () => {
-    setRestartScreen(false);
-    ws.send(JSON.stringify({ type: "closeRestart" }));
-  };
-
-  const toggleMute = () => {
-    setIsMuted(!isMuted);
-    audio.muteAll(!isMuted);
   };
 
   useEffect(() => {
@@ -105,18 +76,16 @@ function App() {
     const handleEscKey = (e) => {
       if (e.key === "Escape" && startGame) {
         if (isPaused) {
-          if (playerName === pausedPlayer || !pausedPlayer || playerLeft) {
+          if (playerName === pausedPlayer || !pausedPlayer || playerLeft && !countdownActive) {
             console.log("Unpause game");
             setIsPaused(false);
-            setShowPauseScreen(false);
             ws.send(
               JSON.stringify({ type: "unPause", pausedPlayer: playerName })
             );
           }
-        } else {
+        } else if (!countdownActive) {
           console.log("Pause game");
           setIsPaused(true);
-          setShowPauseScreen(true);
           ws.send(JSON.stringify({ type: "pause", pausedPlayer: playerName }));
         }
       }
@@ -127,12 +96,11 @@ function App() {
     return () => {
       window.removeEventListener("keydown", handleEscKey);
     };
-  }, [startGame, pausedPlayer, isPaused, playerName, playerLeft, players, isWaiting]);
+  }, [startGame, pausedPlayer, isPaused, playerName, playerLeft, players, isWaiting, countdownActive]);
 
   const handleContinue = () => {
     if (playerName !== pausedPlayer) return;
     setIsPaused(false);
-    setShowPauseScreen(false);
     ws.send(JSON.stringify({ type: "unPause" }));
   };
 
@@ -162,14 +130,12 @@ function App() {
       }
       if (data.type === "unPauseGame") {
         setIsPaused(false);
-        setShowPauseScreen(false);
         setPausedPlayer("");
         setLeftGame(false);
         setPlayerLeft("");
       }
       if (data.type === "pauseGame") {
         setIsPaused(true);
-        setShowPauseScreen(true);
         setPausedPlayer(data.pausedPlayer);
       }
       if (data.type === "delete") {
@@ -201,13 +167,6 @@ function App() {
         const updatedPlayers = Object.values(data.state.players);
         setPlayers(updatedPlayers);
       }
-      if (data.type === "closeRematch") {
-        setRestartScreen(false);
-        setRestartPlayer("");
-        setIsPaused(false);
-        setShowPauseScreen(false);
-        setPausedPlayer("");
-      }
       if (data.type === "initRestart") {
         setGameKey((prev) => prev + 1);
         setRestartTimer(true);
@@ -220,7 +179,6 @@ function App() {
       if (data.type === "endGame") {
         setOnlyPlayer(true);
         setEndGame(true);
-        setGameStarted(false);
       }
       if (data.type === "collectableCollected") {
         audio.playSound("gempoint"); // Play collectable sound
@@ -278,7 +236,6 @@ function App() {
                 players={players}
                 onQuit={quit}
                 onRestart={handleRestart}
-                onClose={handleClose}
               />
             </div>
           )}
@@ -294,7 +251,6 @@ function App() {
             selectedRoom={selectedRoom}
             setPlayerName={setPlayerName}
             playerName={playerName}
-            players={players}
             onJoinGame={(name) => {
               setGameRooms({
                 ...gameRooms,
@@ -313,9 +269,9 @@ function App() {
               setEndGame(false);
               setOnlyPlayer(false);
               setIsWaiting(false);
+              setCountdownActive(true);
               audio.playSound("background"); // Play the background audio when the game starts
             }}
-            handleStartGame={handleStartGame}
             onBack={back}
             onQuit={quit}
             scoreboard={scoreboard}
@@ -328,9 +284,7 @@ function App() {
             gameKey={gameKey}
             endGame={endGame}
             onlyPlayer={onlyPlayer}
-            startGame={startGame}
-            restartScreen={restartScreen}
-            isWaiting={isWaiting}
+            setCountdownActive={setCountdownActive}
           />
         </>
       )}

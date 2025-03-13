@@ -145,14 +145,6 @@ wss.on('connection', (ws) => {
                 });
             }
         }
-        if (data.type === "closeRestart") {
-            const closeMessage = JSON.stringify({ type: "closeRematch" });
-            wss.clients.forEach(client => {
-                if (client.readyState === client.OPEN) {
-                    client.send(closeMessage);
-                }
-            });
-        }
         if (data.type === "startGame") {
             if (playerId === null || !gameState.players[playerId]) return;
             if (gameState.players[playerId].isLeader && Object.values(gameState.players).every(player => player.isReady)) {

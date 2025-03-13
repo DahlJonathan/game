@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 function LeaveGame({ playerLeft, onClose }) {
-  // animationPhase: "enter" (initial), "display" (visible), "exit" (leaving)
   const [animationPhase, setAnimationPhase] = useState("enter");
 
   useEffect(() => {

@@ -16,19 +16,6 @@ function initGame() {
     }
 
     window.currentGame = new Game();
-    console.log("Created new game", window.currentGame);
-    console.log("Game initialized");
-
-    // Handle WebSocket messages
-    ws.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        if (message.type === 'init') {
-            console.log("init");
-        }
-        if (message.type === "input") {
-            console.log("message:", message);
-        }
-    };
 
     // Send player movement to the server
     document.addEventListener('keydown', (event) => {

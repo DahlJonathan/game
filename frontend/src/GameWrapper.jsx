@@ -6,7 +6,6 @@ const GameWrapper = ({ gameKey }) => {
 
   useEffect(() => {
     if (prevKey === null || prevKey !== gameKey) {
-      console.log("gameKey changed:", gameKey);
 
       const gameContainer = document.getElementById("game-container");
 
@@ -22,10 +21,8 @@ const GameWrapper = ({ gameKey }) => {
 
       // Append script inside the game container
       gameContainer.appendChild(script);
-      console.log("script created");
 
       return () => {
-        console.log("script removed");
         gameContainer.removeChild(script);
       };
     }

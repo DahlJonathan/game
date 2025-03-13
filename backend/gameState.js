@@ -14,11 +14,7 @@ export default class GameState {
         this.collectablesImage = 'src/images/gem.png';
         this.platformImage = 'src/images/platform.jpg';
         this.playerImage = 'src/images/1.png';
-        //this.collectablesImage = '/gem.png'; for netlify
-        //this.platformImage = '/platform.jpg'; for netlify
         this.playerImage = '/1.png';
-        //this.playerImage = 'src/images/1.png';
-        //this.playerImage = '1.png';
         this.gameStarted = false;
 
         this.gravity = 2;
@@ -380,7 +376,6 @@ export default class GameState {
                     }
                 });
                 player.points += 1;
-                //console.log(`Player ${player.name} (ID: ${playerId}) collected a collectable and now has ${player.points} points.`);
             }
         });
 
@@ -404,7 +399,6 @@ export default class GameState {
                     }
                 });
                 player.points += 5;
-                //console.log(`Player ${player.name} (ID: ${playerId}) collected a collectable and now has ${player.points} points.`);
             }
         });
 
@@ -506,10 +500,8 @@ export default class GameState {
         }
 
         if (topPlayers.length > 1) {
-            console.log(`Draw! ${topPlayers.map(p => p.name).join(' and ')} have the same amount of points`);
             return topPlayers;
         } else {
-            console.log(`Game over! Winner: ${topPlayers[0].name} with ${topPlayers[0].points} points`);
             return topPlayers[0];
         }
     }
