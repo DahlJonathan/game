@@ -85,7 +85,6 @@ export default class Game {
             this.powerSpeedImage = data.state.powerSpeedImage;
             this.diamonds = data.state.diamonds;
             this.diamondsImage = data.state.diamondsImage;
-            console.log("Received initial game state:", data.state);
             
             for (let playerId in data.state.players) {
                 let player = data.state.players[playerId];

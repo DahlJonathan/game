@@ -77,14 +77,12 @@ function App() {
       if (e.key === "Escape" && startGame) {
         if (isPaused) {
           if (playerName === pausedPlayer || !pausedPlayer || playerLeft && !countdownActive) {
-            console.log("Unpause game");
             setIsPaused(false);
             ws.send(
               JSON.stringify({ type: "unPause", pausedPlayer: playerName })
             );
           }
         } else if (!countdownActive) {
-          console.log("Pause game");
           setIsPaused(true);
           ws.send(JSON.stringify({ type: "pause", pausedPlayer: playerName }));
         }
@@ -99,7 +97,7 @@ function App() {
   }, [startGame, pausedPlayer, isPaused, playerName, playerLeft, players, isWaiting, countdownActive]);
 
   const handleContinue = () => {
-    if (playerName !== pausedPlayer) return;
+    if (playerName !== pausedPlayer && pausedPlayer !== playerLeft) return;
     setIsPaused(false);
     ws.send(JSON.stringify({ type: "unPause" }));
   };
