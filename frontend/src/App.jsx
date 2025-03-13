@@ -35,6 +35,9 @@ function App() {
   const [restartTimer, setRestartTimer] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [endGame, setEndGame] = useState(false);
+  const [onlyPlayer, setOnlyPlayer] = useState(false);
+  const [isWaiting, setIsWaiting] = useState(false);
 
   const quit = () => {
     setGameRooms((prevGameRooms) => ({
@@ -92,10 +95,17 @@ function App() {
   };
 
   useEffect(() => {
+    const isPlayerInGame = players.some((p) => p.name === playerName);
+    if (!isPlayerInGame) {
+      setStartGame(false);
+      setIsWaiting(true);
+      return;
+    }
+
     const handleEscKey = (e) => {
       if (e.key === "Escape" && startGame) {
         if (isPaused) {
-          if (playerName === pausedPlayer || !pausedPlayer) {
+          if (playerName === pausedPlayer || !pausedPlayer || playerLeft) {
             console.log("Unpause game");
             setIsPaused(false);
             setShowPauseScreen(false);
@@ -117,7 +127,7 @@ function App() {
     return () => {
       window.removeEventListener("keydown", handleEscKey);
     };
-  }, [startGame, pausedPlayer, isPaused, playerName]);
+  }, [startGame, pausedPlayer, isPaused, playerName, playerLeft, players, isWaiting]);
 
   const handleContinue = () => {
     if (playerName !== pausedPlayer) return;
@@ -138,6 +148,7 @@ function App() {
             character: playerData.playerImage,
           })
         );
+        setPlayers(updatedScoreboard);
         setScoreboard(updatedScoreboard);
         setWinnerName("");
         setWinnerPoints(0);
@@ -146,6 +157,8 @@ function App() {
         setLeftGame(false);
         setPlayerLeft("");
         setRestartTimer(false);
+        setEndGame(false);
+        setStartGame(true);
       }
       if (data.type === "unPauseGame") {
         setIsPaused(false);
@@ -160,11 +173,20 @@ function App() {
         setPausedPlayer(data.pausedPlayer);
       }
       if (data.type === "delete") {
+        const playersData = data.state.players;
+        const updatedScoreboard = Object.entries(playersData).map(
+          ([id, playerData]) => ({
+            name: playerData.name || id,
+            points: playerData.points,
+            character: playerData.playerImage,
+          })
+        );
+        setScoreboard(updatedScoreboard);
         setLeftGame(true);
         setPlayerLeft(data.playerName);
-        setPausedPlayer("");
       }
       if (data.type === "gameOver") {
+        setEndGame(true);
         setWinnerName(data.winner);
         setWinnerPoints(data.points);
         audio.stopSound("background");
@@ -195,6 +217,8 @@ function App() {
         audio.playSound("background");
       }
       if (data.type === "endGame") {
+        setOnlyPlayer(true);
+        setEndGame(true);
         setGameStarted(false);
       }
       if (data.type === "collectableCollected") {
@@ -217,7 +241,7 @@ function App() {
     return () => {
       ws.removeEventListener("message", handleMessage);
     };
-  }, []);
+  }, [players, playerName]);
 
   return (
     <div className="relative">
@@ -233,7 +257,7 @@ function App() {
         <SinglePlayer onBack={back} />
       ) : (
         <>
-          {isPaused && startGame && (
+          {isPaused && startGame && !endGame && playerName && (
             <div className="absolute inset-0">
               <PauseScreen
                 playerName={playerName}
@@ -242,10 +266,11 @@ function App() {
                 onQuit={quit}
                 onRestart={handleRestart}
                 onPause={isPaused}
+                onlyPlayer={onlyPlayer}
               />
             </div>
           )}
-          {restartScreen && (
+          {restartScreen && startGame && scoreboard.length >= 2 && (
             <div className="absolute inset-0">
               <RestartScreen
                 player={restartPlayer}
@@ -266,6 +291,8 @@ function App() {
             onGameRoomSelect={setSelectedRoom}
             restartTimer={restartTimer}
             selectedRoom={selectedRoom}
+            setPlayerName={setPlayerName}
+            playerName={playerName}
             players={players}
             onJoinGame={(name) => {
               setGameRooms({
@@ -278,9 +305,13 @@ function App() {
             onGameStart={() => {
               if (!selectedRoom || !gameRooms[selectedRoom]) {
                 console.error("No valid room selected.");
-                return;
               }
               setStartGame(true);
+              setIsPaused(false);
+              setRestartScreen(false);
+              setEndGame(false);
+              setOnlyPlayer(false);
+              setIsWaiting(false);
               audio.playSound("background"); // Play the background audio when the game starts
             }}
             handleStartGame={handleStartGame}
@@ -294,6 +325,11 @@ function App() {
             draw={draw}
             drawPlayers={drawPlayers}
             gameKey={gameKey}
+            endGame={endGame}
+            onlyPlayer={onlyPlayer}
+            startGame={startGame}
+            restartScreen={restartScreen}
+            isWaiting={isWaiting}
           />
         </>
       )}

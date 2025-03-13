@@ -31,8 +31,12 @@ const MultiPlayer = ({
   drawPlayers,
   gameKey,
   restartTimer,
+  endGame,
+  onlyPlayer,
+  setPlayerName,
+  playerName,
+  isWaiting,
 }) => {
-  const [playerName, setPlayerName] = useState("");
   const [isReady, setIsReady] = useState(false);
   const [players, setPlayers] = useState([]);
   const [gameStarted, setGameStarted] = useState(false);
@@ -41,19 +45,27 @@ const MultiPlayer = ({
   const [lobbyLeader, setLobbyLeader] = useState(null);
   const [timeUp, setTimeUp] = useState(false);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
-  const [time, setTime] = useState(5);
+  const [time, setTime] = useState(15);
   const [countdown, setCountdown] = useState(1);
   const [hasJoined, setHasJoined] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
   const back = () => {
     setPlayers([]);
-    ws.send(JSON.stringify({ type: 'leaveLobby', playerName, room: selectedRoom }));
+    ws.send(
+      JSON.stringify({ type: "leaveLobby", playerName, room: selectedRoom })
+    );
   };
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
     audio.muteAll(!isMuted);
+  };
+
+  const handleInput = (e) => {
+    const newName = e.target.value;
+
+    ws.send(JSON.stringify({ type: "checkName", name: newName }));
   };
 
   useEffect(() => {
@@ -64,11 +76,11 @@ const MultiPlayer = ({
         setPlayers(updatedPlayers);
 
         // Find the leader from the players list
-        const leader = updatedPlayers.find(player => player.isLeader);
+        const leader = updatedPlayers.find((player) => player.isLeader);
         setLobbyLeader(leader);
       } else if (data.type === "init") {
         setGameStarted(true);
-        setTime(20);
+        setTime(15);
         setCountdown(1);
         onGameStart();
       } else if (data.type === "pause") {
@@ -83,9 +95,13 @@ const MultiPlayer = ({
         }
       } else if (data.type === "error") {
         setMessage(data.message);
+        setPlayerName("");
+      } else if (data.type === "nameOkay") {
+        setPlayerName(data.name);
+        setMessage("");
       }
     };
-  }, []);
+  }, [gameStarted]);
 
   const handleJoin = () => {
     if (
@@ -112,15 +128,20 @@ const MultiPlayer = ({
 
   const handleReady = () => {
     setIsReady(!isReady);
-    ws.send(JSON.stringify({ type: 'ready', playerName, roomId: selectedRoom, isReady: !isReady }));
+    ws.send(
+      JSON.stringify({
+        type: "ready",
+        playerName,
+        roomId: selectedRoom,
+        isReady: !isReady,
+      })
+    );
   };
 
   const handleStartGame = () => {
-    ws.send(JSON.stringify({ type: 'startGame', playerName, room: selectedRoom }));
-  };
-
-  const handleRestart = () => {
-    ws.send(JSON.stringify({ type: "startGame" }));
+    ws.send(
+      JSON.stringify({ type: "startGame", playerName, room: selectedRoom })
+    );
   };
 
   const handleCharacterSelect = (character) => {
@@ -134,7 +155,7 @@ const MultiPlayer = ({
     );
   };
 
-  if (gameStarted) {
+  if (gameStarted && playerName) {
     return (
       <>
         <div className="relative flex flex-col items-center justify-center h-screen w-full overflow-hidden">
@@ -150,13 +171,12 @@ const MultiPlayer = ({
             draw={draw}
             drawPlayers={drawPlayers}
             restartTimer={restartTimer}
+            endGame={endGame}
+            onlyPlayer={onlyPlayer}
           >
             <Fps className="absolute left-0 top-0 ml-4 mt-4 text-lg rounded-lg" />
             <div className="absolute right-0 top-0 text-lg rounded-lg">
-            <Mute
-              isMuted={isMuted}
-              toggleMute={toggleMute}
-            />
+              <Mute isMuted={isMuted} toggleMute={toggleMute} />
             </div>
           </Timer>
           <GameWrapper
@@ -186,9 +206,9 @@ const MultiPlayer = ({
             type="text"
             maxLength={12}
             value={playerName}
-            onChange={(e) => setPlayerName(e.target.value)}
+            onChange={handleInput}
             className="p-2 font-bold text-center text-black rounded-lg mb-2 bg-white"
-            placeholder="Username (max 12 characters)"
+            placeholder="Name (max 12 characters)"
           />
           <p className="text-xl mt-3">Choose server</p>
           {/* Game Room Selection */}
@@ -279,8 +299,11 @@ const MultiPlayer = ({
         <button
           onClick={handleReady}
           disabled={!selectedCharacter || !hasJoined}
-          className={`px-6 py-2 mb-2 mt-3 font-bold rounded-lg transition ${isReady ? "bg-green-500 hover:bg-green-700" : "bg-blue-500 hover:bg-blue-700"
-            } text-white`}
+          className={`px-6 py-2 mb-2 mt-3 font-bold rounded-lg transition ${
+            isReady
+              ? "bg-green-500 hover:bg-green-700"
+              : "bg-blue-500 hover:bg-blue-700"
+          } text-white`}
         >
           {isReady ? "Unready" : "Ready"}
         </button>

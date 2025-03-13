@@ -189,7 +189,7 @@ export default class GameState {
     removePlayer(playerId) {
         delete this.players[playerId];
 
-        if (playerId === this.leaderId) {
+        if (playerId === this.leaderId || !this.leaderId) {
             this.assignNewLeader();
         }
     }

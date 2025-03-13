@@ -10,6 +10,7 @@ const wss = new WebSocketServer({ noServer: true });
 const gameState = new GameState(wss);
 let gameInterval = null;
 let gameEnded = false;
+let rematchActive = false;
 
 app.get('/favicon.ico', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
@@ -34,9 +35,16 @@ wss.on('connection', (ws) => {
 
     ws.on('message', (message) => {
         const data = JSON.parse(message);
+        if (data.type === "checkName") {
+            if (gameState.gameStarted || rematchActive) {
+                ws.send(JSON.stringify({ type: 'error', message: 'Game already started' }));
+                return;
+            }
+            ws.send(JSON.stringify({ type: 'nameOkay', name: data.name}));
+        }
         if (data.type === 'joinLobby') {
 
-            if (gameState.gameStarted) {
+            if (gameState.gameStarted || rematchActive) {
                 ws.send(JSON.stringify({ type: 'error', message: 'Game already started' }));
                 return;
             }
@@ -90,6 +98,7 @@ wss.on('connection', (ws) => {
             Object.values(gameState.players).forEach(player => {
                 player.isReady = false;
             })
+            rematchActive = true;
             const restartPlayer = data.player;
             const restartMessage = JSON.stringify({ type: "restart", state: gameState.getGameState(), player: player, restartPlayer: restartPlayer });
             wss.clients.forEach(client => {
@@ -99,7 +108,7 @@ wss.on('connection', (ws) => {
             });
         }
         if (data.type === "accept") {
-            if (playerId === null) return;
+            if (playerId === null || !gameState.players[playerId]) return;
             const player = gameState.getPlayerName(playerId);
             console.log("player ready:", player);
             gameState.players[playerId].isReady = data.isReady;
@@ -117,7 +126,7 @@ wss.on('connection', (ws) => {
             stopGameLoop();
         }
         if (data.type === "restartGame") {
-            if (playerId === null) return;
+            if (playerId === null || !gameState.players[playerId]) return;
             if (gameState.players[playerId].isLeader && Object.values(gameState.players).every(player => player.isReady)) {
                 gameEnded = false;
 
@@ -145,7 +154,7 @@ wss.on('connection', (ws) => {
             });
         }
         if (data.type === "startGame") {
-            if (playerId === null) return;
+            if (playerId === null || !gameState.players[playerId]) return;
             if (gameState.players[playerId].isLeader && Object.values(gameState.players).every(player => player.isReady)) {
                 gameEnded = false;
                 gameState.startGame();
@@ -242,17 +251,23 @@ wss.on('connection', (ws) => {
                 type: 'lobbyUpdate',
                 state: gameState.getGameState(),
             });
+            const rematchUpdate = JSON.stringify({
+                type: 'rematchUpdate',
+                state: gameState.getGameState(),
+            })
             wss.clients.forEach(client => {
                 if (client.readyState === client.OPEN) {
                     client.send(deleteMessage);
                     client.send(lobbyUpdateMessage);
+                    client.send(rematchUpdate);
                 }
             });
 
-            // End game if no players are left
-            if (Object.keys(gameState.players).length === 0) {
+            // End game if there's only one player are left
+            if (Object.keys(gameState.players).length === 1) {
                 gameState.endGame();
                 gameEnded = true;
+                rematchActive = false;
                 stopGameLoop();
                 const endMessage = JSON.stringify({ type: 'endGame' });
                 wss.clients.forEach(client => {
@@ -290,17 +305,24 @@ wss.on('connection', (ws) => {
                 playerName,
             })
 
+            const rematchUpdate = JSON.stringify({
+                type: 'rematchUpdate',
+                state: gameState.getGameState(),
+            })
+
             wss.clients.forEach(client => {
                 if (client.readyState === client.OPEN) {
                     client.send(lobbyUpdateMessage);
                     client.send(deleteMessage);
+                    client.send(rematchUpdate);
                 }
             });
 
-            // End game if no players are left
-            if (Object.keys(gameState.players).length === 0) {
+            // End game if there's only one player are left
+            if (Object.keys(gameState.players).length === 1) {
                 gameState.endGame();
                 gameEnded = true;
+                rematchActive = false;
                 stopGameLoop();
                 const endMessage = JSON.stringify({ type: 'endGame' });
                 wss.clients.forEach(client => {

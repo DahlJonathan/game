@@ -7,6 +7,7 @@ const EndScreen = ({
   winnerPoints,
   draw,
   drawPlayers,
+  onlyPlayer,
 }) => {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
@@ -33,14 +34,21 @@ const EndScreen = ({
             <h1 className="mb-5 text-xl text-white">
               {winnerName} has {winnerPoints} points!
             </h1>
+            {onlyPlayer && (
+              <h1 className="mb-5 text-xl text-white">
+                You are the only player left!
+              </h1>
+            )}
           </div>
         )}
-        <button
-          onClick={onRestart}
-          className="px-6 py-3 bg-green-500 hover:bg-green-700 text-white font-bold rounded-lg transition m-2"
-        >
-          Rematch
-        </button>
+        {!onlyPlayer && (
+          <button
+            onClick={onRestart}
+            className="px-6 py-3 bg-green-500 hover:bg-green-700 text-white font-bold rounded-lg transition m-2"
+          >
+            Rematch
+          </button>
+        )}
         <button
           onClick={onQuit}
           className="px-6 py-3 bg-red-500 hover:bg-red-700 text-white font-bold rounded-lg transition m-2"
