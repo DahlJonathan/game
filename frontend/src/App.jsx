@@ -212,6 +212,7 @@ function App() {
         setGameKey((prev) => prev + 1);
         setRestartTimer(true);
         setIsPaused(false);
+        setEndGame(false);
         setRestartScreen(false);
         setRestartPlayer("");
         audio.playSound("background");

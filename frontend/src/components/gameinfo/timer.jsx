@@ -59,7 +59,7 @@ function Timer({
         console.log("Time up");
         setTimeUp(true);
         clearInterval(interval);
-        ws.send(JSON.stringify({ type: "endGame" }));
+        ws.send(JSON.stringify({ type: "endRound" }));
       }
     }, 1000);
 

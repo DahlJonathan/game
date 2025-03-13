@@ -176,7 +176,7 @@ wss.on('connection', (ws) => {
                 startGameLoop();
             }
         }
-        if (data.type === "endGame") {
+        if (data.type === "endRound") {
             const topPlayers = gameState.endGame();
             if (topPlayers === null) {
                 const noPlayersMessage = JSON.stringify({
