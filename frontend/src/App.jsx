@@ -66,6 +66,12 @@ function App() {
   };
 
   useEffect(() => {
+    if (!isWaiting) {
+      audio.playSound("background");
+    }
+  }, [isWaiting]);
+
+  useEffect(() => {
     const isPlayerInGame = players.some((p) => p.name === playerName);
     if (!isPlayerInGame) {
       setStartGame(false);
@@ -273,7 +279,6 @@ function App() {
               setOnlyPlayer(false);
               setIsWaiting(false);
               setCountdownActive(true);
-              audio.playSound("background"); // Play the background audio when the game starts
             }}
             onBack={back}
             onQuit={quit}
