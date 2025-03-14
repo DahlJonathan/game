@@ -71,6 +71,9 @@ function App() {
       setStartGame(false);
       setIsWaiting(true);
       return;
+    } else {
+      setStartGame(true);
+      setIsWaiting(false);
     }
 
     const handleEscKey = (e) => {
@@ -172,23 +175,25 @@ function App() {
         setEndGame(false);
         setRestartScreen(false);
         setRestartPlayer("");
-        audio.playSound("background");
+        if (!isWaiting) {
+          audio.playSound("background");
+        }
       }
       if (data.type === "endGame") {
         setOnlyPlayer(true);
         setEndGame(true);
       }
-      if (data.type === "collectableCollected") {
+      if (data.type === "collectableCollected" && !isWaiting) {
         audio.playSound("gempoint"); // Play collectable sound
       }
 
-      if (data.type === "diamondCollected") {
+      if (data.type === "diamondCollected" && !isWaiting) {
         audio.playSound("diapoint"); // Play diamond sound
       }
-      if (data.type === "jump") {
+      if (data.type === "jump" && !isWaiting) {
         audio.playSound("jump"); // Play jump sound
       }
-      if (data.type === "powerupCollected") {
+      if (data.type === "powerupCollected" && !isWaiting) {
         audio.playSound("powerup"); // Play powerup sound
       }
     };
