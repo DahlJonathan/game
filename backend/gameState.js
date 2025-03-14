@@ -105,9 +105,11 @@ export default class GameState {
 
     startCollectableTimer() {
         setInterval(() => {
-            this.resetCollectables();
-            this.resetPowerUp();
-        }, 15000); // 30 seconds
+            if (!this.gamePaused) {
+                this.resetCollectables();
+                this.resetPowerUp();
+            }
+        }, 15000); // 15 seconds
     }
 
     addPlayer(playerId, name = "") {
