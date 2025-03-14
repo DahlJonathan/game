@@ -41,7 +41,12 @@ wss.on('connection', (ws) => {
                 ws.send(JSON.stringify({ type: 'error', message: 'Game already started' }));
                 return;
             }
-            ws.send(JSON.stringify({ type: 'nameOkay', name: data.name}));
+            ws.send(JSON.stringify({ type: 'nameOkay', name: data.name }));
+        }
+        if (data.type === 'requestPlayers') {
+            if (playerId === null) return;
+            const state = JSON.stringify({ type: 'lobbyUpdate', state: gameState.getGameState(), playerId });
+            wss.clients.forEach(client => client.send(state));
         }
         if (data.type === 'joinLobby') {
 
@@ -258,8 +263,10 @@ wss.on('connection', (ws) => {
 
             // End game if there's only one player are left
             if (Object.keys(gameState.players).length === 1) {
+                if (gameState.gameStarted) {
+                    onePlayerLeft = true;
+                }
                 gameState.endGame();
-                onePlayerLeft = true;
                 gameEnded = true;
                 rematchActive = false;
                 stopGameLoop();
@@ -317,6 +324,9 @@ wss.on('connection', (ws) => {
 
             // End game if there's only one player are left
             if (Object.keys(gameState.players).length === 1) {
+                if (gameState.gameStarted) {
+                    onePlayerLeft = true;
+                }
                 gameState.endGame();
                 onePlayerLeft = true;
                 gameEnded = true;

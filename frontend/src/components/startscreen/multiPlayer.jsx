@@ -47,6 +47,10 @@ const MultiPlayer = ({
   const [countdown, setCountdown] = useState(5);
   const [hasJoined, setHasJoined] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  
+  useEffect(() => {
+    ws.send(JSON.stringify({ type: "requestPlayers" }));
+  }, [players]);
 
   const back = () => {
     setPlayers([]);
