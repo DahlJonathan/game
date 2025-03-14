@@ -11,6 +11,7 @@ const gameState = new GameState(wss);
 let gameInterval = null;
 let gameEnded = false;
 let rematchActive = false;
+let onePlayerLeft = false;
 
 app.get('/favicon.ico', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
@@ -36,7 +37,7 @@ wss.on('connection', (ws) => {
     ws.on('message', (message) => {
         const data = JSON.parse(message);
         if (data.type === "checkName") {
-            if (gameState.gameStarted || rematchActive) {
+            if (gameState.gameStarted || rematchActive || onePlayerLeft) {
                 ws.send(JSON.stringify({ type: 'error', message: 'Game already started' }));
                 return;
             }
@@ -44,8 +45,8 @@ wss.on('connection', (ws) => {
         }
         if (data.type === 'joinLobby') {
 
-            if (gameState.gameStarted || rematchActive) {
-                ws.send(JSON.stringify({ type: 'error', message: 'Game already started' }));
+            if (gameState.gameStarted || rematchActive || onePlayerLeft) {
+                ws.send(JSON.stringify({ type: 'error', message: 'Game in progress' }));
                 return;
             }
 
@@ -258,6 +259,7 @@ wss.on('connection', (ws) => {
             // End game if there's only one player are left
             if (Object.keys(gameState.players).length === 1) {
                 gameState.endGame();
+                onePlayerLeft = true;
                 gameEnded = true;
                 rematchActive = false;
                 stopGameLoop();
@@ -267,6 +269,9 @@ wss.on('connection', (ws) => {
                         client.send(endMessage);
                     }
                 });
+            }
+            if (Object.keys(gameState.players).length === 0) {
+                onePlayerLeft = false;
             }
             playerId = null;
         }
@@ -313,6 +318,7 @@ wss.on('connection', (ws) => {
             // End game if there's only one player are left
             if (Object.keys(gameState.players).length === 1) {
                 gameState.endGame();
+                onePlayerLeft = true;
                 gameEnded = true;
                 rematchActive = false;
                 stopGameLoop();
@@ -322,6 +328,9 @@ wss.on('connection', (ws) => {
                         client.send(endMessage);
                     }
                 });
+            }
+            if (Object.keys(gameState.players).length === 0) {
+                onePlayerLeft = false;
             }
             playerId = null;
         }

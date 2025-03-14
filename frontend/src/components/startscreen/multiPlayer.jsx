@@ -87,6 +87,7 @@ const MultiPlayer = ({
         if (updatedPlayers.length > 0) {
           setLobbyLeader(updatedPlayers[0]);
         }
+        setPlayerName("");
       } else if (data.type === "error") {
         setMessage(data.message);
         setPlayerName("");
