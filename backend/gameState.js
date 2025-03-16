@@ -16,6 +16,7 @@ export default class GameState {
         this.playerImage = 'src/images/1.png';
         this.playerImage = '/1.png';
         this.gameStarted = false;
+        this.gameMode = 'Gather'
 
         this.gravity = 2;
         this.jumpStrength = 25;
@@ -49,8 +50,10 @@ export default class GameState {
         this.lastUpdateTime = Date.now();
 
 
-        this.resetPowerUp();
-        this.startCollectableTimer();
+        if (this.gameStarted) {
+            this.resetPowerUp();
+            this.startCollectableTimer();
+        }
     }
 
     generateCollectables() {
@@ -106,7 +109,9 @@ export default class GameState {
     startCollectableTimer() {
         setInterval(() => {
             if (!this.gamePaused) {
-                this.resetCollectables();
+                if (this.gameMode === "Gather") {
+                    this.resetCollectables();
+                }
                 this.resetPowerUp();
             }
         }, 15000); // 15 seconds
@@ -131,21 +136,33 @@ export default class GameState {
             speed: 10, // Default speed
             isReady: false,
             isLeader: false,
+            isIT: false,
         };
         // Assign leader if there is no leader
         if (!this.leaderId) {
             this.leaderId = playerId;
             this.players[playerId].isLeader = true;
+            this.players[playerId].isIT = true;
         }
     }
 
     initializePlayerPos(playerId, index) {
-        const positions = [
-            { x: 0, y: 531 },
-            { x: 1242, y: 531 },
-            { x: 0, y: 15 },
-            { x: 1242, y: 15 },
-        ];
+        let positions = []
+        if (this.gameMode === "Gather") {
+            positions = [
+                { x: 0, y: 531 },
+                { x: 1242, y: 531 },
+                { x: 0, y: 15 },
+                { x: 1242, y: 15 },
+            ];
+        } else if (this.gameMode === "Tag") {
+            positions = [
+                { x: 620, y: 250 },
+                { x: 1242, y: 531 },
+                { x: 0, y: 15 },
+                { x: 1242, y: 15 },
+            ];
+        }
 
         if (this.players[playerId] && positions[index]) {
             this.players[playerId].x = positions[index].x;
@@ -320,6 +337,11 @@ export default class GameState {
                             otherPlayer.pushVelocityX += pushForce;
                         } else {
                             otherPlayer.pushVelocityX -= pushForce;
+                        }
+                        if (player.isIT) {
+                            player.points += 10;
+                            player.isIT = false;
+                            otherPlayer.isIT = true;
                         }
                     }
                 }
@@ -523,6 +545,7 @@ export default class GameState {
             diamonds: this.diamonds,
             diamondsImage: this.diamondsImage,
             gameStarted: this.gameStarted,
+            gameMode: this.gameMode,
         };
     }
 }

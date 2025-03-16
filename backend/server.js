@@ -143,6 +143,8 @@ wss.on('connection', (ws) => {
                     gameState.resetPlayerPowerups(id);
                 });
 
+                gameState.resetPowerUp();
+
                 const initMessage = JSON.stringify({ type: 'initRestart', state: gameState.getGameState(), playerId });
                 wss.clients.forEach(client => {
                     if (client.readyState === client.OPEN) {
@@ -151,14 +153,26 @@ wss.on('connection', (ws) => {
                 });
             }
         }
+        if (data.type === "updateGameMode") {
+            gameState.gameMode = data.mode;
+            const updateModeMessage = JSON.stringify({ type: "gameMode", mode: gameState.gameMode })
+            wss.clients.forEach(client => {
+                if (client.readyState === client.OPEN) {
+                    client.send(updateModeMessage);
+                }
+            });
+        }
         if (data.type === "startGame") {
             if (playerId === null || !gameState.players[playerId]) return;
             if (gameState.players[playerId].isLeader && Object.values(gameState.players).every(player => player.isReady)) {
                 gameEnded = false;
                 gameState.startGame();
-                gameState.resetCollectables();
-                gameState.resetPowerUp();
+                gameState.startCollectableTimer();
+                if (gameState.gameMode === "Gather") {
+                    gameState.resetCollectables();
+                }
 
+                gameState.resetPowerUp();
                 let playerIds = Object.keys(gameState.players);
                 playerIds.forEach((id, index) => {
                     gameState.initializePlayerPos(id, index);

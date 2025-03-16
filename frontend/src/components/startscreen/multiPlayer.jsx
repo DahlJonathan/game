@@ -47,7 +47,8 @@ const MultiPlayer = ({
   const [countdown, setCountdown] = useState(5);
   const [hasJoined, setHasJoined] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  
+  const [gameMode, setGameMode] = useState("Gather");
+
   useEffect(() => {
     ws.send(JSON.stringify({ type: "requestPlayers" }));
   }, [players]);
@@ -98,6 +99,8 @@ const MultiPlayer = ({
       } else if (data.type === "nameOkay") {
         setPlayerName(data.name);
         setMessage("");
+      } else if (data.type === "gameMode") {
+        setGameMode(data.mode);
       }
     };
   }, [gameStarted]);
@@ -137,9 +140,21 @@ const MultiPlayer = ({
     );
   };
 
+  useEffect(() => {
+    ws.send(JSON.stringify({ type: "updateGameMode", mode: gameMode }));
+  }, [gameMode]);
+
+  const toggleGameMode = () => {
+    setGameMode((prevMode) => (prevMode === "Gather" ? "Tag" : "Gather"));
+  };
+
   const handleStartGame = () => {
     ws.send(
-      JSON.stringify({ type: "startGame", playerName, room: selectedRoom })
+      JSON.stringify({
+        type: "startGame",
+        playerName,
+        room: selectedRoom,
+      })
     );
   };
 
@@ -228,6 +243,20 @@ const MultiPlayer = ({
               </button>
             ))}
           </div>
+          <p className="text-xl mt-3">Current mode: {gameMode}</p>
+          <button
+            onClick={toggleGameMode}
+            disabled={!lobbyLeader || lobbyLeader.name !== playerName}
+            className={`px-4 py-2 mb-4 font-bold rounded-lg transition ${
+              lobbyLeader && lobbyLeader.name === playerName
+                ? gameMode === "hunt"
+                  ? "bg-blue-500 hover:bg-blue-700"
+                  : "bg-green-500 hover:bg-green-700"
+                : "bg-gray-500 cursor-not-allowed"
+            } text-white`}
+          >
+            Switch to {gameMode === "Gather" ? "Tag" : "Gather"} Mode
+          </button>
           {/* Join Button */}
           <button
             onClick={handleJoin}
