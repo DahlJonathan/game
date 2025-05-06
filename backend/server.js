@@ -25,8 +25,9 @@ app.get('/favicon.ico', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
 });
 
+const indexPath = path.resolve(__dirname, '../frontend/dist/index.html');
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+    res.sendFile(indexPath);
 });
 
 const server = app.listen(PORT, () => {
