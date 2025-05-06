@@ -12,5 +12,4 @@ export default defineConfig({
   server: {
     allowedHosts: ['*'],
   },
-  root: './public',
 })
