@@ -10,7 +10,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const gameState = new GameState(wss);
 let gameInterval = null;
 let gameEnded = false;
 let rematchActive = false;
@@ -31,6 +30,8 @@ const server = app.listen(PORT, () => {
 });
 
 const wss = new WebSocketServer({ server });
+
+const gameState = new GameState(wss);
 
 server.on('upgrade', (request, socket, head) => {
     wss.handleUpgrade(request, socket, head, (ws) => {
