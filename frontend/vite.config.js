@@ -6,7 +6,10 @@ export default defineConfig({
   css: {
     postcss: './postcss.config.js',
   },
+  build: {
+    outDir: 'dist',
+  },
   server: {
-  allowedHosts: ["2338af580e18.ngrok.app"],
-}
+    allowedHosts: ['*'],
+  }
 })
