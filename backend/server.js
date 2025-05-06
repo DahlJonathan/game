@@ -4,14 +4,25 @@ import { WebSocketServer } from 'ws';
 import { PORT } from './config.js';
 import GameState from './gameState.js';
 import path from 'path';
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const wss = new WebSocketServer({ noServer: true });
+const PORT = process.env.PORT || 8080;
+const wss = new WebSocketServer({ server });
 const gameState = new GameState(wss);
 let gameInterval = null;
 let gameEnded = false;
 let rematchActive = false;
 let onePlayerLeft = false;
+
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  });
 
 app.get('/favicon.ico', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
