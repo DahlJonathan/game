@@ -5,9 +5,8 @@
   "main": "backend/server.js",
   "type": "module",
   "scripts": {
-    "start:backend": "node backend/server.js",
-    "start:frontend": "cd frontend && npm run start",
-    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\""
+    "build": "cd frontend && npm install && npm run build",
+    "start": "node backend/server.js"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
