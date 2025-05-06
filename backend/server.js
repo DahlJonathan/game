@@ -29,7 +29,7 @@ const server = app.listen(PORT, () => {
     console.log(`HTTP server running on port ${PORT}`);
 });
 
-const wss = new WebSocketServer({ server });
+const wss = new WebSocket.Server({ port: 8081 });
 
 const gameState = new GameState(wss);
 
