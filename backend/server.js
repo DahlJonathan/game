@@ -18,7 +18,7 @@ let rematchActive = false;
 let onePlayerLeft = false;
 
 // Serve static files from the dist folder using the resolved __dirname
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join('dist')));
 
 // Handle favicon.ico route
 app.get('/favicon.ico', (req, res) => {
