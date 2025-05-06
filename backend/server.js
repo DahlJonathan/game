@@ -1,6 +1,6 @@
 // filepath: /home/student/web-game/backend/server.js
 import express from 'express';
-import { WebSocket } from 'ws';
+import ws from 'ws';
 import { PORT } from './config.js';
 import GameState from './gameState.js';
 import path from 'path';
@@ -30,7 +30,7 @@ const server = app.listen(PORT, () => {
     console.log(`HTTP server running on port ${PORT}`);
 });
 
-const wss = new WebSocket.Server({ port: 8081 });
+const wss = new ws.WebSocket.Server({ port: 8081 });
 
 const gameState = new GameState(wss);
 
