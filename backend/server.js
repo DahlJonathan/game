@@ -1,9 +1,13 @@
-// filepath: /home/student/web-game/backend/server.js
+
 import express from 'express';
 import { WebSocketServer } from 'ws';
 import { PORT } from './config.js';
 import GameState from './gameState.js';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const wss = new WebSocketServer({ noServer: true });
@@ -13,8 +17,10 @@ let gameEnded = false;
 let rematchActive = false;
 let onePlayerLeft = false;
 
+// Serve static files from the dist folder using the resolved __dirname
 app.use(express.static(path.join(__dirname, 'dist')));
 
+// Handle favicon.ico route
 app.get('/favicon.ico', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
 });
