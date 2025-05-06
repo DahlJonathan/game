@@ -1,7 +1,7 @@
 // frontend/public/websocket.js
 if (!window.__ws) {
 
-    window.__ws = new WebSocket('wss://game-production-2a60.up.railway.app');
+    window.__ws = new WebSocket('wss://game-production-ed1c.up.railway.app');
 
     window.__ws.onopen = () => {
         console.log('WebSocket connection established');
