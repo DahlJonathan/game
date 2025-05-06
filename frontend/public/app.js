@@ -1,4 +1,4 @@
-// ./frontend/public/app.js
+//./frontend/public/app.js
 import Game from "./game.js";
 import ws from "./websocket.js";
 
@@ -21,7 +21,11 @@ function initGame() {
     document.addEventListener('keydown', (event) => {
         const direction = event.key;
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(direction)) {
-            ws.send(JSON.stringify({ type: 'move', playerId: window.currentGame.playerId, direction }));
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type:'move', playerId: window.currentGame.playerId, direction }));
+            } else {
+                console.log('WebSocket connection is not open');
+            }
         }
     });
 }
