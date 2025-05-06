@@ -25,6 +25,10 @@ app.get('/favicon.ico', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
 });
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 const server = app.listen(PORT, () => {
     console.log(`HTTP server running on port ${PORT}`);
 });
