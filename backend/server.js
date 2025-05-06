@@ -10,7 +10,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const wss = new WebSocketServer({ server });
 const gameState = new GameState(wss);
 let gameInterval = null;
 let gameEnded = false;
@@ -30,6 +29,8 @@ app.get('/favicon.ico', (req, res) => {
 const server = app.listen(PORT, () => {
     console.log(`HTTP server running on port ${PORT}`);
 });
+
+const wss = new WebSocketServer({ server });
 
 server.on('upgrade', (request, socket, head) => {
     wss.handleUpgrade(request, socket, head, (ws) => {
